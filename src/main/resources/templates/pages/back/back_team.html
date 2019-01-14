@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="/pages/common::backCommonFile"></head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+    <div th:include="/pages/common::backHead" class="main-header"></div>
+    <div th:include="/pages/common::backLeft" class="main-sidebar"></div>
+
+    <div class="content-wrapper">
+        <!--搜索框-->
+        <section class="content-header" style="width:300px">
+            <form th:action="@{/AdminC/toTeams}" method="post" class="sidebar-form">
+                <div class="input-group" >
+                    <input type="text" name="teamName" class="form-control"  style="background-color: ghostwhite" placeholder="搜索团队">
+                    <span class="input-group-btn">
+              <button type="submit" name="search" style="background-color: ghostwhite"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+              </button>
+            </span>
+                </div>
+            </form>
+        </section>
+        <!-- 团队列表 -->
+        <section class="content container-fluid">
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>团队名</th>
+                            <th>队长</th>
+                            <th>团队详细</th>
+                            <th>创建时间</th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                       <tr th:each="backTeam :${backTeams}">
+                           <td th:text="${backTeam.teamName}"></td>
+                           <td th:text="${backTeam.teamCaptain}"></td>
+                           <td>
+                               <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#first' + ${backTeam.teamId} ">详细</button>
+
+                               <!-- teams列表的详细按钮 -->
+                               <div class="modal fade" style="width:auto" th:id="'first'+ ${backTeam.teamId} " tabindex="-1" role="dialog" th:aria-labelledby="'first2'+${backTeam.teamId}" aria-hidden="true">
+                                   <div class="modal-dialog">
+                                       <div class="modal-content">
+                                           <div class="modal-header">
+                                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                               <h4 class="modal-title" th:id="'first2'+${backTeam.teamId}" >团队详细</h4>
+                                           </div>
+                                           <div class="modal-body">
+                                               <!-- 下面这个table表格显示团队名 队长 团队人数 -->
+                                               <table class="table table-striped">
+                                                   <thead>
+                                                       <tr>
+                                                           <th>团队名</th>
+                                                           <th>队长</th>
+                                                           <th>团队人数</th>
+                                                       </tr>
+                                                   </thead>
+                                                   <tbody>
+                                                       <tr>
+                                                           <td th:text="${backTeam.teamName}"></td>
+                                                           <td th:text="${backTeam.teamCaptain}"></td>
+                                                           <td th:text="${backTeam.teamNums}"></td>
+                                                       </tr>
+                                                   </tbody>
+                                               </table>
+
+                                                <!-- 项目列表 -->
+                                                      <table class="table table-striped" th:if="${backTeam.teamProjects.size() > 0}">
+                                                       <thead>
+                                                           <tr>
+                                                               <th>项目名</th>
+                                                               <th>项目详细</th>
+                                                               <th>项目归档</th>
+                                                               <th>创建时间</th>
+                                                           </tr>
+                                                       </thead>
+                                                       <tbody th:if="${backTeam.teamProjects.size() > 0}">
+                                                       <!-- team 里面有个 List装着 projects -->
+                                                             <tr th:each=" project :${backTeam.teamProjects}">
+                                                               <td th:text="${project.projectName}"></td>
+                                                               <td>
+                                                                   <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#projectMsg'+${project.projectId}">详细</button>
+                                                               </td>
+                                                               <!-- 模态框（Modal） -->
+                                                               <div class="modal fade" th:id="'projectMsg'+${project.projectId}" tabindex="-1" role="dialog" th:aria-labelledby="'projectMsg2'+${project.projectId} " aria-hidden="true">
+                                                                   <div class="modal-dialog">
+                                                                       <div class="modal-content">
+                                                                           <div class="modal-header">
+                                                                               <h4 class="modal-title" th:id="'projectMsg2'+${project.projectId} " th:text="${project.projectName} + '的项目简介'"> </h4>
+                                                                           </div>
+                                                                           <div class="modal-body" th:text="${project.projectMsg}"></div>
+
+                                                                       </div><!-- /.modal-content -->
+                                                                   </div><!-- /.modal -->
+                                                               </div>
+                                                               <td th:text="${project.projectArchive == 1 } ? '已归档' : '未归档' "></td>
+                                                               <td th:text="${project.projectCreateTime}"></td>
+                                                           </tr>
+
+
+                                                       </tbody>
+
+                                                   </table>
+                                                         <div class=".label label-info" th:if="${backTeam.teamProjects.size() == 0}">暂无项目信息</div>
+
+
+                                               <HR align=center width=300 color=#987cb9 SIZE=1>
+
+                                               <!--想法列表-->
+                                                   <table class="table table-striped" th:if="${backTeam.teamIdeas.size() > 0}">
+                                                       <thead>
+                                                           <tr>
+                                                               <th>想法名</th>
+                                                               <th>想法详细</th>
+                                                               <th>创建时间</th>
+                                                           </tr>
+                                                       </thead>
+                                                           <tbody >
+                                                               <!-- team 里面有个 List装着 projects -->
+                                                               <tr th:each="idea : ${backTeam.teamIdeas}">
+                                                                   <td th:text="${idea.ideaName}"></td>
+                                                                   <td>
+                                                                       <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#idea'+${idea.ideaId}">详细</button>
+                                                                   </td>
+
+                                                                       <div class="modal fade" th:id="'idea'+ ${idea.ideaId}" tabindex="-1" role="dialog" th:aria-labelledby="'ideaMsg'+${idea.ideaId}" aria-hidden="true">
+                                                                           <div class="modal-dialog">
+                                                                               <div class="modal-content">
+                                                                                   <div class="modal-header">
+                                                                                       <h4 class="modal-title" th:id="'ideaMsg'+${idea.ideaId}" th:text="${idea.ideaName} + '的想法信息'"> </h4>
+                                                                                   </div>
+                                                                                   <div class="modal-body" th:text="${idea.ideaMsg}"></div>
+                                                                               </div>
+                                                                           </div>
+                                                                       </div>
+
+                                                                   <td th:text="${idea.ideaCreateTime}"></td>
+                                                               </tr>
+                                                           </tbody>
+                                                   </table>
+                                               <div class=".label label-info" th:if="${backTeam.teamIdeas.size() == 0}">暂无想法信息</div>
+
+
+                                               <HR align=center width=300 color=#987cb9 SIZE=1>
+                                               <!--member列表-->
+                                                   <table class="table table-striped" th:if="${backTeam.backTeamMembers.size() > 0}">
+                                                       <thead>
+                                                           <tr>
+                                                               <th>姓名</th>
+                                                               <th>职位</th>
+                                                               <th>入团时间</th>
+                                                           </tr>
+                                                       </thead>
+
+                                                       <tbody >
+                                                           <!-- team 里面有个 List装着 projects -->
+
+                                                           <tr th:each="member:${backTeam.backTeamMembers}">
+                                                               <td th:text="${member.userName}"></td>
+                                                               <td th:text="${member.teamRoleName}"></td>
+                                                               <td th:text="${member.memberJoinTime}"></td>
+                                                           </tr>
+                                                       </tbody>
+                                                   </table>
+                                               <div class=".label label-info" th:if="${backTeam.backTeamMembers.size() == 0}">暂无成员</div>
+                                           </div>
+                                           <!-- 关闭-->
+                                           <div class="modal-footer">
+                                               <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                           </div>
+                                       </div><!-- /.modal-content -->
+                                   </div><!-- /.modal -->
+                               </div>
+                           </td>
+                           <td th:text="${backTeam.teamCreateTime}"></td>
+                       </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--页码-->
+            <div>
+                <ul class="pagination" >
+                    <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage-1}}">&laquo;</a></li>
+                    <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+                    <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+                    <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+                    <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
+                    <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+                    <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+                    <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+                    <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/AdminC/toTeams?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+                </ul>
+                <br>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <div th:include="/pages/common::backFooter" class="main-footer"></div>
+</div>
+
+</body>
+<script type="text/javascript">
+    $(function () {
+        $(".sidebar-menu li").eq(1).addClass("active");
+    });
+</script>
+</html>

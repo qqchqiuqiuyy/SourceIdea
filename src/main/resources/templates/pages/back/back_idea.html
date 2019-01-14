@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="/pages/common::backCommonFile"></head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+    <div th:include="/pages/common::backHead" class="main-header"></div>
+    <div th:include="/pages/common::backLeft" class="main-sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content-header" style="width:300px">
+            <form th:action="@{/AdminC/toIdeas}" method="post" class="sidebar-form" style="width: 300px">
+                <div class="input-group" >
+                    <input type="text" name="ideaName" class="form-control"  style="background-color: ghostwhite" placeholder="搜索想法">
+                    <span class="input-group-btn">
+                          <button type="submit" name="search" style="background-color: ghostwhite"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                         </button>
+                     </span>
+                    <select class="selectpicker  show-tick form-control" style="border: 0; background: transparent;width:80px" name="tagName">
+                        <span th:each="tag:${tags}">
+                              <option th:value="${tag.tagName}" th:text="${tag.tagName}" ></option>
+                        </span>
+                    </select>
+                </div>
+            </form>
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>标签</th>
+                        <th>发起人</th>
+                        <th>所属团队</th>
+                        <th>想法详细</th>
+                        <th>操作</th>
+                        <th>发起时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="idea : ${ideas}">
+                        <td th:text="${idea.tagName}"></td>
+                        <td th:text="${idea.userName}"></td>
+                        <!--团队列表-->
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#myModa'+${idea.userName}+${idea.ideaSupports}">详细</button>
+                            <!-- 模态框（Modal） -->
+                            <div class="modal fade" th:id="'myModa'+${idea.userName}+${idea.ideaSupports}" tabindex="-1" role="dialog" th:aria-labelledby="'myModal' + ${idea.userName}+${idea.ideaSupports}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" th:id="'myModal' + ${idea.userName}+${idea.ideaSupports}">团队列表</h4>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="panel panel-default">
+                                                <div class="panel-body" th:each=" team:${idea.userTeams}">
+                                                    <p th:text="${team.teamName}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+                            </div>
+                        </td>
+                        <!--想法详细-->
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#myModal2'+${idea.userName}+${idea.ideaSupports}">详细</button>
+                            <!-- 模态框（Modal） -->
+                            <div class="modal fade" th:id="'myModal2'+${idea.userName}+${idea.ideaSupports}" tabindex="-1" role="dialog" th:aria-labelledby="'myModalLabel2'+${idea.userName}+${idea.ideaSupports}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" th:id="'myModalLabel2'+${idea.userName}+${idea.ideaSupports}">想法详细</h4>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <div class="panel panel-default">
+                                                <div class="panel-body" th:text="${idea.ideaMsg}">
+                                                </div>
+                                            </div>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                <tr>
+                                                    <th>支持数</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td th:text="${idea.ideaSupports}"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs" th:value="${idea.ideaId}" th:id="'button'+${idea.ideaId}" onclick="handle(this.value)">删除</button>
+                        </td>
+                        <td th:text="${ideaCreateTime}"></td>
+                    </tr>
+                  <!--  <tr>
+                        <td>社交</td>
+                        <td>小明</td>
+                        <td>生产大队</td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal3">详细</button>
+                            &lt;!&ndash; 模态框（Modal） &ndash;&gt;
+                            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel3">想法详细</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    我想..............
+                                                </div>
+                                            </div>
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>支持数</th>
+                                                        <th>团队支持比率</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>200</td>
+                                                        <td>0.6</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>&lt;!&ndash; /.modal-content &ndash;&gt;
+                                </div>&lt;!&ndash; /.modal &ndash;&gt;
+                            </div>
+                        </td>
+                        <td>未立项</td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-xs" >删除</button>
+                        </td>
+                        <td>2019</td>
+                    </tr>-->
+
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div>
+                <ul class="pagination" >
+                    <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-1}}">&laquo;</a></li>
+                    <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+                    <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+                    <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+                    <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
+                    <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+                    <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+                    <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+                    <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+                </ul>
+                <br>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <div th:include="/pages/common::backFooter" class="main-footer"></div>
+</div>
+
+</body>
+<script type="text/javascript">
+    function handle(value) {
+        $.ajax({
+            url:"/AdminC/toDeleteIdea",
+            type:"post",
+            dataType:"json",
+            data:{
+                "ideaId":value
+            },
+            cache:false,
+            success:function(data){
+                if(data.msg == "1"){
+                    $("#button" + value).parent().parent().remove();
+                }else{
+                    alert(data.msg)
+                }
+            }
+        });
+    }
+    $(function () {
+        $(".sidebar-menu li").eq(2).addClass("active");
+    });
+
+</script>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <title>SourceIdea社区</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="SourceIdea社区">
+  <meta name="description" content="SourceIdea社区">
+  <link rel="stylesheet" href="../../../../res/layui/css/layui.css">
+  <link rel="stylesheet" href="../../../../res/css/global.css">
+  <link rel="stylesheet" href="../../../../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<script th:fragment="script">
+  /*$(function () {
+    var userName = $.cookie('account');
+    $("#myName").text('欢迎 ' + userName);
+  })*/
+</script>
+<!--头部-->
+<div th:fragment="commonHeader" >
+  <div class="fly-header layui-bg-black" >
+    <div class="layui-container">
+      <span class="logo-lg fly-logo" style="font-size: 36px;top:5px"><b>Source</b>Idea</span>
+
+      <ul class="layui-nav fly-nav-user">
+       <!-- <div th:each="cookie : ${#httpServletRequest.getCookies()}">
+          <div th:if="${cookie.getName().equals('account')}">
+            &lt;!&ndash; 登入后的状态 &ndash;&gt;
+            <li class="layui-nav-item">
+              <a class="fly-nav-avatar" href="javascript:;">
+                <cite class="layui-hide-xs" th:text="${cookie.getValue()}"></cite>
+              </a>
+              <dl class="layui-nav-child">
+                <dd><a href="../user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+                <dd><a href="../user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
+                <dd><a href="../user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+                <hr style="margin: 5px 0;">
+                <dd><a href="" style="text-align: center;">退出</a></dd>
+              </dl>
+            </li>
+          </div>
+        </div>-->
+        <shiro:hasRole name="user:common">　　
+          <li class="layui-nav-item">
+            <a class="fly-nav-avatar" href="javascript:;">
+              <cite class="layui-hide-xs" id="myName" th:text="'欢迎 '+${session.userName}"></cite>
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="../user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+              <dd><a href="../user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
+              <dd><a href="../user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+              <hr style="margin: 5px 0;">
+              <dd><a th:href="@{/LoginC/toLogout}" style="text-align: center;">退出</a></dd>
+            </dl>
+          </li>
+        </shiro:hasRole>
+
+        <shiro:lacksRole name="user:common">　　
+            <li class="layui-nav-item">
+              <a th:href="@{/UserC/toLogin}">登入</a>
+            </li>
+            <li class="layui-nav-item">
+              <a th:href="@{/UserC/toReg}">注册</a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs">
+              <a href="/app/qq/" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs">
+              <a href="/app/weibo/" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
+            </li>
+        </shiro:lacksRole>
+
+
+        <!-- 登入后的状态 -->
+
+      </ul>
+    </div>
+  </div>
+</div>
+<!--导航栏-->
+<div th:fragment="navigation">
+  <div class="fly-panel fly-column">
+    <div class="layui-container">
+      <ul class="layui-clear">
+        <li class="layui-hide-xs "><a th:href="@{/IndexC/toIndex}">首页</a></li>
+        <li ><a th:href="@{/TeamC/toTeam}">团队</a></li>
+        <li><a th:href="@{/IdeaC/toIdea}">想法</a></li>
+        <li ><a th:href="@{/ProjectC/toProject}">项目</a></li>
+          <shiro:hasRole name="user:common">
+              <li><a th:href="@{/UserC/toHome}">个人信息</a></li>
+          </shiro:hasRole>
+        <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
+
+        <shiro:hasRole name="user:common">　　
+            <!-- 用户登入后显示 -->
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block "><a th:href="@{/UserC/toMyIdea}">我发表的想法</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyTeam}">我参与的团队</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyProject}">我参与的项目</a></li>
+           <shiro:hasRole name="Administrator">　　
+             <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/AdminC/toUsers}">管理员页面</a></li>
+           </shiro:hasRole>
+        </shiro:hasRole>
+      </ul>
+
+      <div class="fly-column-right layui-hide-xs">
+        <span class="fly-search"><i class="layui-icon"></i></span>
+        <a href="../addIdea.html" class="layui-btn">组建团队</a>
+      </div>
+      <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
+        <a href="../addIdea.html" class="layui-btn">组建团队</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!--尾部-->
+<div th:fragment="footer">
+  <div class="fly-footer" >
+    <p><a href="http://www.cvte.com/" target="_blank">SourceIdea·Cvte社区</a> 2019 &copy; <a href="http://www.cvte.com/" target="_blank">Cvte.com 出品</a></p>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sourceidea?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: ily520wan
+    type: com.alibaba.druid.pool.DruidDataSource
+  thymeleaf:
+    cache: false
+  redis:
+    host: 47.107.133.24
+    port: 6379
+mybatis:
+  type-handlers-package: cn.bb.sourceideamanage.entity
+  mapper-locations: classpath:mappler/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+jedis:
+  port: 47.107.133.24

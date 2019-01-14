@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>注册</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="SourceIdea社区">
+  <meta name="description" content="SourceIdea社区">
+  <link rel="stylesheet" href="../../../../../res/layui/css/layui.css">
+  <link rel="stylesheet" href="../../../../../res/css/global.css">
+</head>
+<body>
+
+<!---->
+<div th:include=" /pages/front/html/common/common :: commonHeader"></div>
+<div th:include="/pages/front/html/common/common :: navigation"></div>
+<div class="layui-container fly-marginTop">
+  <div class="fly-panel fly-panel-user" pad20>
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title">
+        <li><a th:href="@{/UserC/toLogin}">登入</a></li>
+        <li class="layui-this">注册</li>
+      </ul>
+      <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+        <div class="layui-tab-item layui-show">
+          <div class="layui-form layui-form-pane">
+            <form method="post" th:action="@{/LoginC/register}" id="dataFrom">
+              <div class="layui-form-item">
+                <label for="L_account" class="layui-form-label">账号</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_account" name="account" required lay-verify="required" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">将会成为您唯一的登入名</div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">昵称</label>
+                <div class="layui-input-inline">
+                  <input type="text" id="L_username" name="username" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_pass" name="password" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_repass" name="repassword" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label th:text="${info}" style="color: #FF5722"></label>
+              </div>
+              <div class="layui-form-item">
+                <button class="layui-btn" type="submit" id="submit"  >立即注册</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div  th:include="/pages/front/html/common/common :: footer"></div>
+
+<script src="../../../../../res/layui/layui.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+layui.cache.page = 'user';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '../../res/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '../../res/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+<script>
+/*  $(function() {
+    $("#back").click(function () {
+      alert("123")
+    });
+    $("#submit").click(function () {//点击按钮提交
+      console.log("222");
+      $.ajax({
+        url: "/LoginC/register",
+        data: new FormData($("#dataFrom")[0]) ,  //$("#dataFrom").serialize(),
+        type: "post",
+        dataType : "json",
+        cache: false,
+        processData : false,  //必须false才会避开jQuery对 formdata 的默认处理
+        contentType : false,  //必须false才会自动加上正确的Content-Type
+        success: function (data) {//ajax返回的数据
+          console.log(data);
+          if(data.isSuccess == "1"){
+            console.log("111");
+            alert("注册成功!!");
+            window.location.href = "/UserC/toLogin";
+          }else{
+            alert(data.msg);
+          }
+        },
+        error:function (data){
+          console.log(data);
+          if(data.isSuccess == "1"){
+            alert("注册成功!!");
+            window.location.href = "/UserC/toLogin";
+          }else{
+            alert(data.msg);
+          }
+        }
+      });
+    });
+  });*/
+</script>
+</body>
+</html>

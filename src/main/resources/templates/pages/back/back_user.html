@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:include="/pages/common::backCommonFile"></head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+    <div th:include="/pages/common::backHead" class="main-header"></div>
+    <div th:include="/pages/common::backLeft" class="main-sidebar"></div>
+
+    <div class="content-wrapper">
+        <section class="content-header" style="width:300px">
+            <form action="#" th:action="@{/AdminC/toUsers}" method="post" class="sidebar-form">
+                <div class="input-group" >
+                    <input type="text" name="userName" class="form-control"  style="background-color: ghostwhite" placeholder="搜索用户">
+                    <span class="input-group-btn">
+              <button type="submit" name="search" style="background-color: ghostwhite"  id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+              </button>
+            </span>
+                </div>
+            </form>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>所属团队</th>
+                            <th>个人简介</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users} ">
+                            <td th:text="${user.userName}"></td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-xs" data-toggle="modal"   th:data-target="'#left'+${user.userId}">详细</button>
+                            </td>
+                            <!-- 模态框（Modal） -->
+                                <div class="modal fade" id="left" th:id="'left'+${user.userId}" tabindex="-1" role="dialog" th:aria-labelledby="'left2'+${user.userId}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title" th:id="'left2'+${user.userId}" > 所属团队</h4>
+                                            </div>
+                                            <div class="modal-body" >
+                                                <div th:each="team : ${user.backTeams}">
+                                                    <p th:text="${team.teamName}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" th:data-target="'#right'+${user.userId}">详细</button></td>
+                                <!-- 模态框（Modal） -->
+                                <div class="modal fade" th:id="'right'+${user.userId}" tabindex="-1" role="dialog" th:aria-labelledby="'right2'+${user.userId}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" th:id="'right2'+${user.userId}" th:text="${user.userName} " > </h4>
+                                        </div>
+                                        <div class="modal-body" th:text="${user.userMsg}"></div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div></div>
+                            </td>
+                            <td th:text="${user.userCreateTime}" ></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div>
+                <ul class="pagination" >
+                    <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage-1}}">&laquo;</a></li>
+                    <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+                    <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+                    <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+                    <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
+                    <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+                    <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+                    <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+                    <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/AdminC/toUsers?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+                </ul>
+                <br>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <div th:include="/pages/common::backFooter" class="main-footer"></div>
+</div>
+
+</body>
+<script type="text/javascript">
+    $(function () {
+        $(".sidebar-menu li").eq(0).addClass("active");
+    });
+  /*  $(".sidebar-menu li").click(function(){
+        $(this).addClass("active");
+    })*/
+</script>
+</html>
