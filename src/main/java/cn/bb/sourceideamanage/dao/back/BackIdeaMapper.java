@@ -16,7 +16,7 @@ public interface BackIdeaMapper {
 
     @Select("select u.user_id ,u.user_name AS userName,t.tag_name, i.idea_msg, i.idea_supports,i.idea_create_time, i.idea_id" +
             " from user u, idea i,tag t  " +
-            " where t.tag_name LIKE '%${tagName}%' AND idea_name LIKE '%${ideaName}%' AND i.user_id = u.user_id AND t.tag_id = i.tag_id")
+            " where t.tag_name LIKE CONCAT('%',#{tagName},'%') AND idea_name LIKE CONCAT('%',#{ideaName},'%') AND i.user_id = u.user_id AND t.tag_id = i.tag_id")
     @Results(
             //colums是数据库列,以这个id为一组 , property是back_user对象里面的属性
             @Result(column = "user_id",javaType = List.class, property = "userTeams",

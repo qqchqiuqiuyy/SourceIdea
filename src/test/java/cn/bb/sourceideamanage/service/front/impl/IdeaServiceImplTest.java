@@ -2,6 +2,7 @@ package cn.bb.sourceideamanage.service.front.impl;
 
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
+import cn.bb.sourceideamanage.dto.front.comment;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.IdeaService;
 import com.github.pagehelper.PageInfo;
@@ -106,5 +107,18 @@ public class IdeaServiceImplTest {
     @Test
     public void testRedisMap(){
 
+    }
+
+    @Test
+    public void findAllIdea(){
+        List<FrontIdea> allIdea = ideaService.findAllIdea(43);
+
+        System.out.println(allIdea);
+    }
+
+    @Test
+    public void getAllComment(){
+        List<comment> allComment = ideaService.getAllComment(3);
+        System.out.println(allComment);
     }
 }

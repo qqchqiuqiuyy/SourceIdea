@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8">
   <title>SourceId社区</title>
@@ -10,76 +10,18 @@
   <link rel="stylesheet" href="../../../../../res/css/global.css">
 </head>
 <body>
-
-<div class="fly-header layui-bg-black">
-  <div class="layui-container">
-    <span class="logo-lg fly-logo" style="font-size: 36px"><b>Source</b>Idea</span>
-
-    <ul class="layui-nav fly-nav-user">
-
-      <!-- 未登入的状态 -->
-      <li class="layui-nav-item">
-        <a class="iconfont icon-touxiang layui-hide-xs" href="../user/login.html"></a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="../user/login.html">登入</a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="../user/reg.html">注册</a>
-      </li>
-      <li class="layui-nav-item layui-hide-xs">
-        <a href="/app/qq/" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
-      </li>
-      <li class="layui-nav-item layui-hide-xs">
-        <a href="/app/weibo/" onclick="layer.msg('正在通过微博登入', {icon:16, shade: 0.1, time:0})" title="微博登入" class="iconfont icon-weibo"></a>
-      </li>
-
-      <!-- 登入后的状态 -->
-      <!--
-      <li class="layui-nav-item">
-        <a class="fly-nav-avatar" href="javascript:;">
-          <cite class="layui-hide-xs">贤心</cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
-          <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
-        </a>
-        <dl class="layui-nav-child">
-          <dd><a href="../user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
-          <dd><a href="../user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-          <dd><a href="../user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
-          <hr style="margin: 5px 0;">
-          <dd><a href="" style="text-align: center;">退出</a></dd>
-        </dl>
-      </li>
-      -->
-    </ul>
-  </div>
-</div>
-
-<div class="fly-panel fly-column">
-  <div class="layui-container">
-    <ul class="layui-clear">
-      <li class="layui-hide-xs "><a th:href="@{/IndexC/toIndex}">首页</a></li>
-      <li ><a th:href="@{/TeamC/toTeam}">团队</a></li>
-      <li class="layui-this"><a th:href="@{/IdeaC/toIdea}">想法</a></li>
-      <li><a th:href="@{/ProjectC/toProject}">项目</a></li>
-      <li><a th:href="@{/UserC/toHome}">个人信息</a></li>
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
-
-      <!-- 用户登入后显示 -->
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block "><a th:href="@{/UserC/toMyIdea}">我发表的想法</a></li>
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyTeam}">我参与的团队</a></li>
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyProject}">我参与的项目</a></li>
-    </ul>
-
-  </div>
-</div>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script th:include="/pages/front/html/common/common :: script"></script>
+<!---->
+<div th:include=" /pages/front/html/common/common :: commonHeader"></div>
+<!--横-->
+<div th:include="/pages/front/html/common/common :: navigation"></div>
 
 <div class="layui-container" style="width:900px">
   <div class="layui-row layui-col-space15">
     <div class="layui-col-md12 content detail">
       <div class="fly-panel detail-box">
-        <h1>想法 xxx</h1>
+        <h1 th:text="'想法 '+${ideaName} +'的评论'"></h1>
         </div>
         </div>
       </div>
@@ -89,88 +31,53 @@
           <legend>回帖</legend>
         </fieldset>
 
-        <ul class="jieda" id="jieda">
+        <ul class="jieda" id="jieda" th:each="comment : ${comments}">
           <li data-id="111" class="jieda-daan">
             <div class="detail-about detail-about-reply" style="padding-left: 0px">
               <div class="fly-detail-user">
                 <a href="" class="fly-link">
-                  <cite>贤心</cite>
+                  <cite th:text="${comment.userName}"></cite>
                 </a>
               </div>
 
               <div class="detail-hits">
-                <span>2017-11-30</span>
+                <span th:text="${comment.commentTime}"></span>
               </div>
             </div>
             <div class="detail-body jieda-body photos">
-              <p>香菇那个蓝瘦，这是一条被采纳的回帖</p>
+              <p th:text="${comment.content}"></p>
             </div>
             <div class="jieda-reply">
-              <!-- 点赞  -->
-              <!--<span class="jieda-zan zanok" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>66</em>
-              </span>-->
               <span type="reply">
                 <i class="iconfont icon-svgmoban53"></i>
                 回复
+              </span>
+              <span onclick="commemt()">
+                <i class="layui-icon-reply-fill">&#xe611;</i>
+                评论
               </span>
             </div>
           </li>
-          
-         <!-- <li data-id="111">
-            <a name="item-1111111111"></a>
-            <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="">
-                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt=" ">
-              </a>
-              <div class="fly-detail-user">
-                <a href="" class="fly-link">
-                  <cite>贤心</cite>       
-                </a>
-              </div>
-              <div class="detail-hits">
-                <span>2017-11-30</span>
-              </div>
-            </div>
-            <div class="detail-body jieda-body photos">
-              <p>蓝瘦那个香菇，这是一条没被采纳的回帖</p>
-            </div>
-            <div class="jieda-reply">
-              <span class="jieda-zan" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>0</em>
-              </span>
-              <span type="reply">
-                <i class="iconfont icon-svgmoban53"></i>
-                回复
-              </span>
-              <div class="jieda-admin">
-                <span type="edit">编辑</span>
-                <span type="del">删除</span>
-                <span class="jieda-accept" type="accept">采纳</span>
-              </div>
-            </div>
-          </li>-->
-          
-          <!-- 无数据时 -->
-          <!-- <li class="fly-none">消灭零回复</li> -->
+          <hr class="layui-bg-gray">
         </ul>
-        
-        <div class="layui-form layui-form-pane">
-          <form action="/jie/reply/" method="post">
-            <div class="layui-form-item layui-form-text">
-              <a name="comment"></a>
-              <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+        <shiro:hasRole name="user:common">
+          <div class="layui-form layui-form-pane">
+            <form th:action="@{/IdeaC/commentIdea}" method="post">
+              <div class="layui-form-item layui-form-text">
+                <a name="comment"></a>
+                <div class="layui-input-block">
+                  <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                </div>
               </div>
-            </div>
-            <div class="layui-form-item">
-              <input type="hidden" name="jid" value="123">
-              <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
-            </div>
-          </form>
-        </div>
+              <div class="layui-form-item">
+                <input type="hidden" name="ideaName" th:value="${ideaName}">
+                <input type="hidden" name="ideaId" th:value="${ideaId}">
+                <button class="layui-btn" type="submit">提交回复</button>
+              </div>
+            </form>
+          </div>
+        </shiro:hasRole>
+
       </div>
     </div>
   </div>
@@ -207,6 +114,51 @@ layui.config({
   */
 });
 </script>
+<script type="text/javascript">
+  $(function () {
+    $(".layui-clear li").eq(2).addClass("layui-this");
+  });
+</script>
 
+<script src="../../../../../res/layui/lay/modules/layer.js"></script>
+<script>
+  /*function commemt(){
+
+    $.ajax({
+      url:"/ProjectC/joinProject",
+      data:{ "userId" : userId,
+        "projectId" : projectId
+      },
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据a
+        console.log(data);
+        layer.msg(data.msg)
+      },
+      error:function (data) {
+        layer.msg("未登录无法申请哦! 请登录")
+      }
+
+    });
+
+    console.log("commemt");
+    layui.use('layer',function () {
+      layer.open({
+        type : 1,
+        content : '<h1>23232323</h1>',
+        area: ['800px','500px'],
+        btn: ['关闭'],
+        shade: [0.6],
+        shadeClose: true,
+        anim: 1
+      });
+    })
+  }*/
+/*  layer.open({
+
+  });*/
+ /* layer.msg('hello');*/
+</script>
 </body>
 </html>

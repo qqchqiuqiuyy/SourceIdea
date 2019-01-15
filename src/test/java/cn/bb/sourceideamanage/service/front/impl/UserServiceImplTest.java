@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.dto.front.ApplyUser;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,5 +54,11 @@ public class UserServiceImplTest {
     public void findUserByAccount(){
         User bb = userService.findUserByAccount("bb");
         log.warn("bb = {} " ,bb.toString());
+    }
+
+    @Test
+    public void getAllAppy(){
+        List<ApplyUser> applys = userService.getAllAppy("生产大队");
+        System.out.println(applys);
     }
 }

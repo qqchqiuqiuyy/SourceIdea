@@ -15,7 +15,7 @@ public interface BackUserMapper {
 
     @Select("select distinct  u.user_id AS userId, u.user_id, u.user_name As userName,u.user_msg As userMsg,u.user_create_time AS userCreateTime " +
             " from user u ,user_team ut , team t" +
-            " WHERE u.user_name LIKE '%${userName}%' ")
+            " WHERE u.user_name LIKE CONCAT('%',#{userName},'%') ")
     @Results(
             //colums是数据库列,以这个id为一组 , property是back_user对象里面的属性
             @Result(column = "user_id",javaType = List.class, property = "backTeams",

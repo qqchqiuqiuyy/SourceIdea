@@ -123,17 +123,14 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        alert(data.msg);
+        layer.msg(data.msg);
       },
       error:function (data) {
-        alert("未登录无法申请哦! 请登录")
+        layer.msg("未登录无法申请哦! 请登录")
       }
 
     });
-
   }
-
-
 </script>
 </body>
 </html>

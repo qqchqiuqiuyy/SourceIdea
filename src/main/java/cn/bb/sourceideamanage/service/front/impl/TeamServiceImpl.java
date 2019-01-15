@@ -3,6 +3,7 @@ package cn.bb.sourceideamanage.service.front.impl;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
+import cn.bb.sourceideamanage.dto.front.MyTeamMember;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Project;
 import cn.bb.sourceideamanage.entity.User;
@@ -91,5 +92,22 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<String> findAllTeam(Integer userId) {
         return teamMapper.findAllTeam(userId);
+    }
+
+    @Override
+    public PageInfo<FrontTeam> findAllMyTeam(int page, int size, String teamName, Integer userId) {
+        PageHelper.startPage(page,size);
+        List<FrontTeam> teams = teamMapper.findAllMyTeam(teamName,userId);
+        return new PageInfo<>(teams);
+    }
+
+    @Override
+    public List<MyTeamMember> findAllMyTeamMember(String teamName) {
+        return teamMapper.findAllMyTeamMember(teamName);
+    }
+
+    @Override
+    public List<String> findTeamRoleByTeamNameAndUserId(String teamName, Integer userId) {
+        return teamMapper.findTeamRoleByTeamNameAndUserId(teamName,userId);
     }
 }

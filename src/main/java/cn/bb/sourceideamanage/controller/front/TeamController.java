@@ -25,6 +25,7 @@ public class TeamController {
 
     @Autowired
     JSONObject jsonObject;
+
     @RequestMapping("/toTeam")
     public String toTeam(Model model, String teamName, Integer page){
         if(null == page || page < 1){

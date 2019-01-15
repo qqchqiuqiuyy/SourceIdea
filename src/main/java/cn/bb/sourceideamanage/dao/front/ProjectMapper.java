@@ -2,11 +2,9 @@ package cn.bb.sourceideamanage.dao.front;
 
 import cn.bb.sourceideamanage.dto.front.FrontProject;
 import cn.bb.sourceideamanage.dto.front.FrontProjectMsg;
-import cn.bb.sourceideamanage.dto.front.projectMember;
-import com.github.pagehelper.PageInfo;
+import cn.bb.sourceideamanage.dto.front.ProjectMember;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public interface ProjectMapper {
             "   u.user_name AS projectManager ," +
             "   p.project_name AS projectName" +
             " FROM project p,team t,user_team ut, user u" +
-            "   WHERE p.project_name LIKE '%${projectName}%' AND" +
+            "   WHERE p.project_name LIKE CONCAT('%',#{projectName},'%') AND" +
             "   p.team_id = t.team_id AND" +
             "   t.team_id = ut.team_id AND" +
             "   ut.role_id = '4' AND" +
@@ -44,7 +42,7 @@ public interface ProjectMapper {
             "ut.role_id = r.role_id AND " +
             "ut.user_id = u.user_id  " +
             "GROUP BY user_name")
-    public List<projectMember> getProjectMembers(@Param("teamId") Integer teamId);
+    public List<ProjectMember> getProjectMembers(@Param("teamId") Integer teamId);
 
     @Select("SELECT  p.project_id AS projectId,p.project_name AS projectName ," +
             "   p.project_msg AS projectMsg ,t.team_name AS teamName , " +
@@ -72,4 +70,18 @@ public interface ProjectMapper {
             " WHERE u.user_id = #{userId} AND u.user_id = ut.user_id AND" +
             " ut.team_id = t.team_id AND t.team_id = p.project_id")
     public List<String> getAllProjects(@Param("userId") Integer userId);
+
+
+    @Select("SELECT p.project_id AS projectId, t.team_name AS projectTeam , " +
+            "              p.project_create_time AS projectCreateTime ," +
+            "            u.user_name AS projectManager  ," +
+            "              p.project_name AS projectName " +
+            "           FROM project p,team t,user_team ut, user u, role r" +
+            "             WHERE p.project_name LIKE CONCAT('%',#{projectName},'%') AND " +
+            "               ut.user_id = #{userId} AND " +
+            "               ut.team_id = t.team_id AND " +
+            "               t.team_id = p.team_id AND " +
+            "                  ut.role_id = r.role_id " +
+            "           GROUP BY projectName")
+    public List<FrontProject> findAllMyProject(@Param("projectName") String projectName,@Param("userId") Integer userId);
 }

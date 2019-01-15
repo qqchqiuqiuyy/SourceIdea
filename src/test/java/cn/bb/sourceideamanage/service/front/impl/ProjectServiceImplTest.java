@@ -34,7 +34,9 @@ public class ProjectServiceImplTest {
 
     @Test
     public void getAllProject(){
-        List<String> allProjects = projectService.getAllProjects(43);
-        System.out.println(allProjects.toString());
+        PageInfo<FrontProject> allMyProject = projectService.findAllMyProject(1,2,"", 43);
+        System.out.println(allMyProject.getList().toString());
     }
+
+
 }

@@ -4,28 +4,37 @@ import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
+import cn.bb.sourceideamanage.dto.front.comment;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Tag;
+import cn.bb.sourceideamanage.entity.commentIdea;
 import cn.bb.sourceideamanage.service.back.BackIdeaService;
 import cn.bb.sourceideamanage.service.front.IdeaService;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static cn.bb.sourceideamanage.common.config.PageSize.PAGE_SIZE;
 
 @Controller
 @RequestMapping("/IdeaC")
+@Slf4j
 public class IdeaController {
+
     @Autowired
     IdeaService ideaService;
     @Autowired
     BackIdeaService backIdeaService;
+
 
     /**
      * 去idea想法列表 并且有分页
@@ -42,6 +51,9 @@ public class IdeaController {
         }
         if(ideaName == null){
             ideaName = "";
+        }
+        if(tagName == null){
+            tagName = "";
         }
 
         PageInfo<FrontIdea> info = ideaService.findAllFrontIdea(page, PAGE_SIZE, ideaName, tagName);
@@ -66,13 +78,44 @@ public class IdeaController {
     }
 
     @RequestMapping("/toIdeaComments")
-    public String toIdeaComments(Integer ideaId){
+    public String toIdeaComments(Integer ideaId,String ideaName,Model model){
+        List<comment> comments = ideaService.getAllComment(ideaId);
+        model.addAttribute("ideaId",ideaId);
+        model.addAttribute("ideaName",ideaName);
+        model.addAttribute("comments",comments);
         return "/pages/front/html/idea/ideaComments";
     }
+
+
     @RequestMapping("/upIdeaSupports")
     @ResponseBody
     public String upIdeaSupports(String ideaId,String userId){
         String info = ideaService.upIdeaSupports(ideaId, userId);
         return info;
     }
+
+    @RequestMapping("/commentIdea")
+    public String commentIdea(Model model,String content, String ideaName,Integer ideaId ,HttpServletRequest request){
+        ideaService.commentIdea(content,ideaName,ideaId,request);
+        List<comment> comments = ideaService.getAllComment(ideaId);
+        model.addAttribute("ideaId",ideaId);
+        model.addAttribute("ideaName",ideaName);
+        model.addAttribute("comments",comments);
+        return "/pages/front/html/idea/ideaComments";
+    }
+
+    @RequestMapping("/toAddIdea")
+    public String toAddIdea(Model model){
+        List<Tag> tags = backIdeaService.findAllTag();
+        model.addAttribute("tags",tags);
+        return "/pages/front/html/idea/addIdea";
+    }
+
+    @RequestMapping("/addIdea")
+    public String addIdea(String ideaName, Integer tagId, String ideaMsg, HttpServletRequest request){
+        ideaService.addIdea(ideaName,tagId,ideaMsg,request);
+        return "redirect:/UserC/toMyIdea";
+    }
+
+
 }

@@ -2,6 +2,7 @@ package cn.bb.sourceideamanage.service.front;
 
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
+import cn.bb.sourceideamanage.dto.front.MyTeamMember;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Project;
 import cn.bb.sourceideamanage.entity.User;
@@ -21,4 +22,7 @@ public interface TeamService {
     public String joinTeam(Integer userId,Integer teamId);
     public String checkTeamMember(Integer userId, Integer teamId);
     public List<String> findAllTeam(Integer userId);
+    public PageInfo<FrontTeam> findAllMyTeam(int page, int size, String teamName,Integer userId);
+    public List<MyTeamMember> findAllMyTeamMember(String teamName);
+    public List<String> findTeamRoleByTeamNameAndUserId(String teamName,Integer userId);
 }

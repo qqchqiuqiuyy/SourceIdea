@@ -42,6 +42,12 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.getProjectMsgByProjectId(projectId);
     }
 
+    /**
+     * 申请加入项目 同时加入团队
+     * @param userId
+     * @param projectId
+     * @return
+     */
     @Override
     @Transactional
     public String joinProject(Integer userId, Integer projectId) {
@@ -75,5 +81,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<String> getAllProjects(Integer userId) {
         return projectMapper.getAllProjects(userId);
+    }
+
+    @Override
+    public PageInfo<FrontProject> findAllMyProject(int page, int size, String projectName, Integer userId) {
+        PageHelper.startPage(page,size);
+        List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId);
+        return new PageInfo<>(projects);
     }
 }

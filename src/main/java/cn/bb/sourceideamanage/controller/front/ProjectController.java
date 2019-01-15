@@ -39,6 +39,7 @@ public class ProjectController {
         model.addAttribute("totalPage",info.getPages());
         return "/pages/front/html/project/projectList";
     }
+
     @RequestMapping("/toProjectMsg")
     public String toProjectMsg(Model model, Integer projectId, HttpServletRequest request){
         FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);

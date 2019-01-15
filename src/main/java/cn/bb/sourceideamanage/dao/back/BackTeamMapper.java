@@ -48,7 +48,7 @@ public interface BackTeamMapper {
             " FROM  " +
             "       user_team ut , team t  ,role r " +
             " WHERE " +
-            "       t.team_name LIKE '%${teamName}%' AND ut.team_id = t.team_id AND ut.role_id = r.role_id AND t.team_id != '1000'" +
+            "       t.team_name LIKE CONCAT('%',#{teamName},'%') AND ut.team_id = t.team_id AND ut.role_id = r.role_id " +
             " GROUP BY teamId ")
     @Results({
             //colums是数据库列,以这个id为一组 , property是back_user对象里面的属性

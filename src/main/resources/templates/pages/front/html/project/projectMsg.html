@@ -90,7 +90,7 @@ layui.config({
     }
   }
 </script>
-
+<script src="../../../../../res/layui/lay/modules/layer.js"></script>
 <script type="text/javascript">
   $(function () {
     $(".layui-clear li").eq(3).addClass("layui-this");
@@ -108,12 +108,12 @@ layui.config({
       type:"post",
       dataType:"json",
       cache:false,
-      success:function(data){//ajax返回的数据
+      success:function(data){//ajax返回的数据a
         console.log(data);
-        alert(data.msg);
+        layer.msg(data.msg)
       },
       error:function (data) {
-        alert("未登录无法申请哦! 请登录")
+        layer.msg("未登录无法申请哦! 请登录")
       }
 
     });

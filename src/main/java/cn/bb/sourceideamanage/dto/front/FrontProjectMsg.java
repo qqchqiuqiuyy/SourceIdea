@@ -1,6 +1,5 @@
 package cn.bb.sourceideamanage.dto.front;
 
-import cn.bb.sourceideamanage.dto.back.BackTeamMember;
 import lombok.Data;
 import lombok.ToString;
 
@@ -15,5 +14,5 @@ public class FrontProjectMsg {
     private String projectMsg;
     private String teamName;
     private Timestamp projectCreateTime;
-    private List<projectMember> projectMembers;
+    private List<ProjectMember> ProjectMembers;
 }
