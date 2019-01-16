@@ -110,4 +110,9 @@ public class TeamServiceImpl implements TeamService {
     public List<String> findTeamRoleByTeamNameAndUserId(String teamName, Integer userId) {
         return teamMapper.findTeamRoleByTeamNameAndUserId(teamName,userId);
     }
+
+    @Override
+    public Integer getTeamId(String teamName) {
+        return teamMapper.getTeamId(teamName);
+    }
 }

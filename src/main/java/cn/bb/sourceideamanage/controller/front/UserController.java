@@ -46,8 +46,12 @@ public class UserController {
     UserService userService;
 
     @RequestMapping("/toHome")
-    public String toHome(HttpServletRequest request){
+    public String toHome(HttpServletRequest request,Model model){
         Integer userId = (Integer)request.getSession().getAttribute("userId");
+        frontUser user = userService.getUserMsg(userId);
+        List<inviteUser> invites = userService.getUserInvite(userId);
+        model.addAttribute("invites",invites);
+        model.addAttribute("user",user);
         return "pages/front/html/home";
     }
 
@@ -139,13 +143,21 @@ public class UserController {
         List<MyTeamMember> members = teamService.findAllMyTeamMember(teamName);
         //获取当前用户名
         Integer userId = (Integer) request.getSession().getAttribute("userId");
+
         //查找当前用户对于某个团队的角色
-        List<String> userRole = teamService.findTeamRoleByTeamNameAndUserId(teamName, userId);
+        Integer teamId = teamService.getTeamId(teamName);
+        List<Integer> roles = userService.getAllTeamRole(userId, teamId);
+        JSONArray userRoles = JSONArray.fromObject(roles);
+
         //审核表
         List<ApplyUser> applies = userService.getAllAppy(teamName);
         //找到所有project
         List<FrontProject> projects = userService.findProjects(teamName);
-        JSONArray userRoles = JSONArray.fromObject(userRole);
+        //找到该团队所有想法
+        List<FrontIdea> ideas = ideaService.getAllProjectIdea(teamName);
+
+
+        model.addAttribute("ideas",ideas);
         model.addAttribute("projects",projects);
         model.addAttribute("applies",applies);
         model.addAttribute("teamName",teamName);
@@ -174,10 +186,7 @@ public class UserController {
         return info;
     }
 
-    @RequestMapping("/addProject")
-    public String addProject(){
-        return "";
-    }
+
 
     @RequestMapping("/toAddTeamIdea")
     public String toAddTeamIdea(Model model,String teamName){
@@ -189,6 +198,86 @@ public class UserController {
     @RequestMapping("/addTeamIdea")
     public String addTeamIdea(String ideaName, Integer tagId, String ideaMsg,String teamName ,HttpServletRequest request){
         ideaService.addProjectIdea(ideaName,tagId,ideaMsg,teamName,request);
-        return "redirect:/UserC/toMyIdea";
+        return "redirect:/UserC/toMyTeamMsg?teamName="+teamName;
+    }
+
+
+    @RequestMapping("/delIdea")
+    @ResponseBody
+    public String delIdea(Integer ideaId){
+        String s = ideaService.delIdea(ideaId);
+        return s;
+    }
+
+    @RequestMapping("/toAddProject")
+    public String toAddProject(String teamName,Model model){
+        List<UserTag> tags = userService.getUsersForTag(teamName);
+        model.addAttribute("tags",tags);
+        model.addAttribute("teamName",teamName);
+        return "/pages/front/html/team/addProject";
+    }
+
+
+    @RequestMapping("/addTeamProject")
+    @ResponseBody
+    public String addTeamProject(String teamName,String projectName,String projectMsg){
+        String s = userService.addTeamProject(teamName, projectName, projectMsg);
+        return s;
+    }
+
+
+
+
+    @RequestMapping("/toUsers")
+    public String toUsesrs(Model model, String userName, Integer page,String teamName){
+        if(null == page || page < 1){
+            page = 1;
+        }
+        if(userName == null){
+            userName = "";
+        }
+        PageInfo<frontUser> info = userService.findAllFrontUser(page, PAGE_SIZE, userName);
+
+        List<frontUser> users = info.getList();
+        model.addAttribute("users",users);
+        model.addAttribute("indexPage",page);
+        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute("teamName",teamName);
+        return "pages/front/html/user/userList";
+    }
+
+
+   @RequestMapping("/toUserMsg")
+    public String toUserMsg(Model model,HttpServletRequest request,Integer userId,String teamName){
+
+        //查找当前用户信息
+       frontUser userMsg = userService.getUserMsg(userId);
+       Boolean flag = userService.checkUserInInvite(userId, teamName);
+       //查找这个用户的所有teamName
+        List<String> userTeams = teamService.findAllTeam(userId);
+        JSONArray userteamsJson = JSONArray.fromObject(userTeams);
+
+        model.addAttribute("flag",flag);
+        model.addAttribute("userteamsJson",userteamsJson);
+        model.addAttribute("teamName",teamName);
+        model.addAttribute("userMsg",userMsg);
+
+        return "pages/front/html/user/userMsg";
+    }
+
+    @RequestMapping("/invite")
+    @ResponseBody
+    public String invite(Integer userId,String teamName){
+        String invite = userService.invite(userId, teamName);
+        return invite;
+    }
+
+
+    @RequestMapping("/agree")
+    @ResponseBody
+    public String agree(Integer userId,Integer teamId){
+        String agree = userService.agree(userId, teamId);
+        return agree;
     }
 }
+

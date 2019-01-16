@@ -85,7 +85,10 @@ public class ShiroConfig {
         filterMap.put("/LoginC/*","anon");
         filterMap.put("/IndexC/*","anon");
         filterMap.put("/UserC/toLogin","anon");
+        filterMap.put("/UserC/toReg","anon");
+        filterMap.put("/UserC/toUsers","anon");
         filterMap.put("/IdeaC/upIdeaSupports","authc");
+        filterMap.put("/UserC/**","authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return shiroFilterFactoryBean;
     }

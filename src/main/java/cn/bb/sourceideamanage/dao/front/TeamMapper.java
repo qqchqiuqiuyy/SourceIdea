@@ -155,4 +155,15 @@ public interface TeamMapper {
 
     @Select("select t.team_id from team t where t.team_name = #{teamName}")
     public Integer findTeamId(@Param("teamName") String teamName);
+
+    @Select("SELECT ut.user_id from user_team ut where ut.team_id = #{teamId} ")
+    public List<Integer> getTeamUserId(@Param("teamId") Integer teamId);
+
+    @Insert("INSERT INTO invite (team_id , user_id) VALUES ( #{teamId},#{userId}  )")
+    public void teamInvite(@Param("teamId") Integer teamId,@Param("userId") Integer userId);
+    @Select("SELECT t.team_id " +
+            " FROM" +
+            "  team t" +
+            " WHERE t.team_name = #{teamName}")
+    public Integer getTeamId(@Param("teamName") String  teamName);
 }

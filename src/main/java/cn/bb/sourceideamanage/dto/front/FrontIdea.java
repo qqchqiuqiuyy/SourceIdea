@@ -13,6 +13,7 @@ public class FrontIdea {
     private String ideaMsg;
     private String ideaTag;
     private String ideaUserName;
+    private Integer teamId;
     private Integer ideaSupports;
     private Timestamp ideaCreateTime;
 }

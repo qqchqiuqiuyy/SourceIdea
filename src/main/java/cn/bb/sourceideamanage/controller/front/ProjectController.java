@@ -46,6 +46,7 @@ public class ProjectController {
         model.addAttribute("projectMsg",projectMsg);
 
         Integer userId = (Integer) request.getSession().getAttribute("userId");
+
         List<String> projects = projectService.getAllProjects(userId);
         JSONArray projectsName = JSONArray.fromObject(projects);
         model.addAttribute("projectsName",projectsName);

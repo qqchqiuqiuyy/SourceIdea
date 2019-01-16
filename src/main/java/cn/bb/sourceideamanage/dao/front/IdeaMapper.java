@@ -4,10 +4,7 @@ import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.dto.front.comment;
 import cn.bb.sourceideamanage.entity.*;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -94,4 +91,29 @@ public interface IdeaMapper {
     public void addProjectIdea(@Param("ideaName") String ideaName, @Param("tagId") Integer tagId,
                         @Param("ideaMsg") String ideaMsg,   @Param("userId") Integer userId,
                                @Param("teamId") Integer teamId);
+
+    @Select("SELECT " +
+            "i.idea_id AS ideaId, " +
+            "i.idea_name AS ideaName, " +
+            "i.idea_msg AS ideaMsg, " +
+            "t.tag_name AS ideaTag, " +
+            "i.team_id AS teamId," +
+            "i.idea_supports AS ideaSupports, " +
+            "i.idea_create_time AS ideaCreateTime  " +
+            "FROM " +
+            "idea i, " +
+            "tag t  " +
+            "WHERE " +
+            "i.team_id = #{teamId} AND i.tag_id = t.tag_id " +
+            "ORDER BY ideaCreateTime DESC")
+    public List<FrontIdea> findAllProjectIdea(@Param("teamId") Integer teamId);
+
+
+    @Delete("DELETE FROM idea" +
+            "   WHERE idea_id = #{ideaId}")
+    public void delIdea(@Param("ideaId") Integer ideaId);
+
+    @Delete("DELETE FROM  comment_idea  WHERE idea_id = #{ideaId}")
+    public void delIdeaComment(@Param("ideaId") Integer ideaId);
 }
+

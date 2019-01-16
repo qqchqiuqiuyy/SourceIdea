@@ -111,6 +111,8 @@ public class LoginServiceImpl implements LoginService {
             subject.login(token);
             User user = userService.findUserByAccount(account);
             HttpSession session = request.getSession();
+            String id = session.getId();
+            log.info("session Id ={}",id);
             session.setAttribute("userName",user.getUserName());
             session.setAttribute("account",account);
             session.setAttribute("password",password);

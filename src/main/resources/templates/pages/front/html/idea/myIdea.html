@@ -63,12 +63,13 @@
               </span>
 
               <span th:text="'发起时间: '+${idea.ideaCreateTime}" style="display: inline-block;margin-left: 30px">想法发起时间 </span>
-               <span style="display: inline-block;margin-left:70px">
-                 <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;"  onclick="toComment(this)"  th:value="${idea.ideaId}" type="submit">评论</button>
+               <span style="display: inline-block;float: right">
+                 <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;"  onclick="toComment(this.value)"  th:value="${idea.ideaId}" type="submit">评论</button>
                   <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;"  th:value="${idea.ideaId}" th:id="'buttonId'+${idea.ideaId}">点赞</button>
                    <i th:text="${idea.ideaSupports}" th:id="'ideaId'+${idea.ideaId}"></i>
                     <i th:text="${session.userId}" th:id="'userId'+ ${idea.ideaId}" style="visibility: hidden"></i>
-                   <button class="layui-btn layui-btn-danger" style="display: inline-block;"  onclick="delIdea(this.value)" th:value="${idea.ideaId}" th:id="'del'+${idea.ideaId}">删除</button>
+                    <i th:text="${idea.ideaName}" th:id="'ideaName'+ ${idea.ideaId}" style="visibility: hidden"></i>
+                   <button class="layui-btn layui-btn-danger" style="display: inline-block;"  onclick="delIdea(this.value)" th:value="${idea.ideaId}" th:id="'delIdea'+${idea.ideaId}">删除</button>
                  </span>
             </div>
             <div class="fly-list-badge">
@@ -108,10 +109,10 @@
 <div  th:include="/pages/front/html/common/common :: footer"></div>
 
 <script src="../../../../../res/layui/layui.js"></script>
-<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <script>
-  function toComment(idea) {
-    window.location.href = "/IdeaC/toIdeaComments?ideaId=" + idea.value;
+  function toComment(ideaId) {
+      console.log("/IdeaC/toIdeaComments?ideaId=" + ideaId+"ideaName="+$("#ideaName"+ideaId).text());
+      window.location.href = "/IdeaC/toIdeaComments?ideaId=" + ideaId+"&ideaName="+$("#ideaName"+ideaId).text();
   }
   function msg(val){
     layer.open({
@@ -159,15 +160,12 @@ function supports(ideaId){
 }
 
   function delIdea(ideaId) {
-      /*  var userId = val.value();*/
       console.log(ideaId);
-      var teamName = $("#i"+userId).text();
-      console.log(teamName);
+
       $.ajax({
-          url:"/UserC/delMember",
+          url:"/UserC/delIdea",
           data:{
-              "userId" : userId,
-              "teamName":teamName
+              "ideaId" : ideaId
           },
           type:"post",
           dataType:"json",
@@ -175,14 +173,14 @@ function supports(ideaId){
           success:function(data){//ajax返回的数据
               console.log(data);
               if(data.isSuccess == "1"){
-                  $("#delButton" + userId).parent().parent().parent().remove();
+                  $("#delIdea" + ideaId).parent().parent().parent().remove();
                   layer.msg(data.msg);
               }else{
                   layer.msg(data.msg);
               }
           },
           error:function (data) {
-              alert("未登录无法点赞哦! 请登录")
+              alert("未登录无法删除哦! 请登录")
           }
       });
   }

@@ -25,4 +25,5 @@ public interface TeamService {
     public PageInfo<FrontTeam> findAllMyTeam(int page, int size, String teamName,Integer userId);
     public List<MyTeamMember> findAllMyTeamMember(String teamName);
     public List<String> findTeamRoleByTeamNameAndUserId(String teamName,Integer userId);
+    public Integer getTeamId(String teamName);
 }

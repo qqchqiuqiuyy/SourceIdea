@@ -44,5 +44,7 @@ public interface IdeaService {
     public void addIdea(String ideaName,Integer tagId,String ideaMsg,HttpServletRequest request);
     public void addProjectIdea(String ideaName,Integer tagId,String ideaMsg,String teamName,HttpServletRequest request);
 
+    public List<FrontIdea> getAllProjectIdea(String teamName);
 
+    public String delIdea(Integer ideaId);
 }

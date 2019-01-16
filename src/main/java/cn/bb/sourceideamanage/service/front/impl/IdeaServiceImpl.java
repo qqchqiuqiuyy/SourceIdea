@@ -148,5 +148,31 @@ public class IdeaServiceImpl implements IdeaService {
         }
     }
 
+    @Override
+    public List<FrontIdea> getAllProjectIdea(String teamName) {
+        Integer teamId = teamMapper.findTeamId(teamName);
+        List<FrontIdea> ideas = ideaMapper.findAllProjectIdea(teamId);
+        return ideas;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String delIdea(Integer ideaId) {
+        try {
+            ideaMapper.delIdea(ideaId);
+            log.info("删除想法成功!");
+            ideaMapper.delIdeaComment(ideaId);
+            log.info("删除想法评论成功!");
+            jsonObject.put("msg","删除想法成功!");
+            jsonObject.put("isSuccess","1");
+        }catch (Exception e){
+            log.error("删除想法失败!");
+            jsonObject.put("msg","删除想法失败!!");
+            jsonObject.put("isSuccess","0");
+        }
+
+        return jsonObject.toString();
+    }
+
 
 }

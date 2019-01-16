@@ -27,20 +27,23 @@
         <div class=" fly-filter">
           <table>
             <tr>
-              <td> <div href="" class="layui-this" style="width:480px"><h1 th:text="${teamName}+'的团队详细'"></h1></div></td>
-              <shiro:hasAnyRoles name="user:teamManager,user:projectManager">
-                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/UserC/toAddProject}">新增项目</a></td>
-                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/UserC/toAddTeamIdea(teamName=${teamName})}">新增想法</a></td>
-              </shiro:hasAnyRoles>
+              <td> <div href="" class="layui-this" ><h1 th:text="${teamName}+'的团队详细'"></h1></div></td>
+             <!--团员都可以看-->
+                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/UserC/toUsers(teamName=${teamName})}">邀请</a></td>
+
+              <!--项目管理员和团长可以看-->
+                <td><a style="float: left;margin-left: 30px;color:white;display: none" type="button" class="layui-btn layui-btn-normal addProject" th:href="@{/UserC/toAddProject(teamName=${teamName})}">新增项目</a></td>
+
+
+            <!--团长可以看-->
+                <td><a style="float: left;margin-left: 30px;color:white;display: none" type="button" class="layui-btn layui-btn-normal addIdea" th:href="@{/UserC/toAddTeamIdea(teamName=${teamName})}">新增想法</a></td>
+
             </tr>
           </table>
 
-          <span>
-
-        </span>
         </div>
-
         <hr>
+
         <H3>团队成员介绍</H3>
         <ul class="fly-list" th:each="member : ${members}">
           <li style="margin-bottom: 60px">
@@ -50,10 +53,14 @@
             <div class="fly-list-info">
                 <cite th:text="${member.teamRole}"></cite>
               <span  th:text="'入团时间: '+${member.memberJoinTime}"></span>
-              <span style="display: inline-block;margin-right:250px;float: right;display: none" class="del" >
+
+              <!--团长可看-->
+                <span style="display: inline-block;margin-right:250px;float: right;display: none" class="delMember" >
                  <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delMember(this.value)"  th:value="${member.userId}" type="button" th:id="'delButton'+${member.userId}">删除</button>
                 <i th:text="${teamName}" th:id="'i'+${member.userId}" style="display: none"></i>
                  </span>
+
+
             </div>
             <div class="fly-list-badge">
             </div>
@@ -71,11 +78,12 @@
             </h3>
             <div class="fly-list-info">
               <span th:text="${project.projectCreateTime}"></span>
-              <shiro:hasRole name="user:teamManager">
-                <span style="display: inline-block;margin-right:250px;float: right;display: none" class="del" >
-                   <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
+
+              <!--团长 项目管理可看-->
+                  <span style="display: inline-block;margin-right:250px;float: right;display: none" class="delP" >
+                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
                    </span>
-              </shiro:hasRole>
+
             </div>
             <div class="fly-list-badge">
             </div>
@@ -83,25 +91,50 @@
 
         </ul>
 
+
+        <br>
+        <hr>
+        <H3>团队想法介绍</H3>
+        <ul class="fly-list" th:each="idea : ${ideas}">
+          <li style="margin-bottom: 60px">
+            <h3>
+              <a th:href="@{/IdeaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+            </h3>
+            <div class="fly-list-info">
+              <span th:text="${idea.ideaCreateTime}"></span>
+
+              <!--团长可看-->
+                <span style="display: inline-block;margin-right:250px;float: right;display: none" class="delIdea" >
+                   <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delIdea(this.value)"  th:value="${idea.ideaId}" type="button" th:id="'delIdea'+${idea.ideaId}">删除</button>
+                   </span>
+
+
+            </div>
+            <div class="fly-list-badge">
+            </div>
+          </li>
+
+        </ul>
       </div>
     </div>
-    <shiro:hasRole name="user:teamManager">
-      <div class="layui-col-md4">
+
+    <!--团长可看-->
+
+      <div class="layui-col-md4 applyy" style="display: none" >
         <dl class="fly-panel fly-list-one">
           <dt class="fly-panel-title">团队申请</dt>
           <dd th:each="user : ${applies}">
             <a href="" th:text="${user.userName}"></a>
             <span  th:text="'申请时间: '+${user.applyTime}"></span>
-            <span style="display: inline-block;float: right;display: none" class="del" >
+            <span style="display: inline-block;float: right" class="del" >
                  <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px"  onclick="agreeMember(this.value)"  th:value="${user.userId}" type="button" th:id="'agree'+${user.userId}">同意</button>
                     <i th:text="${teamName}" th:id="'agreei'+${user.userId}" style="display: none"></i>
              </span>
           </dd>
-
         </dl>
-
       </div>
-    </shiro:hasRole>
+
+
 
   </div>
 </div>
@@ -132,9 +165,19 @@ layui.config({
   console.log(userRoles);
 
   for (var i=0;i<userRoles.length;i++){
-    if(userRoles[i] == 'user:teamManager'){
-      $(".del").show();
+    //显示项目删除按钮
+    if(userRoles[i] == '4' || userRoles[i] == '3'){
+      $(".delP").show();
+      $(".addProject").show();
     }
+    //团长权限
+    if(userRoles[i] == '4' ){
+      $(".applyy").show();
+      $(".delIdea").show();
+      $(".delMember").show();
+      $(".addIdea").show();
+    }
+    console.log(userRoles[i]);
   }
 </script>
 <script type="text/javascript">
@@ -142,6 +185,33 @@ layui.config({
     $(".layui-clear li").eq(7).addClass("layui-this");
   });
 
+/*删除想法*/
+  function delIdea(ideaId) {
+    console.log(ideaId);
+    $.ajax({
+      url:"/UserC/delIdea",
+      data:{
+        "ideaId" : ideaId
+      },
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        if(data.isSuccess == "1"){
+          $("#delIdea" + ideaId).parent().parent().parent().remove();
+          layer.msg(data.msg);
+        }else{
+          layer.msg(data.msg);
+        }
+      },
+      error:function (data) {
+        layer.msg("未登录无法点赞哦! 请登录")
+      }
+    });
+  }
+
+  /*异步删除成员*/
   function delMember(userId) {
   /*  var userId = val.value();*/
     console.log(userId);
@@ -171,10 +241,9 @@ layui.config({
     });
   }
 
+  /*异步删除项目*/
   function delProject(projectId) {
-    /*  var userId = val.value();*/
     console.log(projectId);
-
     $.ajax({
       url:"/UserC/delProject",
       data:{
@@ -198,6 +267,7 @@ layui.config({
     });
   }
 
+  /*异步审批*/
   function agreeMember(userId) {
   /*  var userId = val.value();*/
     console.log(userId);
