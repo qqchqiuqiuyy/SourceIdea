@@ -19,10 +19,11 @@ public interface ProjectMapper {
             "   WHERE p.project_name LIKE CONCAT('%',#{projectName},'%') AND" +
             "   p.team_id = t.team_id AND" +
             "   t.team_id = ut.team_id AND" +
-            "   ut.role_id = '4' AND" +
+            "   ut.role_id = #{teamManager} AND" +
             "   ut.user_id = u.user_id" +
-            "   GROUP BY projectName")
-    public List<FrontProject> findAllFrontProject(@Param("projectName") String projectName);
+            "   GROUP BY projectName DESC")
+    public List<FrontProject> findAllFrontProject(@Param("projectName") String projectName,
+                                                  @Param("teamManager") Integer teamManager);
 
     /**
      * 一对多查找projectMsg
@@ -81,7 +82,8 @@ public interface ProjectMapper {
             "               ut.user_id = #{userId} AND " +
             "               ut.team_id = t.team_id AND " +
             "               t.team_id = p.team_id AND " +
-            "                  ut.role_id = r.role_id " +
+            "                  ut.role_id = r.role_id AND" +
+            "                   u.user_id = ut.user_id " +
             "           GROUP BY projectName")
     public List<FrontProject> findAllMyProject(@Param("projectName") String projectName,@Param("userId") Integer userId);
 
@@ -92,9 +94,9 @@ public interface ProjectMapper {
 
     @Insert("INSERT INTO project ( team_id, project_msg, project_archive, project_name ) " +
             " VALUES " +
-            " ( #{teamId}, #{projectMsg},'0' ,#{projectName})")
+            " ( #{teamId}, #{projectMsg},#{archive} ,#{projectName})")
     public void addTeamProject(@Param("teamId") Integer teamId, @Param("projectName") String projectName,
-                               @Param("projectMsg") String projectMsg);
+                               @Param("projectMsg") String projectMsg,@Param("archive") Integer archive);
 
     @Select("SELECT id FROM user_team WHERE team_id = #{teamId} AND user_id = #{userId}")
     public Integer checkProjectManager(@Param("teamId") Integer teamId,@Param("userId") Integer userId);

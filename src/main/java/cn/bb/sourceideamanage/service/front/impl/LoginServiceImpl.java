@@ -117,6 +117,7 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("account",account);
             session.setAttribute("password",password);
             session.setAttribute("userId", user.getUserId());
+            session.setMaxInactiveInterval(60*30);
             info.put("isSuccess","1");
             info.put("account",account);
         }catch (UnknownAccountException e){

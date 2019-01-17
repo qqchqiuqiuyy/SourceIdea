@@ -29,8 +29,8 @@
           <hr>
           <p>团队成员：</p>
 
-              <div th:each=" member :${team.backTeamMembers}">
-                <p th:text="${member.userName} + ' : ' + ${member.teamRoleName}"></p>
+              <div th:each=" member :${members}">
+                <p th:text="'姓名:' + ${member.userName} + '      职责:' + ${member.teamRoleName} + '      加入时间:' + ${member.memberJoinTime}"></p>
               </div>
           <br>
           项目列表<hr>

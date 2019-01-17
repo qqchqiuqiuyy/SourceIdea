@@ -15,10 +15,19 @@ public interface UserMapper {
     @Select("select * from user where user_id = #{userId}")
     public User findUserById(@Param("userId") Integer userId);
 
-    @Select("select role_name from role where role_id IN" +
-            "(select role_id from  user_role ur where user_id = #{userId}" +
-            "   UNION " +
-            "  select ut.role_id from user_team ut where ut.user_id = #{userId} )"
+    @Select("SELECT " +
+            "   role_name " +
+            "FROM   " +
+            "   role " +
+            "WHERE  " +
+            "   role_id IN ( SELECT role_id FROM user_role ur WHERE user_id = #{userId}) " +
+            "UNION " +
+            " SELECT " +
+            " ut.role_name " +
+            " FROM " +
+            " user_team ut  " +
+            " WHERE " +
+            " ut.user_id = #{userId}"
     )
     public List<String> findUserAllRoleByUserId(@Param("userId") Integer userId);
 
@@ -55,7 +64,7 @@ public interface UserMapper {
     @Select("SELECT a.team_id AS teamId, a.user_id AS userId ,a.apply_time AS applyTime ,u.user_name AS userName" +
             "   FROM apply a, team t,user u" +
             "   WHERE a.team_id = t.team_id AND u.user_id = a.user_id AND t.team_name = #{teamName} " +
-            "   ORDER BY applyTime")
+            "   ORDER BY applyTime DESC")
     public List<ApplyUser> getAllAppy(@Param("teamName") String teamName);
 
 
@@ -68,9 +77,10 @@ public interface UserMapper {
     @Delete("DELETE FROM apply  WHERE user_id = #{userId} AND team_id = #{teamId}")
     public void delApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
 
-    @Insert("INSERT INTO user_team (team_id,role_id,user_id) " +
-            "   VALUES (#{teamId}, '6' , #{userId})")
-    public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    @Insert("INSERT INTO user_team (team_id,role_id,user_id,role_name) " +
+            "   VALUES (#{teamId}, #{roleId} , #{userId},#{roleName})")
+    public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                         @Param("roleId") Integer roleId,@Param("roleName") String roleName);
 
     @Select("SELECT p.project_id AS projectId," +
             "           p.project_name AS projectName," +

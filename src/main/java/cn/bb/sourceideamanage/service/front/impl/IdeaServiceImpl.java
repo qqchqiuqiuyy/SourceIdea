@@ -73,6 +73,12 @@ public class IdeaServiceImpl implements IdeaService {
         return ideaMapper.getTagSupports();
     }
 
+    /**
+     * 点赞
+     * @param ideaId
+     * @param userId
+     * @return
+     */
     @Override
     public String upIdeaSupports(String ideaId, String userId) {
         //TODO 刷新回数据库
@@ -80,13 +86,13 @@ public class IdeaServiceImpl implements IdeaService {
         if(jedis.sismember("ideaSupportUser:"+ ideaId,userId)){
             jsonObject.put("msg","已点过赞了 亲!");
             jsonObject.put("isSuccess","0");
-            return jsonObject.toString();
         }else{
             jedis.sadd("ideaSupportUser:"+ideaId,userId);
             jedis.incr("ideaSupportNums:"+ideaId);
             jsonObject.put("isSuccess","1");
-            return jsonObject.toString();
+
         }
+        return jsonObject.toString();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.ProjectArchive;
+import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.ProjectMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dao.front.UserMapper;
@@ -89,13 +91,20 @@ public class UserServiceImpl  implements UserService {
         return userMapper.getAllAppy(teamName);
     }
 
+
+    /**
+     * 团长审批同意部分 同意申请进入团队
+     */
     @Override
     @Transactional
     public String agreeMember(Integer userId,String teamName){
         try {
+
             Integer teamId = userMapper.getTeamId(teamName);
             //加入团队
-            userMapper.joinTeam(userId,teamId);
+            userMapper.joinTeam(userId,teamId, Roles.UserProjectMember.getRoleId(),Roles.UserProjectMember.getRoleName()+":"+teamId);
+            userMapper.joinTeam(userId,teamId, Roles.UserTeamMember.getRoleId(),Roles.UserTeamMember.getRoleName()+":"+teamId);
+            log.info("加入团队后的role={}",Roles.UserTeamMember.getRoleName()+":"+teamId);
             //团队人数+1
             userMapper.addMemberNums(teamId);
             //删除审核表
@@ -114,12 +123,20 @@ public class UserServiceImpl  implements UserService {
     }
 
 
+    /**
+     * 用户被邀请进团队部分 用户进行同意
+     * @param userId
+     * @param teamId
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String agree(Integer userId, Integer teamId) {
         try {
-            //加入团队
-            userMapper.joinTeam(userId,teamId);
+            //加入团队 授予roleID 和 roleName + teamId
+            userMapper.joinTeam(userId,teamId, Roles.UserProjectMember.getRoleId(),Roles.UserProjectMember.getRoleName()+":"+teamId);
+            userMapper.joinTeam(userId,teamId, Roles.UserTeamMember.getRoleId(),Roles.UserTeamMember.getRoleName()+":"+teamId);
+            log.info("加入团队后的role={}",Roles.UserTeamMember.getRoleName()+":"+teamId);
             //团队人数+1
             userMapper.addMemberNums(teamId);
             //删除邀请表
@@ -170,6 +187,13 @@ public class UserServiceImpl  implements UserService {
         return tags;
     }
 
+    /**
+     * 增加团队项目
+     * @param teamName
+     * @param projectName
+     * @param projectMsg
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String addTeamProject(String teamName, String projectName, String projectMsg) {
@@ -182,7 +206,7 @@ public class UserServiceImpl  implements UserService {
                 jsonObject.put("isSuccess","2");
                 return jsonObject.toString();
             }
-            projectMapper.addTeamProject(teamId,projectName,projectMsg);
+            projectMapper.addTeamProject(teamId,projectName,projectMsg, ProjectArchive.NOTFINISH.getArchive());
             log.info("添加项目成功!!");
             jsonObject.put("msg","添加项目成功!!");
             jsonObject.put("isSuccess","1");
@@ -203,6 +227,12 @@ public class UserServiceImpl  implements UserService {
         return new PageInfo<>(allFrontUser);
     }
 
+    /**
+     * 邀请用户进团队
+     * @param userId
+     * @param teamName
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String invite(Integer userId, String teamName) {

@@ -3,6 +3,7 @@ package cn.bb.sourceideamanage.controller.front;
 import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
+import cn.bb.sourceideamanage.dto.front.TeamMember;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
@@ -44,13 +45,17 @@ public class TeamController {
 
     @RequestMapping("/toTeamMsg")
     public String toTeamMsg(Model model, String teamName, HttpServletRequest request){
+        Integer teamId = teamService.getTeamId(teamName);
+        /*teamService*/
         BackTeam team = teamService.findAllTeamMember(teamName);
+        List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
         //获取当前用户名
         Integer userId = (Integer) request.getSession().getAttribute("userId");
         List<String> userTeams = teamService.findAllTeam(userId);
         JSONArray userteamsJson = JSONArray.fromObject(userTeams);
         model.addAttribute("userteamsJson",userteamsJson);
         model.addAttribute("team",team);
+        model.addAttribute("members",members);
         return "pages/front/html/team/teamMsg";
     }
 
@@ -59,6 +64,19 @@ public class TeamController {
     public String joinTeam(Integer userId,Integer teamId){
         String info = teamService.joinTeam(userId, teamId);
         return info;
+    }
+
+    @RequestMapping("/toAddTeam")
+    public String toAddTeam(){
+        return "pages/front/html/team/addTeam";
+    }
+
+    @RequestMapping("/addTeam")
+    @ResponseBody
+    public String addTeam(String teamName,String teamMsg,HttpServletRequest request){
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        String s = teamService.addTeam(teamName, teamMsg, userId);
+        return s;
     }
 
 }

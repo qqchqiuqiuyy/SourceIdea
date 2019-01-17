@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.ProjectMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dto.front.FrontProject;
@@ -33,7 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public PageInfo<FrontProject> findAllFrontProject(int page, int size, String projectName) {
         PageHelper.startPage(page,size);
-        List<FrontProject> projects = projectMapper.findAllFrontProject(projectName);
+        List<FrontProject> projects = projectMapper.findAllFrontProject(projectName, Roles.UserTeamManager.getRoleId());
         return new PageInfo<>(projects);
     }
 

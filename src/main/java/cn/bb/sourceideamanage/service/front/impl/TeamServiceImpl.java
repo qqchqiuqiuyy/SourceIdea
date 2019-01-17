@@ -1,13 +1,13 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.MyTeamMember;
-import cn.bb.sourceideamanage.entity.Idea;
-import cn.bb.sourceideamanage.entity.Project;
-import cn.bb.sourceideamanage.entity.User;
-import cn.bb.sourceideamanage.entity.UserTeam;
+import cn.bb.sourceideamanage.dto.front.NewTeam;
+import cn.bb.sourceideamanage.dto.front.TeamMember;
+import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -15,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sun.rmi.runtime.Log;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @Slf4j
@@ -51,7 +53,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public PageInfo<FrontTeam> findAllFrontTeam(int page, int size, String teamName) {
         PageHelper.startPage(page,size);
-        List<FrontTeam> teams = teamMapper.findAllFrontTeam(teamName);
+        List<FrontTeam> teams = teamMapper.findAllFrontTeam(teamName,Roles.UserTeamManager.getRoleId());
         return new PageInfo<>(teams);
     }
 
@@ -60,10 +62,17 @@ public class TeamServiceImpl implements TeamService {
         return teamMapper.findAllTeamMember(teamName);
     }
 
+    /**
+     * 申请加入团队
+     * @param userId
+     * @param teamId
+     * @return
+     */
     @Override
     public String joinTeam(Integer userId, Integer teamId) {
         String checkTeamMember = teamMapper.checkTeamMember(userId, teamId);
         if(null == checkTeamMember){
+            //检查是否已经在申请表
             String checkApplyList = teamMapper.checkApply(userId,teamId);
             if(null == checkApplyList){
                 teamMapper.apply(userId, teamId);
@@ -97,7 +106,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public PageInfo<FrontTeam> findAllMyTeam(int page, int size, String teamName, Integer userId) {
         PageHelper.startPage(page,size);
-        List<FrontTeam> teams = teamMapper.findAllMyTeam(teamName,userId);
+        List<FrontTeam> teams = teamMapper.findAllMyTeam(teamName,userId,Roles.UserTeamManager.getRoleId());
         return new PageInfo<>(teams);
     }
 
@@ -114,5 +123,68 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Integer getTeamId(String teamName) {
         return teamMapper.getTeamId(teamName);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String addTeam(String teamName, String teamMsg, Integer userId) {
+        try {
+            //判断是否已经有这个团队
+            Integer tId = teamMapper.getTeamId(teamName);
+            if(tId != null){
+                log.error("新建团队错误!! 已有重复团队");
+                jsonObject.put("msg","新建团队发生错误!!已有重复团队");
+                jsonObject.put("isSuccess","0");
+
+            }else{
+                NewTeam newTeam = new NewTeam();
+                newTeam.setTeamMsg(teamMsg).setTeamName(teamName);
+                //添加到team表
+                teamMapper.addTeam(newTeam);
+                //返回刚才的teamId
+                Integer teamId = newTeam.getTeamId();
+                log.info("teamId = {}",teamId);
+                //插入user_team 并赋予所有团队权限
+                //项目成员
+/*                Role role2 = new Role().setRoleId(Roles.UserProjectMember.getRoleId()).
+                                        setRoleName(Roles.UserProjectMember.getRoleName()+":"+teamId);
+                //项目管理员
+                Role role3 = new Role().setRoleId(Roles.UserProjectManager.getRoleId()).
+                                        setRoleName(Roles.UserProjectManager.getRoleName()+":"+teamId);
+                //团队成员
+                Role role4 = new Role().setRoleId(Roles.UserTeamMember.getRoleId()).
+                                        setRoleName(Roles.UserTeamMember.getRoleName()+":"+teamId);*/
+                //团队队长
+                Role role5 = new Role().setRoleId(Roles.UserTeamManager.getRoleId()).
+                                        setRoleName(Roles.UserTeamManager.getRoleName()+":"+teamId);
+               /*   List<Role> roles = new ArrayList<>();
+              roles.add(role2);
+                roles.add(role3);
+                roles.add(role4);
+                roles.add(role5);*/
+                int successNums = teamMapper.addTeamRoles(role5, teamId,userId);
+                log.info("successNums={}",successNums);
+                jsonObject.put("msg","创建团队成功!!");
+                jsonObject.put("isSuccess","1");
+                jsonObject.put("successUrl","/UserC/toMyTeamMsg?teamName=" + teamName);
+            }
+
+
+        }catch (Exception e){
+            log.error("新建团队错误!!exception={}",e.toString());
+            jsonObject.put("msg","新建团队发生错误!!");
+            jsonObject.put("isSuccess","0");
+        }
+        return jsonObject.toString();
+    }
+
+    @Override
+    public String getTeamMsg(Integer teamId) {
+        return "";
+    }
+
+    @Override
+    public List<TeamMember> findAllMemberByTeamId(Integer teamId) {
+        return teamMapper.findAllMemberByTeamId(teamId);
     }
 }

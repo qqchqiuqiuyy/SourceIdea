@@ -91,7 +91,14 @@ public class UserController {
         return "/pages/front/html/idea/myIdea";
     }
 
-
+    /**
+     * 去我的项目页面
+     * @param model
+     * @param projectName
+     * @param page
+     * @param request
+     * @return
+     */
     @RequestMapping("/toMyProject")
     public String toMyProject(Model model, String projectName, Integer page,HttpServletRequest request){
         if(null == page || page < 1){
@@ -140,14 +147,13 @@ public class UserController {
 
     @RequestMapping("/toMyTeamMsg")
     public String toMyTeamMsg(Model model, String teamName, HttpServletRequest request){
+        //获取团员列表
         List<MyTeamMember> members = teamService.findAllMyTeamMember(teamName);
         //获取当前用户名
         Integer userId = (Integer) request.getSession().getAttribute("userId");
 
-        //查找当前用户对于某个团队的角色
+        //查找这个团队的Id
         Integer teamId = teamService.getTeamId(teamName);
-        List<Integer> roles = userService.getAllTeamRole(userId, teamId);
-        JSONArray userRoles = JSONArray.fromObject(roles);
 
         //审核表
         List<ApplyUser> applies = userService.getAllAppy(teamName);
@@ -161,8 +167,8 @@ public class UserController {
         model.addAttribute("projects",projects);
         model.addAttribute("applies",applies);
         model.addAttribute("teamName",teamName);
-        model.addAttribute("userRoles",userRoles);
         model.addAttribute("members",members);
+        model.addAttribute("teamId",teamId);
         return "pages/front/html/team/myTeamMsg";
     }
 
@@ -173,6 +179,12 @@ public class UserController {
         return info;
     }
 
+    /**
+     * 队长审批
+     * @param userId
+     * @param teamName
+     * @return
+     */
     @RequestMapping("/agreeMember")
     @ResponseBody
     public String agreeMember(Integer userId,String teamName){
@@ -272,7 +284,12 @@ public class UserController {
         return invite;
     }
 
-
+    /**
+     * 用户同意部分
+     * @param userId
+     * @param teamId
+     * @return
+     */
     @RequestMapping("/agree")
     @ResponseBody
     public String agree(Integer userId,Integer teamId){

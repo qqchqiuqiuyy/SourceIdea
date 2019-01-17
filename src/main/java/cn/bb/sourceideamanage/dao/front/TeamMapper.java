@@ -4,10 +4,13 @@ import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.back.BackTeamMember;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.MyTeamMember;
+import cn.bb.sourceideamanage.dto.front.NewTeam;
+import cn.bb.sourceideamanage.dto.front.TeamMember;
 import cn.bb.sourceideamanage.entity.*;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 
+import javax.annotation.processing.SupportedOptions;
 import java.util.List;
 
 @Mapper
@@ -30,8 +33,9 @@ public interface TeamMapper {
     @Select("select distinct t.team_id AS teamId, t.team_name AS teamName,t.team_create_time AS teamCreateTime, " +
             "  u.user_name AS teamCaptain" +
             " from team t,user_team ut , role r , user u " +
-            " where t.team_id = ut.team_id AND ut.role_id = '4' AND ut.user_id = u.user_id AND t.team_name LIKE CONCAT('%',#{teamName},'%') ")
-    public List<FrontTeam> findAllFrontTeam(@Param("teamName") String teamName);
+            " where t.team_id = ut.team_id AND ut.role_id = #{teamManager} AND " +
+            "ut.user_id = u.user_id AND t.team_name LIKE CONCAT('%',#{teamName},'%') ")
+    public List<FrontTeam> findAllFrontTeam(@Param("teamName") String teamName,@Param("teamManager") Integer teamManager);
 
 
 
@@ -39,11 +43,20 @@ public interface TeamMapper {
     @Select("select distinct * from project where team_id = #{teamId}")
     public List<Project> findAllProjectByTeamId(Integer teamId);
 
-    @Select("select distinct r.role_msg As teamRoleName, " +
-            " ut.member_join_time As memberJoinTime,u.user_name As userName" +
-            " from role r, user u,user_team ut " +
-            " where r.role_id = ut.role_id  AND u.user_id = ut.user_id AND ut.team_id = #{tId2} AND r.role_id != '5'")
-    public List<BackTeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
+    @Select("SELECT DISTINCT" +
+            " r.role_msg AS teamRoleName, " +
+            " ut.member_join_time AS memberJoinTime, " +
+            " u.user_name AS userName  " +
+            "FROM " +
+            " role r, " +
+            " USER u, " +
+            " user_team ut  " +
+            "WHERE " +
+            " r.role_id = ut.role_id  " +
+            " AND u.user_id = ut.user_id " +
+            " AND  ut.team_id = #{tId2}" +
+            " AND ut.role_id = (select max(role_id) from user_team where ut.user_id = user_id)")
+    public List<TeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 
     @Select("select distinct * from idea where team_id = #{teamId}")
@@ -56,7 +69,7 @@ public interface TeamMapper {
      */
     @Select("select distinct u.user_name " +
             "from role r, user_team ut ,user u" +
-            " where ut.team_id = #{teamId} AND ut.role_id = '4' AND ut.user_id = u.user_id")
+            " where ut.team_id = #{teamId} AND ut.role_id = '5' AND ut.user_id = u.user_id")
     public String findTeamCaptainByTeamId(Integer teamId);
 
 
@@ -65,14 +78,25 @@ public interface TeamMapper {
      * @param teamName
      * @return
      */
-    @Select("select   " +
-            "   t.team_name As teamName,  t.team_id As teamId,t.team_id As tId ,t.team_id As tId2 ,t.team_id As tId3 ,t.team_id As tId4 , " +
-            "    ut.user_id As uId  , t.team_nums As teamNums , t.team_create_time , t.team_msg AS teamMsg" +
-            " FROM  " +
-            "       user_team ut , team t  ,role r " +
-            " WHERE " +
-            "       t.team_name = #{teamName} AND ut.team_id = t.team_id AND ut.role_id = r.role_id " +
-            " GROUP BY teamId ")
+    @Select("SELECT " +
+            " t.team_name AS teamName, " +
+            " t.team_id AS teamId, " +
+            " t.team_id AS tId, " +
+            " t.team_id AS tId2, " +
+            " t.team_id AS tId3, " +
+            " t.team_id AS tId4, " +
+            " ut.user_id AS uId, " +
+            " t.team_nums AS teamNums, " +
+            " t.team_create_time, " +
+            " t.team_msg AS teamMsg  " +
+            "FROM " +
+            " user_team ut, " +
+            " team t, " +
+            " role r " +
+            "WHERE " +
+            " t.team_name = #{teamName} AND ut.team_id = t.team_id AND ut.role_id = r.role_id  " +
+            "GROUP BY  " +
+            " teamId ")
     @Results({
             //colums是数据库列,以这个id为一组 , property是back_user对象里面的属性
             @Result(column = "tId", javaType = List.class, property = "teamProjects",
@@ -99,10 +123,10 @@ public interface TeamMapper {
     })
     public BackTeam findAllTeamMember(@Param("teamName") String teamName);
 
-    @Insert("INSERT INTO user_team (team_id,role_id,user_id) " +
+   /* @Insert("INSERT INTO user_team (team_id,role_id,user_id) " +
             "   VALUES" +
             "   (#{teamId} , '6',#{userId})")
-    public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId);*/
 
     @Select("SELECT role_id FROM user_team ut WHERE ut.user_id = #{userId} AND ut.team_id = #{teamId}")
     public String checkTeamMember(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
@@ -135,16 +159,37 @@ public interface TeamMapper {
             " user u  " +
             "WHERE " +
             " t.team_id = ut.team_id  " +
-            " AND ut.role_id = '4'  " +
+            " AND ut.role_id = #{teamManager}  " +
             " AND ut.role_id = r.role_id AND  t.team_name LIKE CONCAT( '%',#{teamName}, '%' ) " +
             " AND u.user_id = ut.user_id " +
-            " AND ut.team_id IN ( SELECT ut.team_id FROM user_team ut WHERE ut.user_id = #{userId} )")
-    public List<FrontTeam> findAllMyTeam(@Param("teamName") String teamName,@Param("userId") Integer userId);
+            " AND ut.team_id IN ( SELECT ut.team_id FROM user_team ut WHERE ut.user_id = #{userId})" +
+            "   ORDER BY teamCreateTime DESC")
+    public List<FrontTeam> findAllMyTeam(@Param("teamName") String teamName,@Param("userId") Integer userId,
+                                        @Param("teamManager") Integer teamManager);
 
-    @Select("SELECT u.user_id AS userId,u.user_name AS userName ,r.role_msg AS teamRole,ut.member_join_time AS memberJoinTime" +
-            " FROM role r,user u,user_team ut,team t " +
-            " WHERE  t.team_name = #{teamName} AND t.team_id = ut.team_id AND" +
-            "       ut.user_id = u.user_id AND ut.role_id = r.role_id")
+    /**
+     * TODO
+     * /UserC/toMyTeamMsg
+     * @param teamName
+     * @return
+     */
+    @Select("SELECT " +
+            " u.user_id AS userId, " +
+            " u.user_name AS userName, " +
+            " r.role_msg AS teamRole, " +
+            " ut.member_join_time AS memberJoinTime, " +
+            " ut.role_id " +
+            "FROM " +
+            " role r, " +
+            " USER u, " +
+            " user_team ut, " +
+            " team t  " +
+            "WHERE " +
+            " t.team_name = #{teamName}  " +
+            " AND t.team_id = ut.team_id  " +
+            " AND ut.user_id = u.user_id " +
+            " AND ut.role_id = r.role_id " +
+            " AND ut.role_id = (select max(role_id) from user_team  where user_id = ut.user_id)" )
     public List<MyTeamMember> findAllMyTeamMember(@Param("teamName") String teamName);
 
     @Select("select r.role_name " +
@@ -166,4 +211,13 @@ public interface TeamMapper {
             "  team t" +
             " WHERE t.team_name = #{teamName}")
     public Integer getTeamId(@Param("teamName") String  teamName);
+
+    @Insert("INSERT INTO team  (team_name , team_msg) VALUES (#{newTeam.teamName} ,#{newTeam.teamMsg})")
+    @Options(useGeneratedKeys = true,keyProperty = "newTeam.teamId",keyColumn = "team_id")
+    public void addTeam(@Param("newTeam") NewTeam newTeam);
+
+    @Insert("INSERT INTO user_team (team_id,user_id,role_id,role_name) " +
+            "   VALUES (#{teamId}, #{userId}, #{role.roleId} ,#{role.roleName})")
+    public int addTeamRoles(@Param("role") Role role,@Param("teamId") Integer teamId,
+                            @Param("userId") Integer userId);
 }

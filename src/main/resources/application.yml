@@ -18,6 +18,16 @@ mybatis:
   mapper-locations: classpath:mappler/*.xml
   configuration:
     map-underscore-to-camel-case: true
-
+    cache-enabled: true #二级缓存
 jedis:
   port: 47.107.133.24
+
+# 日志打印sql语句cn.bb.sourceideamanage.dao
+logging:
+  level:
+    cn:
+      bb:
+        sourceideamanage:
+          dao: debug
+# 控制台信息
+debug: true
