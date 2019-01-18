@@ -88,6 +88,7 @@ public class ShiroConfig {
         filterMap.put("/UserC/toReg","anon");
         filterMap.put("/UserC/toUsers","anon");
         filterMap.put("/TeamC/toTeam","anon");
+        filterMap.put("/TeamC/toTeamMsg","anon");
         filterMap.put("/IdeaC/upIdeaSupports","authc");
         filterMap.put("/IdeaC/toIdea","anon");
         filterMap.put("/ProjectC/toProject","anon");

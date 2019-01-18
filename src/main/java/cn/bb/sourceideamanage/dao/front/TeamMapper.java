@@ -2,10 +2,7 @@ package cn.bb.sourceideamanage.dao.front;
 
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.back.BackTeamMember;
-import cn.bb.sourceideamanage.dto.front.FrontTeam;
-import cn.bb.sourceideamanage.dto.front.MyTeamMember;
-import cn.bb.sourceideamanage.dto.front.NewTeam;
-import cn.bb.sourceideamanage.dto.front.TeamMember;
+import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.*;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -220,4 +217,14 @@ public interface TeamMapper {
             "   VALUES (#{teamId}, #{userId}, #{role.roleId} ,#{role.roleName})")
     public int addTeamRoles(@Param("role") Role role,@Param("teamId") Integer teamId,
                             @Param("userId") Integer userId);
+
+
+    @Select("SELECT i.idea_name " +
+            "   FROM idea i " +
+            "   WHERE i.team_id = #{teamId}")
+    public List<Idea> findAllTeamIdeas(@Param("teamId") Integer teamId);
+
+
+    @Select("SELECT * FROM team WHERE team_name = #{teamName}")
+    public TeamMsg findTeamMsg(@Param("teamName") String teamName);
 }

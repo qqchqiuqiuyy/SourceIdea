@@ -4,11 +4,13 @@ import cn.bb.sourceideamanage.dto.front.ApplyUser;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.UserService;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import redis.clients.jedis.Jedis;
 
 import java.util.List;
 
@@ -60,5 +62,15 @@ public class UserServiceImplTest {
     public void getAllAppy(){
         List<ApplyUser> applys = userService.getAllAppy("生产大队");
         System.out.println(applys);
+    }
+
+    @Autowired
+    Jedis jedis;
+    @Test
+    public void redis(){
+        User user = new User();
+        user.setUserName("ss");
+        jedis.set("user", JSONObject.fromObject(user).toString());
+        jedis.get("user");
     }
 }

@@ -4,6 +4,10 @@ import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.TeamMember;
+import cn.bb.sourceideamanage.dto.front.TeamMsg;
+import cn.bb.sourceideamanage.entity.Idea;
+import cn.bb.sourceideamanage.entity.Project;
+import cn.bb.sourceideamanage.service.front.IdeaService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
@@ -28,6 +32,7 @@ public class TeamController {
     JSONObject jsonObject;
 
     @RequestMapping("/toTeam")
+
     public String toTeam(Model model, String teamName, Integer page){
         if(null == page || page < 1){
             page = 1;
@@ -47,8 +52,13 @@ public class TeamController {
     public String toTeamMsg(Model model, String teamName, HttpServletRequest request){
         Integer teamId = teamService.getTeamId(teamName);
         /*teamService*/
-        BackTeam team = teamService.findAllTeamMember(teamName);
+        TeamMsg team = teamService.findTeamMsg(teamName);
+        //查询项目
+        List<Project> projects = teamService.findAllProject(teamId);
+        //查询成员
         List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
+        //查询想法
+        List<Idea> ideas = teamService.findAllTeamIdeas(teamId);
         //获取当前用户名
         Integer userId = (Integer) request.getSession().getAttribute("userId");
         List<String> userTeams = teamService.findAllTeam(userId);
@@ -56,6 +66,8 @@ public class TeamController {
         model.addAttribute("userteamsJson",userteamsJson);
         model.addAttribute("team",team);
         model.addAttribute("members",members);
+        model.addAttribute("projects",projects);
+        model.addAttribute("ideas",ideas);
         return "pages/front/html/team/teamMsg";
     }
 

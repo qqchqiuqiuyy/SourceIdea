@@ -13,6 +13,8 @@ spring:
   redis:
     host: 47.107.133.24
     port: 6379
+    database: 0
+
 mybatis:
   type-handlers-package: cn.bb.sourceideamanage.entity
   mapper-locations: classpath:mappler/*.xml
@@ -31,3 +33,7 @@ logging:
           dao: debug
 # 控制台信息
 debug: true
+
+# 缓存失效时间 秒
+cache:
+  timeOut: 60
