@@ -12,6 +12,9 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
@@ -22,6 +25,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "IdeaServiceImpl")
 public class IdeaServiceImpl implements IdeaService {
 
     @Resource
@@ -57,6 +61,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    @Cacheable( cacheNames = "ideaPage",key = "'findAllFrontIdea=[page='+#page+'][idea=Name='+#ideaName+'][tagName='+#tagName+']'")
     public PageInfo<FrontIdea> findAllFrontIdea(int page, int size, String ideaName, String tagName) {
         PageHelper.startPage(page,size);
         List<FrontIdea> allFrontIdea = ideaMapper.findAllFrontIdea(tagName, ideaName);
@@ -64,11 +69,13 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    @Cacheable(cacheNames = "ideaMsg", key = "'ideaMsg=[ideaId='+#ideaId+']'")
     public IdeaMsg getIdeaMsg(Integer ideaId) {
         return ideaMapper.getIdeaMsg(ideaId);
     }
 
     @Override
+    @Cacheable(cacheNames = "supportsList",key = "'ideaSupports'")
     public List<Idea> getIdeaSupports() {
         return ideaMapper.getTagSupports();
     }
@@ -101,6 +108,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    @Cacheable(cacheNames = "myIdeas",key = "'myIdeas=[page='+#page+'][tagName='+#tagName+'][ideaName='+#ideaName+'[userId='+#userId+']'")
     public PageInfo<FrontIdea> findAllMyIdea(int page, int size,String tagName, String ideaName, Integer userId) {
         PageHelper.startPage(page,size);
         List<FrontIdea> allFrontIdea = ideaMapper.findAllMyIdea(tagName, ideaName,userId);
@@ -113,12 +121,14 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    @Cacheable(cacheNames = "comments",key = "'comments=['+#ideaId+']'")
     public List<comment> getAllComment(Integer ideaId) {
         return ideaMapper.getAllComment(ideaId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "comments", key = "'comments=['+#ideaId+']'")
     public void commentIdea(String content, String ideaName, Integer ideaId, HttpServletRequest request) {
         try {
             Integer userId = (Integer)request.getSession().getAttribute("userId");
@@ -132,6 +142,7 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames =  "myIdeas", allEntries = true)
     public void addIdea(String ideaName, Integer tagId, String ideaMsg, HttpServletRequest request) {
         try {
             Integer userId = (Integer) request.getSession().getAttribute("userId");
@@ -143,11 +154,12 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
-    public void addProjectIdea(String ideaName, Integer tagId, String ideaMsg, String teamName, HttpServletRequest request) {
+    @CacheEvict(cacheNames = "teamIdeas",key = "'teamIdeas=[teamName='+#teamNam+']'")
+    public void addTeamIdea(String ideaName, Integer tagId, String ideaMsg, String teamName, HttpServletRequest request) {
         try {
             Integer userId = (Integer) request.getSession().getAttribute("userId");
             Integer teamId = teamMapper.findTeamId(teamName);
-            ideaMapper.addProjectIdea(ideaName,tagId,ideaMsg,userId,teamId);
+            ideaMapper.addTeamIdea(ideaName,tagId,ideaMsg,userId,teamId);
             log.info("添加想法成功!!");
         }catch (Exception e){
             log.error("添加想法失败!!");
@@ -155,14 +167,16 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
-    public List<FrontIdea> getAllProjectIdea(String teamName) {
+    @Cacheable(cacheNames = "teamIdeas",key = "'teamIdeas=[teamName='+#teamNam+']'")
+    public List<FrontIdea> findAllTeamIdea(String teamName) {
         Integer teamId = teamMapper.findTeamId(teamName);
-        List<FrontIdea> ideas = ideaMapper.findAllProjectIdea(teamId);
+        List<FrontIdea> ideas = ideaMapper.findAllTeamIdea(teamId);
         return ideas;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "myIdeas",allEntries = true)
     public String delIdea(Integer ideaId) {
         try {
             ideaMapper.delIdea(ideaId);

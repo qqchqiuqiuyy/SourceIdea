@@ -4,7 +4,9 @@ import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.dto.front.FrontProject;
 import cn.bb.sourceideamanage.dto.front.FrontProjectMsg;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
+import cn.bb.sourceideamanage.dto.front.TeamMember;
 import cn.bb.sourceideamanage.service.front.ProjectService;
+import cn.bb.sourceideamanage.service.front.TeamService;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +42,17 @@ public class ProjectController {
         return "/pages/front/html/project/projectList";
     }
 
+    @Autowired
+    TeamService teamService;
     @RequestMapping("/toProjectMsg")
     public String toProjectMsg(Model model, Integer projectId, HttpServletRequest request){
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer teamId = projectService.getTeamIdByProjectId(projectId);
+        List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
+
         FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);
         model.addAttribute("projectMsg",projectMsg);
-
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        model.addAttribute("members",members);
 
         List<String> projects = projectService.getAllProjects(userId);
         JSONArray projectsName = JSONArray.fromObject(projects);

@@ -1,6 +1,7 @@
 package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
+import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.Idea;
@@ -81,13 +82,11 @@ public class UserController {
         List<FrontIdea> ideas = info.getList();
 
         List<Tag> tags = backIdeaService.findAllTag();
-        List<Idea> ideasSupports = ideaService.getIdeaSupports();
         model.addAttribute("tagName",tagName);
         model.addAttribute("tags",tags);
         model.addAttribute("ideas",ideas);
         model.addAttribute("indexPage",page);
         model.addAttribute("totalPage",info.getPages());
-        model.addAttribute("ideasSupports",ideasSupports);
         return "/pages/front/html/idea/myIdea";
     }
 
@@ -160,9 +159,9 @@ public class UserController {
         //找到所有project
         List<FrontProject> projects = userService.findProjects(teamName);
         //找到该团队所有想法
-        List<FrontIdea> ideas = ideaService.getAllProjectIdea(teamName);
+        List<FrontIdea> ideas = ideaService.findAllTeamIdea(teamName);
 
-
+        model.addAttribute("manager", Roles.UserProjectManager.getRoleMsg());
         model.addAttribute("ideas",ideas);
         model.addAttribute("projects",projects);
         model.addAttribute("applies",applies);
@@ -205,11 +204,11 @@ public class UserController {
         List<Tag> allTag = backIdeaService.findAllTag();
         model.addAttribute("tags",allTag);
         model.addAttribute("teamName",teamName);
-        return "/pages/front/html/team/addProjectIdea";
+        return "/pages/front/html/team/addTeamIdea";
     }
     @RequestMapping("/addTeamIdea")
     public String addTeamIdea(String ideaName, Integer tagId, String ideaMsg,String teamName ,HttpServletRequest request){
-        ideaService.addProjectIdea(ideaName,tagId,ideaMsg,teamName,request);
+        ideaService.addTeamIdea(ideaName,tagId,ideaMsg,teamName,request);
         return "redirect:/UserC/toMyTeamMsg?teamName="+teamName;
     }
 
@@ -223,8 +222,6 @@ public class UserController {
 
     @RequestMapping("/toAddProject")
     public String toAddProject(String teamName,Model model){
-        List<UserTag> tags = userService.getUsersForTag(teamName);
-        model.addAttribute("tags",tags);
         model.addAttribute("teamName",teamName);
         return "/pages/front/html/team/addProject";
     }
@@ -295,6 +292,14 @@ public class UserController {
     public String agree(Integer userId,Integer teamId){
         String agree = userService.agree(userId, teamId);
         return agree;
+    }
+
+
+
+    @RequestMapping("/awardManager")
+    @ResponseBody
+    public String awardManager(Integer userId, String teamName){
+        return userService.awardManager(userId,teamName);
     }
 }
 

@@ -8,12 +8,15 @@ import cn.bb.sourceideamanage.dao.front.UserMapper;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.ProjectService;
+import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,8 @@ public class UserServiceImpl  implements UserService {
     @Resource
     TeamMapper teamMapper;
 
+    @Autowired
+    TeamService teamService;
     @Override
     public User findUserById(Integer userId) {
         return userMapper.findUserById(userId);
@@ -72,6 +77,7 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public String delMember(Integer userId, String teamName) {
         try {
             userMapper.delMember(userId,teamName);
@@ -97,6 +103,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "myTeamMember ",key = "'myTeamMember=[teamName='+#teamName+']'")
     public String agreeMember(Integer userId,String teamName){
         try {
 
@@ -160,12 +167,14 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "myTeams", key = "'myTeams=[teamName='+#teamName+']'")
     public List<FrontProject> findProjects(String teamName) {
         return userMapper.findProjects(teamName);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "myTeams",key = "'myTeams=[teamName='+#teamName+']'")
     public String delProject(Integer projectId) {
         try {
             userMapper.delProject(projectId);
@@ -196,6 +205,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "myTeams",allEntries = true)
     public String addTeamProject(String teamName, String projectName, String projectMsg) {
         try {
             Integer teamId = userMapper.getTeamId(teamName);
@@ -261,6 +271,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "userMsg",key = "'userMsg=[userId='+#userId+']'")
     public frontUser getUserMsg(Integer userId) {
         frontUser userMsg = userMapper.getUserMsg(userId);
         return userMsg;
@@ -280,12 +291,44 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = "inviteList",key = "'inviteList=[userId='+#userId+']'")
     public List<inviteUser> getUserInvite(Integer userId) {
 
         return userMapper.getUserInvite(userId);
     }
 
 
+    /**
+     * 团长授予项目管理员
+     * @param userId
+     * @param teamName
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
+    public String awardManager(Integer userId, String  teamName){
+        try{
+            Integer teamId = teamService.getTeamId(teamName);
+            //判断 该用户所在团队 是不是项目管理员
+            Integer roleId = teamService.checkManager(userId, teamId,Roles.UserProjectManager.getRoleId());
+            if(null != roleId && roleId.equals(Roles.UserProjectManager.getRoleId())){
+                log.info("该成员已经是项目管理员!");
+                jsonObject.put("msg","该成员已经是项目管理员!");
+                jsonObject.put("isSuccess","0");
+                return jsonObject.toString();
+            }
+            //对用户所在团队 的团员职位进行授权为项目管理员
+            teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectMember.getRoleName()+":"+teamId);
+            log.info("授予项目管理员成功!!");
+            jsonObject.put("msg","授予项目管理员成功!!");
+            jsonObject.put("isSuccess","1");
+        }catch (Exception e){
+            log.error("授予项目管理员失败!! {}",e.getMessage());
+            jsonObject.put("msg","授予项目管理员失败!!");
+            jsonObject.put("isSuccess","0");
+        }
+        return jsonObject.toString();
 
-
+    }
 }

@@ -11,6 +11,8 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class ProjectServiceImpl implements ProjectService {
     JSONObject jsonObject;
 
     @Override
+    @Cacheable(cacheNames = "projectPage",key = "'projectPage=[page='+#page+'][size='+#size+'][projectName='+#projectName+']'")
     public PageInfo<FrontProject> findAllFrontProject(int page, int size, String projectName) {
         PageHelper.startPage(page,size);
         List<FrontProject> projects = projectMapper.findAllFrontProject(projectName, Roles.UserTeamManager.getRoleId());
@@ -39,6 +42,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Cacheable(cacheNames = "projectMsg", key = "'projectMsg=[projectId='+#projectId+']'")
     public FrontProjectMsg getProjectMsgByProjectId(Integer projectId) {
         return projectMapper.getProjectMsgByProjectId(projectId);
     }
@@ -80,14 +84,22 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Cacheable(cacheNames = "allProjectsByUserId" ,key = "'allProjectsByUserId=[userId='+#userId+']'")
     public List<String> getAllProjects(Integer userId) {
         return projectMapper.getAllProjects(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = "myProjects",key = "'myProjects=[page='+#page+'][size='+#size+'][projectName='+#projectName+'][userId='+#userId+']'")
     public PageInfo<FrontProject> findAllMyProject(int page, int size, String projectName, Integer userId) {
         PageHelper.startPage(page,size);
         List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId);
         return new PageInfo<>(projects);
+    }
+
+    @Override
+    @Cacheable(cacheNames = "getTeamIdByProjectId" ,key = "'getTeamIdByProjectId=[projectId='+#projectId+']'")
+    public Integer getTeamIdByProjectId(Integer projectId) {
+        return projectMapper.getTeamIdByProjectId(projectId);
     }
 }

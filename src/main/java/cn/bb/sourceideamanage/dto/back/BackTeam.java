@@ -5,13 +5,15 @@ import cn.bb.sourceideamanage.entity.Project;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @ToString
-public class BackTeam {
+public class BackTeam implements Serializable {
+    private static final long serialVersionUID = -4351297260075962504L;
     private Integer teamId;
     private String teamName;
     private String teamCaptain;

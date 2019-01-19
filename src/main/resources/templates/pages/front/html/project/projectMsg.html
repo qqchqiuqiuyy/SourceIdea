@@ -27,10 +27,14 @@
           <p th:text="'所属团队: '+${projectMsg.teamName}"></p>
           <br>
           <hr>
-          <p>团队成员：</p>
+          <h1>团队成员：</h1>
 
-          <div th:each=" member :${projectMsg.projectMembers}">
-            <p th:text="${member.userName} + ' : ' + ${member.projectRole}"></p>
+          <div th:each=" member :${members}">
+            <p th:text="'名字:'+${member.userName} "></p>
+            <p th:text="'职级:'+${member.teamRoleName}"></p>
+            <p th:text="'加入时间:'+${member.memberJoinTime}"></p>
+            <br>
+            <hr>
           </div>
           <hr>
           <br>

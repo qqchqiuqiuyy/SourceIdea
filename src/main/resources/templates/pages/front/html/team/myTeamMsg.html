@@ -60,19 +60,19 @@
               <a  th:text="${member.userName}"></a>
             </h4>
             <div class="fly-list-info">
-                <cite th:text="${member.teamRole}"></cite>
+                <cite th:id="'tr'+${member.userId}" th:text="${member.teamRole}"></cite>
               <span  th:text="'入团时间: '+${member.memberJoinTime}"></span>
-
-
               <!--团长可看-->
               <shiro:hasRole name="|user:teamManager:${teamId}|" >
-                  <span style="display: inline-block;margin-right:250px;float: right" class="delMember" >
-                   <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delMember(this.value)"  th:value="${member.userId}" type="button" th:id="'delButton'+${member.userId}">删除</button>
-                  <i th:text="${teamName}" th:id="'i'+${member.userId}" style="display: none"></i>
+                  <span style="display: inline-block;" class="awardManager" >
+                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:deepskyblue"  onclick="awardManager(this.value)"  th:value="${member.userId}" type="button" th:id="'awButton'+${member.userId}">项目管理员</button>
+                     <i th:text="${teamName}" th:id="'aw'+${member.userId}" style="display: none"></i>
+                   </span>
+                  <span style="display: inline-block;margin-right:250px;" class="delMember" >
+                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delMember(this.value)"  th:value="${member.userId}" type="button" th:id="'delButton'+${member.userId}">删除</button>
+                     <i th:text="${teamName}" th:id="'i'+${member.userId}" style="display: none"></i>
                    </span>
               </shiro:hasRole>
-
-
             </div>
             <div class="fly-list-badge">
             </div>
@@ -90,17 +90,12 @@
             </h3>
             <div class="fly-list-info">
               <span th:text="${project.projectCreateTime}"></span>
-
-
               <!--团长 项目管理可看-->
               <shiro:hasAnyRoles name="|user:teamManager:${teamId} , user:projectManager:${teamId}|" >
                   <span style="display: inline-block;margin-right:250px;float: right" class="delP" >
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
                    </span>
               </shiro:hasAnyRoles>
-
-
-
             </div>
             <div class="fly-list-badge">
             </div>
@@ -180,8 +175,8 @@ layui.config({
 }).use('fly');
 
 </script>
-<!--<script th:inline="javascript">
-  var userRoles =   [[${userRoles}]]
+<script th:inline="javascript">
+ /* var userRoles =   [[${userRoles}]]
   console.log(userRoles);
 
   for (var i=0;i<userRoles.length;i++){
@@ -198,8 +193,8 @@ layui.config({
       $(".addIdea").show();
     }
     console.log(userRoles[i]);
-  }
-</script>-->
+  }*/
+</script>
 <script type="text/javascript">
   $(function () {
     $(".layui-clear li").eq(7).addClass("layui-this");
@@ -225,6 +220,37 @@ layui.config({
         }else{
           layer.msg(data.msg);
         }
+      },
+      error:function (data) {
+        layer.msg("未登录无法点赞哦! 请登录")
+      }
+    });
+  }
+
+
+  /*授予项目管理员*/
+  function awardManager(userId) {
+    /*  var userId = val.value();*/
+    console.log(userId);
+    var teamName = $("#aw"+userId).text();
+    console.log(teamName);
+    var mamager = '[[${manager}]]';
+    $.ajax({
+      url:"/UserC/awardManager",
+      data:{
+        "userId" : userId,
+        "teamName":teamName
+      },
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        if(data.isSuccess == "1"){
+          $("#awButton" + userId).parent().remove();
+          $("#tr"+userId).text(mamager);
+        }
+        layer.msg(data.msg);
       },
       error:function (data) {
         layer.msg("未登录无法点赞哦! 请登录")

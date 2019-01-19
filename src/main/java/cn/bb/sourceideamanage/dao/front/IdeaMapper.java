@@ -88,7 +88,7 @@ public interface IdeaMapper {
 
     @Insert("INSERT INTO idea (tag_id,user_id,idea_msg,idea_name,team_id) VALUES" +
             "   (#{tagId},#{userId},#{ideaMsg},#{ideaName},#{teamId})")
-    public void addProjectIdea(@Param("ideaName") String ideaName, @Param("tagId") Integer tagId,
+    public void addTeamIdea(@Param("ideaName") String ideaName, @Param("tagId") Integer tagId,
                         @Param("ideaMsg") String ideaMsg,   @Param("userId") Integer userId,
                                @Param("teamId") Integer teamId);
 
@@ -106,7 +106,7 @@ public interface IdeaMapper {
             "WHERE " +
             "i.team_id = #{teamId} AND i.tag_id = t.tag_id " +
             "ORDER BY ideaCreateTime DESC")
-    public List<FrontIdea> findAllProjectIdea(@Param("teamId") Integer teamId);
+    public List<FrontIdea> findAllTeamIdea(@Param("teamId") Integer teamId);
 
 
     @Delete("DELETE FROM idea" +

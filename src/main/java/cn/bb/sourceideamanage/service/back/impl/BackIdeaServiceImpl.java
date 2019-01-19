@@ -7,6 +7,8 @@ import cn.bb.sourceideamanage.service.back.BackIdeaService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class BackIdeaServiceImpl implements BackIdeaService {
     BackIdeaMapper mapper;
 
     @Override
+    @Cacheable(cacheNames = "backIdeasPage",key = "'backIdeasPage=[page='+#page+'][size='+#size+'][ideaName=['+#ideaName+'][tagName'+#tagName+']'")
     public PageInfo<BackIdea> findBackIdeaByPage(int page, int size, String ideaName, String tagName) {
         PageHelper.startPage(page,size);
         List<BackIdea> ideas = mapper.findAllBackIdea(ideaName, tagName);
@@ -27,6 +30,7 @@ public class BackIdeaServiceImpl implements BackIdeaService {
     }
 
     @Override
+    @Cacheable( cacheNames = "allTag",key = "'findAllTag'")
     public List<Tag> findAllTag() {
         return mapper.findAllTag();
     }

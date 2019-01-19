@@ -33,4 +33,5 @@ public interface TeamService {
     public List<TeamMember> findAllMemberByTeamId( Integer teamId);
     public List<Idea> findAllTeamIdeas(Integer teamId);
     public TeamMsg findTeamMsg(String teamName);
+    public Integer checkManager( Integer userId, Integer teamId,Integer roleId);
 }

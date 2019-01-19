@@ -15,4 +15,5 @@ public interface ProjectService {
     public String joinProject(Integer userId,Integer projectId);
     public List<String> getAllProjects( Integer userId);
     public PageInfo<FrontProject> findAllMyProject(int page,int size, String projectName, Integer userId);
+    public Integer getTeamIdByProjectId( Integer projectId);
 }

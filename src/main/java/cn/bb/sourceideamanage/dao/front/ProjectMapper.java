@@ -54,13 +54,6 @@ public interface ProjectMapper {
             " WHERE p.project_id = #{projectId} AND p.team_id = t.team_id  " +
             "   GROUP BY projectName "
            )
-    @Results({
-            @Result(column = "teamId", javaType = List.class, property = "projectMembers",
-                    many = @Many(   //一对多
-                            select = "cn.bb.sourceideamanage.dao.front.ProjectMapper.getProjectMembers", //上面搜索的方法
-                            fetchType = FetchType.LAZY
-                    ))
-    })
     public FrontProjectMsg getProjectMsgByProjectId(@Param("projectId") Integer projectId);
 
 
@@ -106,4 +99,8 @@ public interface ProjectMapper {
 
     @Select("select project_id from project where project_name = #{projectName}")
     public Integer checkProjectName(@Param("projectName") String projectName);
+
+
+    @Select("SELECT team_id FROM project p WHERE p.project_id = #{projectId}")
+    public Integer getTeamIdByProjectId(@Param("projectId") Integer projectId);
 }

@@ -36,4 +36,4 @@ debug: true
 
 # 缓存失效时间 秒
 cache:
-  timeOut: 60
+  timeOut: 600

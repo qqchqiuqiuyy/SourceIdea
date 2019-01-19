@@ -227,4 +227,12 @@ public interface TeamMapper {
 
     @Select("SELECT * FROM team WHERE team_name = #{teamName}")
     public TeamMsg findTeamMsg(@Param("teamName") String teamName);
+
+
+    @Select("SELECT role_id FROM user_team where user_id = #{userId} AND team_id = #{teamId} AND role_id = #{roleId}")
+    public Integer checkManager(@Param("userId") Integer userId,@Param("teamId") Integer teamId,@Param("roleId") Integer roleId);
+
+    @Update("UPDATE user_team SET role_id = #{roleId},role_name = #{roleName} WHERE user_id = #{userId} AND team_id = #{teamId} AND role_id = #{originRoleId}")
+    public void awardManager(@Param("userId") Integer userId, @Param("teamId") Integer teamId ,@Param("originRoleId") Integer originRoleId,
+                             @Param("roleId") Integer roleId , @Param("roleName") String roleName);
 }

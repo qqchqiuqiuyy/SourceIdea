@@ -42,9 +42,9 @@ public interface IdeaService {
     public void commentIdea(String content, String ideaName, Integer ideaId , HttpServletRequest request);
 
     public void addIdea(String ideaName,Integer tagId,String ideaMsg,HttpServletRequest request);
-    public void addProjectIdea(String ideaName,Integer tagId,String ideaMsg,String teamName,HttpServletRequest request);
+    public void addTeamIdea(String ideaName,Integer tagId,String ideaMsg,String teamName,HttpServletRequest request);
 
-    public List<FrontIdea> getAllProjectIdea(String teamName);
+    public List<FrontIdea> findAllTeamIdea(String teamName);
 
     public String delIdea(Integer ideaId);
 }
