@@ -2,7 +2,7 @@ package cn.bb.sourceideamanage.service.front.impl;
 
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
-import cn.bb.sourceideamanage.dto.front.comment;
+import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.IdeaService;
 import com.github.pagehelper.PageInfo;
@@ -14,8 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.clients.jedis.Jedis;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -118,7 +116,7 @@ public class IdeaServiceImplTest {
 
     @Test
     public void getAllComment(){
-        List<comment> allComment = ideaService.getAllComment(3);
+        List<Comment> allComment = ideaService.getAllComment(3);
         System.out.println(allComment);
     }
 }

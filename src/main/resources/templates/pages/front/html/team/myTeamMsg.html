@@ -225,7 +225,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess == "1"){
+        if(data.success == "1"){
           $("#delIdea" + ideaId).parent().parent().parent().remove();
           layer.msg(data.msg);
         }else{
@@ -257,7 +257,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess == "1"){
+        if(data.success == "1"){
           $("#awButton" + userId).parent().remove();
           $("#tr"+userId).text(mamager);
         }
@@ -286,7 +286,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess == "1"){
+        if(data.success == "1"){
           $("#delButton" + userId).parent().parent().parent().remove();
           layer.msg(data.msg);
         }else{
@@ -313,7 +313,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess = "1"){
+        if(data.success = "1"){
           $('#archive'+projectId).parent().remove();
         }
         layer.msg(data.msg);
@@ -337,7 +337,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess == "1"){
+        if(data.success == "1"){
           $("#delProject" + projectId).parent().parent().parent().remove();
           layer.msg(data.msg);
         }else{
@@ -367,7 +367,7 @@ layui.config({
       cache:false,
       success:function(data){//ajax返回的数据
         console.log(data);
-        if(data.isSuccess == "1"){
+        if(data.success == "1"){
           $("#agree" + userId).parent().parent().remove();
           layer.msg(data.msg);
         }else{

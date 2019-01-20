@@ -1091,7 +1091,7 @@ Fixed Issues:
 * [#8663](https://dev.ckeditor.com/ticket/8663): Fixed [`element.renameNode()`](https://docs.ckeditor.com/ckeditor4/docs/#!/api/CKEDITOR.dom.element-method-renameNode) not clearing the [`element.getName()`](https://docs.ckeditor.com/ckeditor4/docs/#!/api/CKEDITOR.dom.element-method-getName) cache.
 * [#11574](https://dev.ckeditor.com/ticket/11574): Fixed: *Backspace* destroying the DOM structure if an inline editable is placed in a list item.
 * [#11603](https://dev.ckeditor.com/ticket/11603): Fixed: [Table Resize](https://ckeditor.com/cke4/addon/tableresize) attaches to tables outside the editable.
-* [#9205](https://dev.ckeditor.com/ticket/9205), [#7805](https://dev.ckeditor.com/ticket/7805), [#8216](https://dev.ckeditor.com/ticket/8216): Fixed: `{cke_protected_1}` appearing in data in various cases where HTML comments are placed next to `"` or `'`.
+* [#9205](https://dev.ckeditor.com/ticket/9205), [#7805](https://dev.ckeditor.com/ticket/7805), [#8216](https://dev.ckeditor.com/ticket/8216): Fixed: `{cke_protected_1}` appearing in data in various cases where HTML Comments are placed next to `"` or `'`.
 * [#11635](https://dev.ckeditor.com/ticket/11635): Fixed: Some attributes are not protected before the content is passed through the fix bin.
 * [#11660](https://dev.ckeditor.com/ticket/11660): [IE] Fixed: Table content is lost when some extra markup is inside the table.
 * [#11641](https://dev.ckeditor.com/ticket/11641): Fixed: Switching between modes in the classic editor removes content styles for the inline editor.

@@ -93,16 +93,16 @@ public class TeamServiceImpl implements TeamService {
                 teamMapper.apply(userId, teamId);
                 log.info("申请加入团队成功!!");
                 jsonObject.put("msg","申请加入团队成功!!等待团长审批!!");
-                jsonObject.put("isSuccess","1");
+                jsonObject.put("success","1");
             }else{
                 log.warn("已申请!!等待审批中 请勿重复申请");
                 jsonObject.put("msg","已申请 等待审批 请勿重复申请");
-                jsonObject.put("isSuccess","0");
+                jsonObject.put("success","0");
             }
         }else{
             log.info("申请加入失败!! 已在此团队");
             jsonObject.put("msg","已在此团队,请勿重复加入!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
         return jsonObject.toString();
@@ -163,7 +163,7 @@ public class TeamServiceImpl implements TeamService {
             if(tId != null){
                 log.error("新建团队错误!! 已有重复团队");
                 jsonObject.put("msg","新建团队发生错误!!已有重复团队");
-                jsonObject.put("isSuccess","0");
+                jsonObject.put("success","0");
 
             }else{
                 NewTeam newTeam = new NewTeam();
@@ -180,7 +180,7 @@ public class TeamServiceImpl implements TeamService {
                 int successNums = teamMapper.addTeamRoles(role5, teamId,userId);
                 log.info("successNums={}",successNums);
                 jsonObject.put("msg","创建团队成功!!");
-                jsonObject.put("isSuccess","1");
+                jsonObject.put("success","1");
                 jsonObject.put("successUrl","/UserC/toMyTeamMsg?teamName=" + teamName);
             }
 
@@ -188,7 +188,7 @@ public class TeamServiceImpl implements TeamService {
         }catch (Exception e){
             log.error("新建团队错误!!exception={}",e.toString());
             jsonObject.put("msg","新建团队发生错误!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
         return jsonObject.toString();
     }

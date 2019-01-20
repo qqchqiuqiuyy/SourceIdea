@@ -31,4 +31,5 @@ public interface UserService {
     public String agree(Integer userId,Integer teamId);
     public List<Integer> getAllTeamRole(Integer userId,Integer teamId);
     public String awardManager(Integer userId,  String  teamName);
+    public String getUserName(Integer userId);
 }

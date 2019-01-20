@@ -60,6 +60,8 @@ public interface UserMapper {
             " AND team_id IN ( SELECT t.team_id FROM team t WHERE t.team_name = #{teamName} )")
     public void delMember(@Param("userId") Integer userId ,@Param("teamName") String teamName);
 
+    @Update("UPDATE team set team_nums = team_nums - 1 WHERE team_id #{teamId}")
+    public void decrMemberNums(@Param("teamId") Integer teamId);
 
     @Select("SELECT a.team_id AS teamId, a.user_id AS userId ,a.apply_time AS applyTime ,u.user_name AS userName" +
             "   FROM apply a, team t,user u" +
@@ -131,5 +133,9 @@ public interface UserMapper {
             " ut.user_id = #{userId}  " +
             " AND ut.team_id = #{teamId}")
     public List<Integer> getAllTeamRole(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+
+
+    @Select("select user_name from user where user_id = #{userId}")
+    public String getUserName(@Param("userId") Integer userId);
 }
 

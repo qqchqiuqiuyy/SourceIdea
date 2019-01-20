@@ -63,8 +63,8 @@ lists, loop definitions, or array/object indices. For example:
 
 #### Comments ####
 
-Use [jsDoc](http://usejsdoc.org) comments for all file and function headers.
-Use // for all inline and block comments, regardless of length.
+Use [jsDoc](http://usejsdoc.org) Comments for all file and function headers.
+Use // for all inline and block Comments, regardless of length.
 
 All // comment blocks should have an empty line above *and* below them. For
 example:
@@ -80,7 +80,7 @@ example:
 
 #### Wrapping ####
 
-Block comments should be wrapped at 80 characters.
+Block Comments should be wrapped at 80 characters.
 
 Code should attempt to wrap at 80 characters, but may run longer if wrapping
 would hurt readability more than having to scroll horizontally.  This is a

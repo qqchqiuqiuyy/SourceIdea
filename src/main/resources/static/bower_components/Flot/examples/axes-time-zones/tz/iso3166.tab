@@ -18,7 +18,7 @@
 # Columns are separated by a single tab.
 # The table is sorted by country code.
 #
-# Lines beginning with `#' are comments.
+# Lines beginning with `#' are Comments.
 #
 # From Arthur David Olson (2011-08-17):
 # Resynchronized today with the ISO 3166 site (adding SS for South Sudan).

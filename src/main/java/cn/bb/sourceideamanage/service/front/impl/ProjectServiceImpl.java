@@ -67,16 +67,16 @@ public class ProjectServiceImpl implements ProjectService {
                 teamMapper.apply(userId,teamId);
                 log.info("申请加入成功!! 等待团长审批!");
                 jsonObject.put("msg","申请加入成功!! 等待团长审批!");
-                jsonObject.put("isSuccess","1");
+                jsonObject.put("success","1");
             }else{
                 log.error("错误! 已经申请过了!");
                 jsonObject.put("msg","已提交过申请,等待审批中,请勿重复申请!!");
-                jsonObject.put("isSuccess","0");
+                jsonObject.put("success","0");
             }
         }else{
             log.error("已加入该项目! 请勿重复操作");
             jsonObject.put("msg","已加入该项目! 请勿重复操作");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
 
         }
         return jsonObject.toString();
@@ -119,17 +119,17 @@ public class ProjectServiceImpl implements ProjectService {
             if(integer == 1){
                 log.error("已归档 无法修改!");
                 jsonObject.put("msg","修改项目失败! 已归档 无法修改!");
-                jsonObject.put("isSuccess","0");
+                jsonObject.put("success","0");
                 return jsonObject.toString();
             }
             projectMapper.editProject(projectName,projectId,projectMsg);
             jsonObject.put("msg","修改项目成功!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
             jsonObject.put("successUrl","redirect:/ProjectC/toProjectMsg?projectId="+projectId);
             log.info("修改项目成功!");
         }catch (Exception e){
             jsonObject.put("msg","修改项目失败!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
             log.error("修改项目失败!");
         }
 
@@ -145,12 +145,12 @@ public class ProjectServiceImpl implements ProjectService {
         try{
              projectMapper.archiveProject(projectId);
             jsonObject.put("msg","归档成功!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
             log.info("归档成功!");
         }catch (Exception e){
             log.error("归档失败!!{}",e.toString());
             jsonObject.put("msg","归档失败!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
         return jsonObject.toString();
 

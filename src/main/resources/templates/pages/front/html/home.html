@@ -121,7 +121,7 @@ function agree(teamId) {
     cache:false,
     success:function(data){//ajax返回的数据
       console.log(data);
-      if(data.isSuccess == "1"){
+      if(data.success == "1"){
         $("#agree" + teamId).parent().remove();
 
       }

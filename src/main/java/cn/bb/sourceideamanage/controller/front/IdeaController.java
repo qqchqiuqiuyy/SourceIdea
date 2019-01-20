@@ -1,21 +1,17 @@
 package cn.bb.sourceideamanage.controller.front;
 
-import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
-import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
-import cn.bb.sourceideamanage.dto.front.comment;
+import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Tag;
-import cn.bb.sourceideamanage.entity.commentIdea;
 import cn.bb.sourceideamanage.service.back.BackIdeaService;
 import cn.bb.sourceideamanage.service.front.IdeaService;
+import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +31,9 @@ public class IdeaController {
     @Autowired
     BackIdeaService backIdeaService;
 
+
+        @Autowired
+        UserService userService;
 
     /**
      * 去idea想法列表 并且有分页
@@ -79,10 +78,10 @@ public class IdeaController {
 
     @RequestMapping("/toIdeaComments")
     public String toIdeaComments(Integer ideaId,String ideaName,Model model){
-        List<comment> comments = ideaService.getAllComment(ideaId);
+        List<Comment> Comments = ideaService.getAllComment(ideaId);
         model.addAttribute("ideaId",ideaId);
         model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments",comments);
+        model.addAttribute("comments", Comments);
         return "/pages/front/html/idea/ideaComments";
     }
 
@@ -95,12 +94,16 @@ public class IdeaController {
     }
 
     @RequestMapping("/commentIdea")
-    public String commentIdea(Model model,String content, String ideaName,Integer ideaId ,HttpServletRequest request){
+    public String commentIdea(Model model,HttpServletRequest request,
+                              String content, String ideaName,
+                              Integer ideaId ){
+
+
         ideaService.commentIdea(content,ideaName,ideaId,request);
-        List<comment> comments = ideaService.getAllComment(ideaId);
+        List<Comment> Comments = ideaService.getAllComment(ideaId);
         model.addAttribute("ideaId",ideaId);
         model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments",comments);
+        model.addAttribute("comments", Comments);
         return "/pages/front/html/idea/ideaComments";
     }
 
@@ -117,5 +120,15 @@ public class IdeaController {
         return "redirect:/UserC/toMyIdea";
     }
 
+
+    @RequestMapping("/commentIdeaUser")
+    @ResponseBody
+    public String commentIdeaUser(HttpServletRequest request,String content,
+                                  Integer ideaId,String ideaName,
+                                  Integer uid,Integer parentId,String parentName){
+        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        String userName = userService.getUserName(userId);
+        return ideaService.commentIdeaUser(uid,ideaId,ideaName,userId,userName,parentId,parentName,content);
+    }
 
 }

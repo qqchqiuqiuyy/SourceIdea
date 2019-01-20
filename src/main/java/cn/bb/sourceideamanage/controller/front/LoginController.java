@@ -52,7 +52,7 @@ public class LoginController {
     public String register(String account, String password, String repassword, String username, Model model){
         Map<String, String> info = loginService.register(account, password, repassword, username);
         log.info("info={}",info);
-        String isSuccess = info.get("isSuccess");
+        String isSuccess = info.get("success");
         if(isSuccess.equals("1")){
             return "forward:/UserC/toLogin";
         }else{
@@ -65,7 +65,7 @@ public class LoginController {
     @RequestMapping("/check")
     public String check(Model model,String account, String password, HttpServletRequest request, HttpServletResponse response){
         Map<String, String> info = loginService.check(account, password, request, response);
-        String isSuccess = info.get("isSuccess");
+        String isSuccess = info.get("success");
         if(isSuccess.equals("1")){
             return "forward:/IndexC/toIndex";
         }else{

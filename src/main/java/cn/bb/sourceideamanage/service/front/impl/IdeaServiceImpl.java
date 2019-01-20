@@ -5,7 +5,7 @@ import cn.bb.sourceideamanage.dao.front.IdeaMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
-import cn.bb.sourceideamanage.dto.front.comment;
+import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.IdeaService;
 import com.github.pagehelper.PageHelper;
@@ -82,26 +82,21 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     /**
-     * 点赞
+     * 点赞 userId存在Set里面 计算set大小即可
      * @param ideaId
      * @param userId
      * @return
      */
     @Override
     public String upIdeaSupports(String ideaId, String userId) {
-        //TODO 刷新回数据库
-        //首先判断redis的Set中有没有这个userId
         String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
-        String supportsKey = IdeaSupportsKey.SupportsKey.getKey();
         if(jedis.sismember(IdeaSupportsKey.UserSetKey.getKey()+ ideaId,userId)){
             jedis.srem(userSetKey+ideaId,userId);
-         //   jedis.decr(supportsKey+ideaId);
             jsonObject.put("msg","已取消赞");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }else{
             jedis.sadd(userSetKey+ideaId,userId);
-         //   jedis.incr(supportsKey+ideaId);
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
             jsonObject.put("msg","已点赞");
         }
         return jsonObject.toString();
@@ -127,7 +122,7 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Cacheable(cacheNames = "comments",key = "'comments=['+#ideaId+']'")
-    public List<comment> getAllComment(Integer ideaId) {
+    public List<Comment> getAllComment(Integer ideaId) {
         return ideaMapper.getAllComment(ideaId);
     }
 
@@ -141,7 +136,7 @@ public class IdeaServiceImpl implements IdeaService {
             ideaMapper.commentIdea(content,ideaName,ideaId,userId,userName);
             log.info("评论成功!");
         }catch (Exception e){
-            log.error("评论错误!!");
+            log.error("评论错误!!e={}",e.getMessage());
         }
     }
 
@@ -189,13 +184,42 @@ public class IdeaServiceImpl implements IdeaService {
             ideaMapper.delIdeaComment(ideaId);
             log.info("删除想法评论成功!");
             jsonObject.put("msg","删除想法成功!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.error("删除想法失败!");
             jsonObject.put("msg","删除想法失败!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
+        return jsonObject.toString();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void durSupports(Integer ideId,Long supports) {
+        try {
+            ideaMapper.durSupports( ideId, supports);
+            log.info("点赞刷回数据库成功!");
+        }catch (Exception e){
+            log.error("点赞刷回数据库失败!! e={}",e);
+        }
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String commentIdeaUser(Integer uid,Integer ideaId,String ideaName,
+                                  Integer userId,String userName, Integer parentId, String parentName ,String content ) {
+        try{
+            ideaMapper.commentIdeaUser(uid,ideaId,ideaName,userId,userName,parentId,parentName,content);
+            log.info("评论 某人的评论成功!");
+            jsonObject.put("msg","评论成功!");
+            jsonObject.put("success","1");
+        }catch (Exception e){
+            log.error("评论失败!e={}",e.getMessage());
+            jsonObject.put("msg","评论失败!");
+            jsonObject.put("success","0");
+        }
         return jsonObject.toString();
     }
 

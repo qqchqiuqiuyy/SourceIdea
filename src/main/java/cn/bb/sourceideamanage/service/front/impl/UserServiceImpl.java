@@ -80,13 +80,15 @@ public class UserServiceImpl  implements UserService {
     @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public String delMember(Integer userId, String teamName) {
         try {
+            Integer teamId = teamService.getTeamId(teamName);
             userMapper.delMember(userId,teamName);
+            userMapper.decrMemberNums(teamId);
             jsonObject.put("msg","删除成功!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.error("删除错误");
             jsonObject.put("msg","删除错误 请重试");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
         return jsonObject.toString();
@@ -119,11 +121,11 @@ public class UserServiceImpl  implements UserService {
             //删除邀请表
             userMapper.delInvite(userId,teamId);
             jsonObject.put("msg","同意成功!!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.warn("同意进团队错误!!");
             jsonObject.put("msg","同意进团队发生错误!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
         return jsonObject.toString();
@@ -152,11 +154,11 @@ public class UserServiceImpl  implements UserService {
             userMapper.delApply(userId,teamId);
             log.info("成功进入团队!!");
             jsonObject.put("msg","成功进入团队!!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.warn("同意进团队错误!!");
             jsonObject.put("msg","同意进团队发生错误!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
         return jsonObject.toString();
     }
@@ -180,11 +182,11 @@ public class UserServiceImpl  implements UserService {
             userMapper.delProject(projectId);
             log.info("删除项目成功!");
             jsonObject.put("msg","删除成功");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.warn("删除项目失败!");
             jsonObject.put("msg","删除项目失败!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
         return jsonObject.toString();
     }
@@ -213,18 +215,18 @@ public class UserServiceImpl  implements UserService {
             if(projectId != null){
                 log.error("已经存在该项目名!! 请勿重复");
                 jsonObject.put("msg","已经存在该项目名!! 请勿重复");
-                jsonObject.put("isSuccess","2");
+                jsonObject.put("success","2");
                 return jsonObject.toString();
             }
             projectMapper.addTeamProject(teamId,projectName,projectMsg, ProjectArchive.NOTFINISH.getArchive());
             log.info("添加项目成功!!");
             jsonObject.put("msg","添加项目成功!!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
             jsonObject.put("successUrl","/UserC/toMyTeamMsg?teamName=" + teamName);
         }catch (Exception e){
             log.error("添加项目失败!!");
             jsonObject.put("msg","添加项目失败!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
         return jsonObject.toString();
@@ -253,18 +255,18 @@ public class UserServiceImpl  implements UserService {
             boolean contains = teamUserId.contains(userId);
             if(contains){
                 log.error("错误 该用户已在此团队!");
-                jsonObject.put("isSuccess","2");
+                jsonObject.put("success","2");
                 jsonObject.put("msg","错误 该用户已在此团队!");
             }else if(s == null){
                 teamMapper.teamInvite(teamId,userId);
                 log.info("邀请成功");
-                jsonObject.put("isSuccess","1");
+                jsonObject.put("success","1");
                 jsonObject.put("msg","邀请成功");
             }
         }catch (Exception e){
             log.error("邀请发生错误!");
             jsonObject.put("msg","发生错误!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
 
         return jsonObject.toString();
@@ -315,20 +317,25 @@ public class UserServiceImpl  implements UserService {
             if(null != roleId && roleId.equals(Roles.UserProjectManager.getRoleId())){
                 log.info("该成员已经是项目管理员!");
                 jsonObject.put("msg","该成员已经是项目管理员!");
-                jsonObject.put("isSuccess","0");
+                jsonObject.put("success","0");
                 return jsonObject.toString();
             }
             //对用户所在团队 的团员职位进行授权为项目管理员
             teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectManager.getRoleName()+":"+teamId);
             log.info("授予项目管理员成功!!");
             jsonObject.put("msg","授予项目管理员成功!!");
-            jsonObject.put("isSuccess","1");
+            jsonObject.put("success","1");
         }catch (Exception e){
             log.error("授予项目管理员失败!! {}",e.getMessage());
             jsonObject.put("msg","授予项目管理员失败!!");
-            jsonObject.put("isSuccess","0");
+            jsonObject.put("success","0");
         }
         return jsonObject.toString();
 
+    }
+    @Override
+    @Cacheable(cacheNames = "userName",key = "'userName=[userId='+#userId+']'")
+    public String getUserName(Integer userId){
+        return userMapper.getUserName(userId);
     }
 }

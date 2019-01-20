@@ -20,10 +20,10 @@
 # (1) makes some geographical sense, and
 # (2) puts the most populous zones first, where that does not contradict (1).
 #
-# Lines beginning with `#' are comments.
+# Lines beginning with `#' are Comments.
 #
 #country-
-#code	coordinates	TZ			comments
+#code	coordinates	TZ			Comments
 AD	+4230+00131	Europe/Andorra
 AE	+2518+05518	Asia/Dubai
 AF	+3431+06912	Asia/Kabul

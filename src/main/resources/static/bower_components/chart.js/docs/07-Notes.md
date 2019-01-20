@@ -16,7 +16,7 @@ For IE8 & below, I would recommend using the polyfill ExplorerCanvas - available
 </head>
 ```
 
-Usually I would recommend feature detection to choose whether or not to load a polyfill, rather than IE conditional comments, however in this case, VML is a Microsoft proprietary format, so it will only work in IE.
+Usually I would recommend feature detection to choose whether or not to load a polyfill, rather than IE conditional Comments, however in this case, VML is a Microsoft proprietary format, so it will only work in IE.
 
 Some important points to note in my experience using ExplorerCanvas as a fallback.
 

@@ -626,7 +626,7 @@ Other changes:
 - Smalltalk was excluded from DEFAULT_LANGUAGES to save traffic
 - [Vladimir Epifanov][voldmar] has implemented javascript style switcher for
   test.html
-- comments now allowed inside Ruby function definition
+- Comments now allowed inside Ruby function definition
 - [MEL][] language from [Shuen-Huei Guan][drake]
 - whitespace now allowed between `<pre>` and `<code>`
 - better auto-detection of C++ and PHP
@@ -657,7 +657,7 @@ Styles:
 In other news. [One small bug][bug] was fixed, built-in keywords were added for
 Python and C++ which improved auto-detection for the latter (it was shame that
 [my wife's blog][alenacpp] had issues with it from time to time). And lastly
-thanks go to Sam for getting rid of my stylistic comments in code that were
+thanks go to Sam for getting rid of my stylistic Comments in code that were
 getting in the way of [JSMin][].
 
 [zenburn]: http://en.wikipedia.org/wiki/Zenburn
@@ -821,7 +821,7 @@ already downloaded that one!
 Version 1.0 of javascript syntax highlighter is released!
 
 It's the first version available with English description. Feel free to post
-your comments and question to [highlight.js forum][forum]. And don't be afraid
+your Comments and question to [highlight.js forum][forum]. And don't be afraid
 if you find there some fancy Cyrillic letters -- it's for Russian users too :-)
 
 [forum]: http://softwaremaniacs.org/forum/viewforum.php?id=6

@@ -65,13 +65,13 @@ public class LoginServiceImpl implements LoginService {
         Map<String ,String> hashMap = new HashMap<>();
         if(account.equals("") || password.equals("") || username.equals("") || repassword.equals("")){
             hashMap.put("msg","信息输入不完整不能空白");
-            hashMap.put("isSuccess","0");
+            hashMap.put("success","0");
             log.error("信息输入不完整 msg={}",hashMap);
             return hashMap;
         }
         if(!password.equals(repassword)){
             hashMap.put("msg","两次密码不一致请重新输入");
-            hashMap.put("isSuccess","0");
+            hashMap.put("success","0");
             log.error("两次密码不一致 !! p1={},p2={}",password, repassword);
             return hashMap;
         }
@@ -86,10 +86,10 @@ public class LoginServiceImpl implements LoginService {
             loginMapper.addRole(user.getUserId(),1);
 
             hashMap.put("msg","success");
-            hashMap.put("isSuccess","1");
+            hashMap.put("success","1");
         }else{
             hashMap.put("msg","账号已存在请重新输入");
-            hashMap.put("isSuccess","0");
+            hashMap.put("success","0");
             log.error("账号已存在 account={}" ,account);
         }
 
@@ -118,16 +118,16 @@ public class LoginServiceImpl implements LoginService {
             session.setAttribute("password",password);
             session.setAttribute("userId", user.getUserId());
             session.setMaxInactiveInterval(60*30);
-            info.put("isSuccess","1");
+            info.put("success","1");
             info.put("account",account);
         }catch (UnknownAccountException e){
             log.error("账号不存在={}", account);
             info.put("msg","用户不存在");
-            info.put("isSuccess","0");
+            info.put("success","0");
         }catch (IncorrectCredentialsException e){
             log.error("密码错误={}",password);
             info.put("msg","密码错误");
-            info.put("isSuccess","0");
+            info.put("success","0");
         }
         return info;
     }

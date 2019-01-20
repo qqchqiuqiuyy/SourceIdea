@@ -8,9 +8,12 @@
   <meta name="description" content="SourceId社区">
   <link rel="stylesheet" href="../../../../../res/layui/css/layui.css">
   <link rel="stylesheet" href="../../../../../res/css/global.css">
+  <link rel="stylesheet" href="../../../../bower_components/bootstrap/dist/css/bootstrap.min.css">
+
 </head>
 <body>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script th:include="/pages/front/html/common/common :: script"></script>
 <!---->
 <div th:include=" /pages/front/html/common/common :: commonHeader"></div>
@@ -31,13 +34,15 @@
           <legend>回帖</legend>
         </fieldset>
 
-        <ul class="jieda" id="jieda" th:each="comment : ${comments}">
+
+        <ul class="jieda" id="jieda" th:each="comment : ${Comments}">
           <li data-id="111" class="jieda-daan">
             <div class="detail-about detail-about-reply" style="padding-left: 0px">
               <div class="fly-detail-user">
                 <a href="" class="fly-link">
                   <cite th:text="${comment.userName}"></cite>
                 </a>
+                <i style="display: none" th:text="${comment.userId}"></i>
               </div>
 
               <div class="detail-hits">
@@ -47,15 +52,127 @@
             <div class="detail-body jieda-body photos">
               <p th:text="${comment.content}"></p>
             </div>
+            <div class="panel-group" id="accordion" style="width: 800px;margin-left: 50px">
+              <div class="panel panel-default">
+                <div id="collapseOne" class="panel-collapse collapse in">
+
+                  <div class="panel-body">
+                    <ul th:each="child : ${comment.childComments}">
+                      <li>
+                        <span style="display: inline-block;margin-right: 20px" th:text="${child.userName} + ' @' + ${child.parentName} ">xx@xxx</span>
+                        <span style="display: inline-block;margin-right: 20px" th:text="${child.content}">评论: xxx</span>
+                        <span style="display: inline-block;margin-right: 20px" th:text="'时间:'+${child.commentTime}"> 发表时间  2018</span>
+                          <div class="jieda-reply" style="display: inline-block;margin-left: 30px">
+                            <!-- 按钮触发模态框 -->
+                            <shiro:hasRole name="user:common">
+                              <button class="btn btn-primary btn-xs" data-toggle="modal" th:data-target="'#son'+${child.id}">
+                                回复
+                              </button>
+                            </shiro:hasRole>
+                            <!-- 模态框（Modal） -->
+                            <div class="modal fade" th:id="'son'+${child.id}" style=" position: absolute;top: 50%;left: 50%; transform: translateX(-40%) translateY(-50%);height: 500px;width: 800px" tabindex="-1" role="dialog" th:aria-labelledby="'mySon'+${child.id}" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                      &times;
+                                    </button>
+                                    <h4 class="modal-title" th:id="'mySon'+${child.id}">
+                                      评论
+                                    </h4>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form class="layui-form" th:action="@{/IdeaC/commentIdeaUser}">
+                                      <div class="layui-form-item layui-form-text">
+                                        <label class="layui-form-label">内容</label>
+                                        <div class="layui-input-block">
+                                          <textarea name="content" placeholder="请输入评论内容" class="layui-textarea"></textarea>
+                                          <input type="hidden" name="ideaId" th:value="${ideaId}">
+                                          <input type="hidden" name="ideaName" th:value="${ideaName}">
+                                          <input type="hidden" name="uid" th:value="${comment.id}">
+                                          <input type="hidden" name="parentId" th:value="${comment.userId}">
+                                          <input type="hidden" name="parentName" th:value="${comment.userName}">
+                                        </div>
+                                      </div>
+                                      <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                          <button class="layui-btn" type="button" onclick="outReply()">立即提交</button>
+                                          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                        </div>
+                                      </div>
+                                    </form>
+
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button type="button" class="btn btn-primary">
+                                      评论
+                                    </button>
+                                  </div>
+                                </div><!-- /.modal-content -->
+                              </div><!-- /.modal -->
+                            </div>
+                          </div>
+                      </li>
+                      <li>2</li>
+                      <li>3</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="jieda-reply">
-              <span type="reply">
-                <i class="iconfont icon-svgmoban53"></i>
-                回复
-              </span>
-              <span onclick="commemt()">
-                <i class="layui-icon-reply-fill">&#xe611;</i>
-                评论
-              </span>
+
+              <!-- 按钮触发模态框 -->
+              <shiro:hasRole name="user:common">
+                <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+                  回复
+                </button>
+              </shiro:hasRole>
+              <!-- 模态框（Modal） -->
+              <div class="modal fade" id="myModal" style=" position: absolute;top: 50%;left: 50%; transform: translateX(-40%) translateY(-50%);height: 500px;width: 800px" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                      </button>
+                      <h4 class="modal-title" id="myModalLabel">
+                       评论
+                      </h4>
+                    </div>
+                    <div class="modal-body">
+                      <form class="layui-form" id="myfrom1" >
+                        <div class="layui-form-item layui-form-text">
+                          <label class="layui-form-label">内容</label>
+                          <div class="layui-input-block">
+                            <textarea name="content" placeholder="请输入评论内容" class="layui-textarea"></textarea>
+                            <input type="hidden" name="ideaId" th:value="${ideaId}">
+                            <input type="hidden" name="ideaName" th:value="${ideaName}">
+                            <input type="hidden" name="uid" th:value="${comment.id}">
+                            <input type="hidden" name="parentId" th:value="${comment.userId}">
+                            <input type="hidden" name="parentName" th:value="${comment.userName}">
+                          </div>
+                        </div>
+                        <div class="layui-form-item">
+                          <div class="layui-input-block">
+                            <button class="layui-btn" type="button" onclick="outReply()">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                      </button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+              </div>
+
+
             </div>
           </li>
           <hr class="layui-bg-gray">
@@ -72,6 +189,7 @@
               <div class="layui-form-item">
                 <input type="hidden" name="ideaName" th:value="${ideaName}">
                 <input type="hidden" name="ideaId" th:value="${ideaId}">
+                <input type="hidden" name="parentId" >
                 <button class="layui-btn" type="submit">提交回复</button>
               </div>
             </form>
@@ -83,11 +201,10 @@
   </div>
 </div>
 
-<div class="fly-footer" th:fragment="footer">
-  <p><a href="http://fly.layui.com/" target="_blank">SourceIdea·Cvte社区</a> 2019 &copy; <a href="http://www.layui.com/" target="_blank">Cvte.com 出品</a></p>
-</div>
+<div  th:include="/pages/front/html/common/common :: footer"></div>
 
 <script src="../../../../../res/layui/layui.js"></script>
+
 <script>
 layui.cache.page = 'jie';
 layui.cache.user = {
@@ -159,6 +276,30 @@ layui.config({
 
   });*/
  /* layer.msg('hello');*/
+
+  function inReply() {
+
+  }
+
+  function outReply() {
+    console.log("outReply!!")
+    $.ajax({
+      url:"/IdeaC/commentIdeaUser",
+      data:$('#myfrom1').serialize(),
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        layer.msg(data.msg);
+      },
+      error:function (data) {
+        layer.msg("未登录无法点赞哦! 请登录")
+      }
+
+    });
+  }
 </script>
+
 </body>
 </html>
