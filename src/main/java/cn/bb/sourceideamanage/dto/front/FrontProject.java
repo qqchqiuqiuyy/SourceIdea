@@ -14,5 +14,6 @@ public class FrontProject implements Serializable {
     private String projectName;
     private String projectManager;
     private String projectTeam;
+    private Integer projectArchive;
     private Timestamp projectCreateTime;
 }

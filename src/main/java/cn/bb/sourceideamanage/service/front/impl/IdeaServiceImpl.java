@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
 import cn.bb.sourceideamanage.dao.front.IdeaMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
@@ -90,14 +91,18 @@ public class IdeaServiceImpl implements IdeaService {
     public String upIdeaSupports(String ideaId, String userId) {
         //TODO 刷新回数据库
         //首先判断redis的Set中有没有这个userId
-        if(jedis.sismember("ideaSupportUser:"+ ideaId,userId)){
-            jsonObject.put("msg","已点过赞了 亲!");
+        String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
+        String supportsKey = IdeaSupportsKey.SupportsKey.getKey();
+        if(jedis.sismember(IdeaSupportsKey.UserSetKey.getKey()+ ideaId,userId)){
+            jedis.srem(userSetKey+ideaId,userId);
+         //   jedis.decr(supportsKey+ideaId);
+            jsonObject.put("msg","已取消赞");
             jsonObject.put("isSuccess","0");
         }else{
-            jedis.sadd("ideaSupportUser:"+ideaId,userId);
-            jedis.incr("ideaSupportNums:"+ideaId);
+            jedis.sadd(userSetKey+ideaId,userId);
+         //   jedis.incr(supportsKey+ideaId);
             jsonObject.put("isSuccess","1");
-
+            jsonObject.put("msg","已点赞");
         }
         return jsonObject.toString();
     }

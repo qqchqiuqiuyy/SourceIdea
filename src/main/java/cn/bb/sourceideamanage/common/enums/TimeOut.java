@@ -32,7 +32,8 @@ public enum TimeOut {
     TeamRole(60L,"teamRole"),
     TeamId(300L,"teamId"),
     AllTeamMsg(60L,"allTeamMsg"),
-    TeamIdeas(60L,"teamIdeas");
+    TeamIdeas(60L,"teamIdeas"),
+    MyProject(60L,"myProject");
 
     public  final Long time;
     public final String cacheName;

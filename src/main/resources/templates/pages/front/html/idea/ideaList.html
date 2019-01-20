@@ -64,7 +64,7 @@
               <span th:text="'发起时间: '+${idea.ideaCreateTime}" style="display: inline-block;margin-left: 30px">想法发起时间 </span>
 
                <span style="display: inline-block;float: right;">
-                 <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;"  onclick="toComment(this.value)"  th:value="${idea.ideaId}" type="submit">评论</button>
+                 <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;"  onclick="toComment(this.value)"  th:value="${idea.ideaId}"  type="submit">评论</button>
                   <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;" onclick="supports(this.value)" th:value="${idea.ideaId}" th:id="'buttonId'+${idea.ideaId}">点赞</button>
                    <i th:text="${idea.ideaSupports}" th:id="'ideaId'+${idea.ideaId}"></i>
                     <i th:text="${session.userId}" th:id="'userId'+ ${idea.ideaId}" style="visibility: hidden"></i>
@@ -135,9 +135,8 @@
   </div>
 </div>
 
-<div class="fly-footer" th:fragment="footer">
-  <p><a href="http://fly.layui.com/" target="_blank">SourceIdea·Cvte社区</a> 2019 &copy; <a href="http://www.layui.com/" target="_blank">Cvte.com 出品</a></p>
-</div>
+<div  th:include="/pages/front/html/common/common :: footer"></div>
+
 <script src="../../../../../res/layui/layui.js"></script>
 <script>
   function toComment(ideaId) {
@@ -176,11 +175,16 @@ function supports(ideaId){
         console.log("supportNums" + supports);
         console.log("userId "+userId);
         /*点击改变颜色*/
-        $("#buttonId"+ideaId).css("background-color","red");
+        $("#buttonId"+ideaId).removeClass("layui-btn-normal").addClass("layui-btn-danger");
         console.log("#buttonId"+ideaId)
-      }else{
-        layer.msg(data.msg);
       }
+      if(data.isSuccess == "0"){
+        console.log("取消赞!");
+        $("#ideaId"+ideaId).text(supports - 1);
+        /*点击改变颜色*/
+        $("#buttonId"+ideaId).removeClass("layui-btn-danger").addClass("layui-btn-normal");
+      }
+      layer.msg(data.msg);
     },
     error:function (data) {
       layer.msg("未登录无法点赞哦! 请登录")

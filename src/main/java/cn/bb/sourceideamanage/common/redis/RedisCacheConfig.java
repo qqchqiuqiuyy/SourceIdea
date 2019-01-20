@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.common.redis;
 
+import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
 import cn.bb.sourceideamanage.common.enums.TimeOut;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -100,6 +109,8 @@ public class RedisCacheConfig {
         expires.put(TimeOut.TeamId.getCacheName(),TimeOut.TeamId.getTime());
         expires.put(TimeOut.AllTeamMsg.getCacheName(),TimeOut.AllTeamMsg.getTime());
         expires.put(TimeOut.TeamIdeas.getCacheName(),TimeOut.TeamIdeas.getTime());
+        //我的项目
+        expires.put(TimeOut.MyProject.getCacheName(),TimeOut.MyProject.getTime());
 
        redisCacheManager.setExpires(expires);
         return redisCacheManager;
@@ -112,4 +123,12 @@ public class RedisCacheConfig {
     private RedisSerializer<Object> valueSerializer() {
         return new GenericJackson2JsonRedisSerializer();
     }
+
+    @Autowired
+    Jedis jedis;
+
+    private static final String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
+    private static final String supportsKey = IdeaSupportsKey.SupportsKey.getKey();
+
+
 }

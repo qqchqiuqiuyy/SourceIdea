@@ -161,6 +161,7 @@ public class UserController {
         //找到该团队所有想法
         List<FrontIdea> ideas = ideaService.findAllTeamIdea(teamName);
 
+        model.addAttribute("userId",userId);
         model.addAttribute("manager", Roles.UserProjectManager.getRoleMsg());
         model.addAttribute("ideas",ideas);
         model.addAttribute("projects",projects);

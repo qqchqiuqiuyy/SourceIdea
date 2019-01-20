@@ -84,7 +84,8 @@ public interface UserMapper {
 
     @Select("SELECT p.project_id AS projectId," +
             "           p.project_name AS projectName," +
-            "           p.project_create_time AS projectCreateTime " +
+            "           p.project_create_time AS projectCreateTime ," +
+            "           p.project_archive AS projectArchive" +
             "   FROM team t,project p" +
             "   WHERE t.team_name = #{teamName} AND" +
             "   t.team_id = p.team_id " +

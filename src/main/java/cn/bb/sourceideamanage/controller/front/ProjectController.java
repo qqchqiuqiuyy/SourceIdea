@@ -66,4 +66,25 @@ public class ProjectController {
         String msg = projectService.joinProject(userId, projectId);
         return msg;
     }
+
+    @RequestMapping("/toEditProject")
+    public String toEditProject(Integer projectId,Model model){
+        FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);
+        model.addAttribute("project",projectMsg);
+        model.addAttribute("projectId",projectId);
+        return "/pages/front/html/project/editProject";
+    }
+
+
+    @RequestMapping("/editProject")
+    @ResponseBody
+    public String editProject(String projectName,Integer projectId,String projectMsg){
+        return projectService.editProject(projectName,projectId,projectMsg);
+    }
+
+    @RequestMapping("/archiveProject")
+    @ResponseBody
+    public String archiveProject(Integer projectId){
+            return projectService.archiveProject(projectId);
+    }
 }

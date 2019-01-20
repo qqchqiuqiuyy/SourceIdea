@@ -103,4 +103,17 @@ public interface ProjectMapper {
 
     @Select("SELECT team_id FROM project p WHERE p.project_id = #{projectId}")
     public Integer getTeamIdByProjectId(@Param("projectId") Integer projectId);
+
+
+    @Update("UPDATE project SET project_name = #{projectName},project_msg = #{projectMsg}" +
+            "   WHERE project_id = #{projectId}")
+    public void editProject(@Param("projectName") String projectName,
+                            @Param("projectId") Integer projectId,
+                            @Param("projectMsg") String projectMsg);
+
+    @Update("UPDATE project SET project_archive = 1 WHERE project_id = #{projectId}")
+    public void archiveProject(@Param("projectId") Integer projectId);
+
+    @Select("SELECT project_archive from project where project_id= #{projectId}")
+    public Integer checkArchive(@Param("projectId") Integer projectId);
 }

@@ -167,14 +167,14 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    @Cacheable(cacheNames = "myTeams", key = "'myTeams=[teamName='+#teamName+']'")
+    @Cacheable(cacheNames = "myProject", key = "'myProject=[teamName='+#teamName+']'")
     public List<FrontProject> findProjects(String teamName) {
         return userMapper.findProjects(teamName);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myTeams",key = "'myTeams=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = "myProject",key = "'myProject=[teamName='+#teamName+']'")
     public String delProject(Integer projectId) {
         try {
             userMapper.delProject(projectId);
@@ -319,7 +319,7 @@ public class UserServiceImpl  implements UserService {
                 return jsonObject.toString();
             }
             //对用户所在团队 的团员职位进行授权为项目管理员
-            teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectMember.getRoleName()+":"+teamId);
+            teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectManager.getRoleName()+":"+teamId);
             log.info("授予项目管理员成功!!");
             jsonObject.put("msg","授予项目管理员成功!!");
             jsonObject.put("isSuccess","1");

@@ -16,4 +16,6 @@ public interface ProjectService {
     public List<String> getAllProjects( Integer userId);
     public PageInfo<FrontProject> findAllMyProject(int page,int size, String projectName, Integer userId);
     public Integer getTeamIdByProjectId( Integer projectId);
+    public String editProject(String projectName,Integer projectId,String projectMsg);
+    public String archiveProject(Integer projectId);
 }

@@ -60,15 +60,17 @@
               <a  th:text="${member.userName}"></a>
             </h4>
             <div class="fly-list-info">
-                <cite th:id="'tr'+${member.userId}" th:text="${member.teamRole}"></cite>
+                        <cite th:id="'tr'+${member.userId}" th:text="${member.teamRole}"></cite>
               <span  th:text="'入团时间: '+${member.memberJoinTime}"></span>
               <!--团长可看-->
               <shiro:hasRole name="|user:teamManager:${teamId}|" >
+                <p th:if="${member.teamRole != '项目管理员' && member.teamRole != '团队队长' } " style="display: inline-block">
                   <span style="display: inline-block;" class="awardManager" >
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:deepskyblue"  onclick="awardManager(this.value)"  th:value="${member.userId}" type="button" th:id="'awButton'+${member.userId}">项目管理员</button>
                      <i th:text="${teamName}" th:id="'aw'+${member.userId}" style="display: none"></i>
                    </span>
-                  <span style="display: inline-block;margin-right:250px;" class="delMember" >
+                </p>
+                  <span style="display: inline-block;margin-right:100px;" class="delMember" >
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red"  onclick="delMember(this.value)"  th:value="${member.userId}" type="button" th:id="'delButton'+${member.userId}">删除</button>
                      <i th:text="${teamName}" th:id="'i'+${member.userId}" style="display: none"></i>
                    </span>
@@ -92,9 +94,18 @@
               <span th:text="${project.projectCreateTime}"></span>
               <!--团长 项目管理可看-->
               <shiro:hasAnyRoles name="|user:teamManager:${teamId} , user:projectManager:${teamId}|" >
-                  <span style="display: inline-block;margin-right:250px;float: right" class="delP" >
-                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:25px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
+                  <span style="display: inline-block;" class="delP" >
+                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
                    </span>
+                 <span style="display: inline-block;" class="editP" th:if="${project.projectArchive == 0}">
+                     <a class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue"  th:href="@{/ProjectC/toEditProject(projectId=${project.projectId})}" th:value="${project.projectId}" type="button" th:id="'editProject'+${project.projectId}">修改项目</a>
+                   </span>
+                  <span th:if="${project.projectArchive == 0}">
+                    <span style="display: inline-block;" class="archiveP" >
+                     <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue;"  onclick="archiveProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'archive'+${project.projectId}">归档</button>
+                   </span>
+                  </span>
+
               </shiro:hasAnyRoles>
             </div>
             <div class="fly-list-badge">
@@ -281,6 +292,31 @@ layui.config({
         }else{
           layer.msg(data.msg);
         }
+      },
+      error:function (data) {
+        layer.msg("未登录无法点赞哦! 请登录")
+      }
+    });
+  }
+
+
+  /*异步归档项目*/
+  function archiveProject(projectId) {
+    console.log(projectId);
+    $.ajax({
+      url:"/ProjectC/archiveProject",
+      data:{
+        "projectId" : projectId
+      },
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        if(data.isSuccess = "1"){
+          $('#archive'+projectId).parent().remove();
+        }
+        layer.msg(data.msg);
       },
       error:function (data) {
         layer.msg("未登录无法点赞哦! 请登录")

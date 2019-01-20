@@ -102,4 +102,59 @@ public class ProjectServiceImpl implements ProjectService {
     public Integer getTeamIdByProjectId(Integer projectId) {
         return projectMapper.getTeamIdByProjectId(projectId);
     }
+
+    /**
+     * 修改project
+     * @param projectName
+     * @param projectId
+     * @param projectMsg
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "projectMsg", key = "'projectMsg=[projectId='+#projectId+']'")
+    public String editProject(String projectName, Integer projectId, String projectMsg) {
+        try {
+            Integer integer = projectMapper.checkArchive(projectId);
+            if(integer == 1){
+                log.error("已归档 无法修改!");
+                jsonObject.put("msg","修改项目失败! 已归档 无法修改!");
+                jsonObject.put("isSuccess","0");
+                return jsonObject.toString();
+            }
+            projectMapper.editProject(projectName,projectId,projectMsg);
+            jsonObject.put("msg","修改项目成功!");
+            jsonObject.put("isSuccess","1");
+            jsonObject.put("successUrl","redirect:/ProjectC/toProjectMsg?projectId="+projectId);
+            log.info("修改项目成功!");
+        }catch (Exception e){
+            jsonObject.put("msg","修改项目失败!");
+            jsonObject.put("isSuccess","0");
+            log.error("修改项目失败!");
+        }
+
+        return jsonObject.toString();
+    }
+
+
+
+    @Override
+    @Transactional
+    @CacheEvict(cacheNames = "myProject", key = "'myProject=[teamName='+#teamName+']'")
+    public String archiveProject(Integer projectId){
+        try{
+             projectMapper.archiveProject(projectId);
+            jsonObject.put("msg","归档成功!");
+            jsonObject.put("isSuccess","1");
+            log.info("归档成功!");
+        }catch (Exception e){
+            log.error("归档失败!!{}",e.toString());
+            jsonObject.put("msg","归档失败!");
+            jsonObject.put("isSuccess","0");
+        }
+        return jsonObject.toString();
+
+    }
+
+
 }
