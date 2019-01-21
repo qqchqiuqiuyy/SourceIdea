@@ -5,9 +5,11 @@ import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.*;
 import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.annotations.Select;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface IdeaService {
 
@@ -50,4 +52,13 @@ public interface IdeaService {
     public String commentIdeaUser(Integer uid,Integer ideaId,String ideaName,
                                   Integer userId,String userName, Integer parentId, String parentName,
                                   String content);
+
+
+    public List<BrainTime> getAllBrainTime();
+
+    public String addBrainStorming( Integer userId ,String brainName,Integer timeId,String brainMsg );
+
+    public Integer getBrainTime(Integer brainid);
+
+    public List<Map<String ,String >> allBrains();
 }

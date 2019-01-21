@@ -1,10 +1,12 @@
 package cn.bb.sourceideamanage.dao.front;
 
+import cn.bb.sourceideamanage.dto.front.childComment;
 import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.*;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -77,17 +79,34 @@ public interface IdeaMapper {
             "           ci.comment_time AS commentTime ," +
             "           ci.parent_id AS parentId ," +
             "           ci.parent_name AS parentName ," +
-            "           ci.uid as uuid" +
+            "           ci.id as uuid" +
             " FROM comment_idea ci" +
             " WHERE ci.idea_id = #{ideaId}")
     @Results({  //todo 要一对多啦
-            @Result(column = "uuid",javaType = List.class, property = "teams",
+            @Result(column = "uuid",javaType = List.class, property = "childComments",
                     many = @Many(   //一对多
-                            select="cn.bb.sourceideamanage.Dao.AdminMapper.findAllTeamByUserId" //上面搜索的方法
+                            select="cn.bb.sourceideamanage.dao.front.IdeaMapper.getChildComment" //上面搜索的方法
                             //,fetchType = FetchType.LAZY
                     ))
     })
     public List<Comment> getAllComment(@Param("ideaId") Integer ideaId);
+
+    @Select("SELECT " +
+            " ci.id AS id, " +
+            " ci.uid AS uid, " +
+            " ci.idea_id AS ideId, " +
+            " ci.idea_id AS ideaId, " +
+            " ci.idea_name AS ideaName, " +
+            " ci.user_id AS userId, " +
+            " ci.user_name AS userName, " +
+            " ci.parent_id AS parentId, " +
+            " ci.parent_name AS parentName, " +
+            " ci.content AS content, " +
+            " ci.comment_time AS commentTime  " +
+            "FROM " +
+            " comment_idea ci " +
+            "WHERE ci.uid = #{uuid}")
+    public List<childComment> getChildComment(@Param("uuid") Integer uuid);
 
     @Select("SELECT user_id from user where user_name = #{userName}")
     public Integer getUserId(@Param("userName") String userName);
@@ -161,5 +180,14 @@ public interface IdeaMapper {
                                 @Param("ideaName") String ideaName,@Param("userId") Integer userId,
                                 @Param("userName") String userName,@Param("parentId") Integer parentId,
                                 @Param("parentName") String parentName,@Param("content") String content);
+
+
+
+
+    @Select("SELECT id,time FROM brainstorming")
+    public List<BrainTime> getAllBrainTime();
+
+    @Select("SELECT time FROM brainstorming WHERE id = #{id}")
+    public Integer getBrainTime(@Param("id") Integer brainid);
 }
 

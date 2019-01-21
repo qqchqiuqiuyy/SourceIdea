@@ -111,6 +111,8 @@ public class RedisCacheConfig {
         expires.put(TimeOut.TeamIdeas.getCacheName(),TimeOut.TeamIdeas.getTime());
         //我的项目
         expires.put(TimeOut.MyProject.getCacheName(),TimeOut.MyProject.getTime());
+        //头脑风暴时间
+        expires.put(TimeOut.AllBrainTime.getCacheName(),TimeOut.AllBrainTime.getTime());
 
        redisCacheManager.setExpires(expires);
         return redisCacheManager;

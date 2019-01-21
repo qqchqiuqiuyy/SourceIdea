@@ -30,7 +30,7 @@
               <!--搜索框-->
                <form class="form-inline layui-form" th:action="@{/IdeaC/toIdea}" type="post" >
                <td>
-                   <input type="text"  name="ideaName"   placeholder="搜索想法" autocomplete="off" class="layui-input" style="width:200px">
+                   <input type="text"  name="ideaName"   placeholder="搜索想法" autocomplete="off" class="layui-input" style="width:150px">
                </td>
                  <td>
                      <div class="input-group" >
@@ -46,6 +46,7 @@
                  <button style="float: left" type="submit" class="layui-btn layui-btn-normal" >确认</button>
                </td>
                </form>
+              <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/IdeaC/toBrainStorming}">头脑风暴</a></td>
             </tr>
           </table>
         </div>

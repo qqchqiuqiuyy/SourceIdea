@@ -35,18 +35,18 @@
         </fieldset>
 
 
-        <ul class="jieda" id="jieda" th:each="comment : ${Comments}">
+        <ul class="jieda" id="jieda" th:each="comment : ${comments}">
           <li data-id="111" class="jieda-daan">
             <div class="detail-about detail-about-reply" style="padding-left: 0px">
               <div class="fly-detail-user">
                 <a href="" class="fly-link">
-                  <cite th:text="${comment.userName}"></cite>
+                  <cite th:text="'用户名: '+${comment.userName}"></cite>
                 </a>
                 <i style="display: none" th:text="${comment.userId}"></i>
               </div>
 
               <div class="detail-hits">
-                <span th:text="${comment.commentTime}"></span>
+                <span th:text="'回帖时间: '+${comment.commentTime}"></span>
               </div>
             </div>
             <div class="detail-body jieda-body photos">
@@ -61,8 +61,8 @@
                       <li>
                         <span style="display: inline-block;margin-right: 20px" th:text="${child.userName} + ' @' + ${child.parentName} ">xx@xxx</span>
                         <span style="display: inline-block;margin-right: 20px" th:text="${child.content}">评论: xxx</span>
-                        <span style="display: inline-block;margin-right: 20px" th:text="'时间:'+${child.commentTime}"> 发表时间  2018</span>
-                          <div class="jieda-reply" style="display: inline-block;margin-left: 30px">
+                        <span style="display: inline-block;margin-right: 20px;float: right" th:text="'时间:'+${child.commentTime}"> 发表时间  2018</span>
+                          <div class="jieda-reply" style="display: inline-block;margin-left: 30px;float:right;margin-right: 20px">
                             <!-- 按钮触发模态框 -->
                             <shiro:hasRole name="user:common">
                               <button class="btn btn-primary btn-xs" data-toggle="modal" th:data-target="'#son'+${child.id}">
@@ -82,7 +82,7 @@
                                     </h4>
                                   </div>
                                   <div class="modal-body">
-                                    <form class="layui-form" th:action="@{/IdeaC/commentIdeaUser}">
+                                    <form class="layui-form" th:id="'inReplyForm'+${child.id}">
                                       <div class="layui-form-item layui-form-text">
                                         <label class="layui-form-label">内容</label>
                                         <div class="layui-input-block">
@@ -90,18 +90,17 @@
                                           <input type="hidden" name="ideaId" th:value="${ideaId}">
                                           <input type="hidden" name="ideaName" th:value="${ideaName}">
                                           <input type="hidden" name="uid" th:value="${comment.id}">
-                                          <input type="hidden" name="parentId" th:value="${comment.userId}">
-                                          <input type="hidden" name="parentName" th:value="${comment.userName}">
+                                          <input type="hidden" name="parentId" th:value="${child.userId}">
+                                          <input type="hidden" name="parentName" th:value="${child.userName}">
                                         </div>
                                       </div>
                                       <div class="layui-form-item">
                                         <div class="layui-input-block">
-                                          <button class="layui-btn" type="button" onclick="outReply()">立即提交</button>
+                                          <button class="layui-btn" type="button" th:value="${child.id}" onclick="inReply(this.value)">立即提交</button>
                                           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                                         </div>
                                       </div>
                                     </form>
-
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
@@ -114,9 +113,8 @@
                               </div><!-- /.modal -->
                             </div>
                           </div>
+                          <hr>
                       </li>
-                      <li>2</li>
-                      <li>3</li>
                     </ul>
                   </div>
                 </div>
@@ -126,24 +124,24 @@
 
               <!-- 按钮触发模态框 -->
               <shiro:hasRole name="user:common">
-                <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+                <button class="btn btn-primary btn-xs" data-toggle="modal" th:data-target="'#father'+${comment.id}">
                   回复
                 </button>
               </shiro:hasRole>
               <!-- 模态框（Modal） -->
-              <div class="modal fade" id="myModal" style=" position: absolute;top: 50%;left: 50%; transform: translateX(-40%) translateY(-50%);height: 500px;width: 800px" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" th:id="'father'+${comment.id}" style=" position: absolute;top: 50%;left: 50%; transform: translateX(-40%) translateY(-50%);height: 500px;width: 800px" tabindex="-1" role="dialog" th:aria-labelledby="'father2'+${comment.id}" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         &times;
                       </button>
-                      <h4 class="modal-title" id="myModalLabel">
+                      <h4 class="modal-title" th:id="'father2'+${comment.id}">
                        评论
                       </h4>
                     </div>
                     <div class="modal-body">
-                      <form class="layui-form" id="myfrom1" >
+                      <form class="layui-form" th:id="'outReplyForm'+${comment.id}" >
                         <div class="layui-form-item layui-form-text">
                           <label class="layui-form-label">内容</label>
                           <div class="layui-input-block">
@@ -157,7 +155,7 @@
                         </div>
                         <div class="layui-form-item">
                           <div class="layui-input-block">
-                            <button class="layui-btn" type="button" onclick="outReply()">立即提交</button>
+                            <button class="layui-btn" type="button" th:value="${comment.id}" onclick="outReply(this.value)">立即提交</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                           </div>
                         </div>
@@ -277,15 +275,33 @@ layui.config({
   });*/
  /* layer.msg('hello');*/
 
-  function inReply() {
 
-  }
-
-  function outReply() {
-    console.log("outReply!!")
+  function outReply(commentId) {
+    console.log("outReply!!c" + commentId)
     $.ajax({
       url:"/IdeaC/commentIdeaUser",
-      data:$('#myfrom1').serialize(),
+      data:$('#outReplyForm'+commentId).serialize(),
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        layer.msg(data.msg);
+      },
+      error:function (data) {
+        layer.msg("未登录无法点赞哦! 请登录")
+      }
+
+    });
+  }
+
+  function inReply(childId) {
+    console.log("inReply!!c"+ childId)
+    console.log($('#content').text())
+    console.log($('#inReplyForm').serialize())
+    $.ajax({
+      url:"/IdeaC/commentIdeaUser",
+      data:$('#inReplyForm'+childId).serialize(),
       type:"post",
       dataType:"json",
       cache:false,

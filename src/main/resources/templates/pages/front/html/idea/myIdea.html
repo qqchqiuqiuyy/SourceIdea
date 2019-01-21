@@ -26,7 +26,7 @@
         <div class=" fly-filter">
           <table>
             <tr>
-              <td> <div href="" class="layui-this" style="width:500px"><h1 th:text="${session.userName} + '的想法列表'"></h1></div></td>
+              <td> <div href="" class="layui-this" style="width:400px"><h1 th:text="${session.userName} + '的想法列表'"></h1></div></td>
               <!--搜索框-->
                <form class="form-inline layui-form" th:action="@{/UserC/toMyIdea}" type="post" >
                <td>
@@ -47,6 +47,7 @@
                </td>
                </form>
                 <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/IdeaC/toAddIdea}">新增想法</a></td>
+                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/IdeaC/toAddBrainStorming}">开启头脑风暴</a></td>
             </tr>
           </table>
         </div>

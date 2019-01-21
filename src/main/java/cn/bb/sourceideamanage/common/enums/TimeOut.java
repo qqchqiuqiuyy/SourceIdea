@@ -13,6 +13,7 @@ public enum TimeOut {
     ProjectPage(60L,"projectPage"),
     IdeaSupportsList(60L,"supportsList"),
     Tags(3600L,"allTag"),
+    AllBrainTime(3600L,"allBrainTime"),
     DefaultTime(60L,"DefaultTime"),
     IdeaMsg(60L,"ideaMsg"),
     MyIdeas(60L,"myIdeas"),

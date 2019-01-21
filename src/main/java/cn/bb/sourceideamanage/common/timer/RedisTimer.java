@@ -2,6 +2,8 @@ package cn.bb.sourceideamanage.common.timer;
 
 import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
 import cn.bb.sourceideamanage.service.front.IdeaService;
+import com.sun.tools.javac.util.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +19,7 @@ import java.util.concurrent.Executor;
  * 异步任务 5秒钟调用一次
  */
 @Component
+@Slf4j
 public class RedisTimer {
 
     @Autowired
@@ -26,14 +29,16 @@ public class RedisTimer {
 
     @Autowired
     IdeaService ideaService;
-
+    private String CURSOR = "0";
     /**
      * 定时任务 10秒执行一次
      */
     @Scheduled(cron = "0/10 * * * * ?")
     public void redisToDb(){
         ScanParams scanParams = new ScanParams();
-        ScanResult<String> keys = jedis.scan("0", scanParams.match(userSetKey+"*"));
+        ScanResult<String> keys = jedis.scan(CURSOR, scanParams.match(userSetKey+"*"));
+        CURSOR = keys.getStringCursor();
+        log.info("cursor游标={}",CURSOR);
         List<String> results = keys.getResult();
         Integer ideaId = 0;
         Long supports = 0L;

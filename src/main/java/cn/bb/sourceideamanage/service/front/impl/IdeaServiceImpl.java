@@ -1,8 +1,10 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.BrainKey;
 import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
 import cn.bb.sourceideamanage.dao.front.IdeaMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
+import cn.bb.sourceideamanage.dao.front.UserMapper;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.Comment;
@@ -19,14 +21,18 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
-@CacheConfig(cacheNames = "IdeaServiceImpl")
 public class IdeaServiceImpl implements IdeaService {
 
     @Resource
@@ -41,6 +47,9 @@ public class IdeaServiceImpl implements IdeaService {
     @Resource
     TeamMapper teamMapper;
 
+    @Resource
+    UserMapper userMapper;
+
     @Override
     public Team findTeam(Integer teamId) {
         return ideaMapper.findTeam(teamId);
@@ -52,6 +61,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
+    @Cacheable(cacheNames = "findTag" ,key = "'tagId='+#tagId")
     public Tag findTag(Integer tagId) {
         return ideaMapper.findTag(tagId);
     }
@@ -208,6 +218,7 @@ public class IdeaServiceImpl implements IdeaService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = "comments" ,key = "'comments=['+#ideaId+']'")
     public String commentIdeaUser(Integer uid,Integer ideaId,String ideaName,
                                   Integer userId,String userName, Integer parentId, String parentName ,String content ) {
         try{
@@ -221,6 +232,95 @@ public class IdeaServiceImpl implements IdeaService {
             jsonObject.put("success","0");
         }
         return jsonObject.toString();
+    }
+
+    @Override
+    @Cacheable(cacheNames = "allBrainTime",key = "'findAllTime'")
+    public List<BrainTime> getAllBrainTime() {
+        return ideaMapper.getAllBrainTime();
+    }
+
+
+
+    @Override
+    public String addBrainStorming(Integer userId ,String brainName, Integer timeId, String brainMsg) {
+        try{
+            /*String key = BrainKey.BRAIN_KEY.getKey() +userId.toString();*/
+            String key = BrainKey.BRAIN_KEY.getKey() +brainName;
+            if(jedis.exists(key)){
+                log.error("增加头脑风暴失败!!!");
+                jsonObject.put("msg","增加头脑风暴失败!!!名称已重复");
+                jsonObject.put("success","0");
+                throw new Exception("增加头脑风暴失败");
+            }
+            String userName = userMapper.getUserName(userId);
+            //转换成秒
+            Integer brainTime = this.getBrainTime(timeId) * 60;
+            Map<String,String> map = new HashMap<>(16);
+            map.put("brainName",brainName);
+            map.put("brainMsg",brainMsg);
+            map.put("supports","0");
+            map.put("userId",userId.toString());
+            map.put("userName",userName);
+            jedis.hmset(key,map);
+            jedis.expire(key,brainTime);
+            log.info("增加头脑风暴成功!!!");
+            jsonObject.put("msg","增加头脑风暴成功!!!");
+            jsonObject.put("success","1");
+            jsonObject.put("successUrl","/UserC/toMyIdea");
+        }catch (Exception e){
+            log.error("增加头脑风暴失败!! e={}",e.getMessage());
+            jsonObject.put("msg","增加头脑风暴失败!!");
+            jsonObject.put("success","0");
+        }
+
+        return jsonObject.toString();
+    }
+
+    @Override
+    @Cacheable(cacheNames = "brainTime" ,key = "'brainId=['+#brainId +']'")
+    public Integer getBrainTime(Integer brainid) {
+        return ideaMapper.getBrainTime(brainid);
+    }
+
+
+    /**
+     * 头脑风暴页面 找出所有的头脑风暴
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> allBrains() {
+        String cursor = "0";
+        ScanResult<String> keys = null;
+        List<String> allMapKeys = null;
+        List<String> userIds = new ArrayList<>() ;
+        List<Map<String,String>> brains = new ArrayList<>();
+        ScanParams scanParams = new ScanParams();
+        String mach;
+        try{
+            do {
+                mach = BrainKey.BRAIN_KEY.getKey()+"*";
+                keys = jedis.scan(cursor, scanParams.match(mach));
+                //得到所有的keyName
+                allMapKeys = keys.getResult();
+                //取出: 后面的userId;
+                if(null != allMapKeys && allMapKeys.size() > 0 ){
+                    //通过key得到所有的map
+                    for(String key : allMapKeys){
+                        Map<String, String> map = jedis.hgetAll(key);
+                        Long ttl = jedis.ttl(key) / 60;
+                        map.put("time",ttl.toString());
+                        brains.add(map);
+                    }
+                }
+                cursor = keys.getStringCursor();
+            }while (Integer.parseInt(cursor) != 0);
+
+            log.info("去头脑风暴页面成功!!!");
+        }catch (Exception e){
+            log.error("去头脑风暴页面失败!!e={}",e);
+        }
+        return brains;
     }
 
 

@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.BrainKey;
 import cn.bb.sourceideamanage.dto.front.ApplyUser;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.UserService;
@@ -11,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -68,9 +73,30 @@ public class UserServiceImplTest {
     Jedis jedis;
     @Test
     public void redis(){
-        User user = new User();
-        user.setUserName("ss");
-        jedis.set("user", JSONObject.fromObject(user).toString());
-        jedis.get("user");
+        String cursor = "0";
+        ScanResult<String> keys = null;
+        List<String> allMapKeys = null;
+        List<String> userIds = new ArrayList<>() ;
+        List<Map<String,String>> brains = new ArrayList<>();
+        ScanParams scanParams = new ScanParams();
+        String mach;
+        do {
+            mach = BrainKey.BRAIN_KEY.getKey()+"*";
+            keys = jedis.scan(cursor, scanParams.match(mach));
+            //得到所有的keyName
+            allMapKeys = keys.getResult();
+            //取出: 后面的userId;
+            if(null != allMapKeys && allMapKeys.size() > 0 ){
+                //通过key得到所有的map
+                for(String key : allMapKeys){
+                    Map<String, String> map = jedis.hgetAll(key);
+                    brains.add(map);
+                    System.out.println("key = " + key);
+                }
+            }
+            cursor = keys.getStringCursor();
+            System.out.println("CURSOR = "+cursor);
+
+        }while (Integer.parseInt(cursor) != 0);
     }
 }

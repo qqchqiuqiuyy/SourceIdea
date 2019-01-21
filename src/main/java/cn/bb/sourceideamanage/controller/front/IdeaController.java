@@ -2,6 +2,7 @@ package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
+import cn.bb.sourceideamanage.entity.BrainTime;
 import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Tag;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 import static cn.bb.sourceideamanage.common.config.PageSize.PAGE_SIZE;
 
@@ -129,6 +131,36 @@ public class IdeaController {
         Integer userId = (Integer)request.getSession().getAttribute("userId");
         String userName = userService.getUserName(userId);
         return ideaService.commentIdeaUser(uid,ideaId,ideaName,userId,userName,parentId,parentName,content);
+    }
+
+    @RequestMapping("/toAddBrainStorming")
+    public String toAddBrainStorming(Model model){
+        List<BrainTime> brainTimes = ideaService.getAllBrainTime();
+        model.addAttribute("brainTimes",brainTimes);
+        return  "pages/front/html/idea/addBrainStorming";
+    }
+
+
+    @RequestMapping("/addBrainStorming")
+    @ResponseBody
+    public String addBrainStorming(HttpServletRequest request, String brainName,Integer timeId,String brainMsg ){
+        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        return  ideaService.addBrainStorming(userId,brainName,timeId,brainMsg);
+    }
+
+    @RequestMapping("/toBrainStorming")
+    public String toBrainStorming(Model model){
+        List<Map<String, String>> brains = ideaService.allBrains();
+        model.addAttribute("brains",brains);
+        return "pages/front/html/idea/brainStorming";
+    }
+
+
+    @RequestMapping("/upBrainSupports")
+    @ResponseBody
+    public String upBrainSupports(HttpServletRequest request,String brainId ){
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        return "";
     }
 
 }
