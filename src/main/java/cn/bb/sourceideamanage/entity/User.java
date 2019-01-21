@@ -15,7 +15,6 @@ public class User implements Serializable {
     private Integer userId;
     private String userName;
     private String userMsg;
-    private String userImg;
     private String userAccount;
     private String userPassword;
     private Timestamp userCreateTime;

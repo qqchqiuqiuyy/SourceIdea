@@ -9,7 +9,7 @@
     <div th:include="/pages/common::backLeft" class="main-sidebar"></div>
     <div class="content-wrapper">
         <section class="content-header" style="width:300px">
-            <form th:action="@{/AdminC/toIdeas}" method="post" class="sidebar-form" style="width: 300px">
+            <form th:action="@{/adminC/toIdeas}" method="post" class="sidebar-form" style="width: 300px">
                 <div class="input-group" >
                     <input type="text" name="ideaName" class="form-control"  style="background-color: ghostwhite" placeholder="搜索想法">
                     <span class="input-group-btn">
@@ -108,52 +108,6 @@
                         </td>
                         <td th:text="${ideaCreateTime}"></td>
                     </tr>
-                  <!--  <tr>
-                        <td>社交</td>
-                        <td>小明</td>
-                        <td>生产大队</td>
-                        <td>
-                            <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal3">详细</button>
-                            &lt;!&ndash; 模态框（Modal） &ndash;&gt;
-                            <div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title" id="myModalLabel3">想法详细</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="panel panel-default">
-                                                <div class="panel-body">
-                                                    我想..............
-                                                </div>
-                                            </div>
-                                            <table class="table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>支持数</th>
-                                                        <th>团队支持比率</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>200</td>
-                                                        <td>0.6</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                        </div>
-                                    </div>&lt;!&ndash; /.modal-content &ndash;&gt;
-                                </div>&lt;!&ndash; /.modal &ndash;&gt;
-                            </div>
-                        </td>
-                        <td>未立项</td>
-                        <td>
-                            <button type="button" class="btn btn-info btn-xs" >删除</button>
-                        </td>
-                        <td>2019</td>
-                    </tr>-->
 
                     </tbody>
                 </table>
@@ -161,15 +115,15 @@
             <!--分页-->
             <div>
                 <ul class="pagination" >
-                    <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-1}}">&laquo;</a></li>
-                    <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-                    <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-                    <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+                    <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage-1}}">&laquo;</a></li>
+                    <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+                    <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+                    <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
                     <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-                    <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-                    <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-                    <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-                    <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/AdminC/toIdeas?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+                    <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+                    <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+                    <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+                    <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/adminC/toIdeas?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
                 </ul>
                 <br>
             </div>
@@ -182,21 +136,21 @@
 
 </body>
 <script type="text/javascript">
-    function handle(value) {
+    function handle(ideaId) {
+        console.log("删除!!")
         $.ajax({
-            url:"/AdminC/toDeleteIdea",
-            type:"post",
+            url:"/adminC/toDeleteIdea/"+ideaId,
+            type:"delete",
             dataType:"json",
             data:{
-                "ideaId":value
+                "ideaId":ideaId
             },
             cache:false,
             success:function(data){
-                if(data.msg == "1"){
-                    $("#button" + value).parent().parent().remove();
-                }else{
-                    alert(data.msg)
+                if(data.success == "1"){
+                    $("#button" + ideaId).parent().parent().remove();
                 }
+                alert(data.msg)
             }
         });
     }

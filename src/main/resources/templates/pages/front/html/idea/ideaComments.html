@@ -177,7 +177,7 @@
         </ul>
         <shiro:hasRole name="user:common">
           <div class="layui-form layui-form-pane">
-            <form th:action="@{/IdeaC/commentIdea}" method="post">
+            <form th:action="@{/ideaC/commentIdea}" method="post">
               <div class="layui-form-item layui-form-text">
                 <a name="comment"></a>
                 <div class="layui-input-block">
@@ -279,7 +279,7 @@ layui.config({
   function outReply(commentId) {
     console.log("outReply!!c" + commentId)
     $.ajax({
-      url:"/IdeaC/commentIdeaUser",
+      url:"/ideaC/commentIdeaUser",
       data:$('#outReplyForm'+commentId).serialize(),
       type:"post",
       dataType:"json",
@@ -300,7 +300,7 @@ layui.config({
     console.log($('#content').text())
     console.log($('#inReplyForm').serialize())
     $.ajax({
-      url:"/IdeaC/commentIdeaUser",
+      url:"/ideaC/commentIdeaUser",
       data:$('#inReplyForm'+childId).serialize(),
       type:"post",
       dataType:"json",

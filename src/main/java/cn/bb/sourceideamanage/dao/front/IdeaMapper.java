@@ -12,16 +12,35 @@ import java.util.List;
 @Mapper
 public interface IdeaMapper {
 
-    @Select("select * from team where team_id = #{teamId}")
+    @Select(" SELECT team_id,team_name,team_msg,team_nums,team_create_time from team where team_id = 30")
     public Team findTeam(@Param("teamId") Integer teamId);
 
-    @Select("select * from user where user_id = #{userId}")
+    @Select("SELECT " +
+            " user_id, " +
+            " user_name, " +
+            " user_msg, " +
+            " user_account, " +
+            " user_password, " +
+            " user_create_time  " +
+            "FROM " +
+            "USER  " +
+            "WHERE " +
+            " user_id = #{userId}")
     public User findUser(@Param("userId") Integer userId);
 
-    @Select("select * from tag where tag_id = #{tagId}")
+    @Select("select tag_id,tag_name from tag where tag_id = #{tagId}")
     public Tag findTag(@Param("tagId") Integer tagId);
 
-    @Select("select * from comment_idea where idea_id = #{ideaId}")
+    @Select("SELECT " +
+            " id, " +
+            " idea_id, " +
+            " user_id, " +
+            " content, " +
+            " comment_time  " +
+            "FROM " +
+            " comment_idea  " +
+            "WHERE " +
+            " idea_id = #{ideaId}")
     public List<CommentIdea> findComment(@Param("ideaId") Integer ideaId);
 
     @Select("select i.idea_id AS ideaId, i.idea_name AS ideaName, i.idea_msg AS ideaMsg,t.tag_name AS ideaTag ," +
@@ -42,7 +61,7 @@ public interface IdeaMapper {
             " from idea i " +
             " ORDER BY i.idea_supports DESC" +
             " limit 0 ,10")
-    public List<Idea> getTagSupports();
+    public List<Idea> getIdeaSupportsRank();
 
     @Select("select u.user_name AS ideaUserName ,i.idea_id AS ideaId, i.idea_name AS ideaName , " +
             "   i.idea_msg AS ideaMsg , t.tag_name AS ideaTag, i.idea_supports AS ideaSupports" +

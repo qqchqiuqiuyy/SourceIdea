@@ -121,7 +121,7 @@
         <ul class="fly-list" th:each="idea : ${ideas}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/IdeaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+              <a th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
             </h3>
             <div class="fly-list-info">
               <span th:text="${idea.ideaCreateTime}"></span>

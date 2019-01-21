@@ -13,6 +13,6 @@ public class CommentIdea implements Serializable {
     private Integer id;
     private Integer ideaId;
     private Integer userId;
-    private String ideaComments;
+    private String content;
     private Timestamp commentTime;
 }

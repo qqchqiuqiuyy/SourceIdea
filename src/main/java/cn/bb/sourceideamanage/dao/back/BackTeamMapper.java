@@ -13,17 +13,49 @@ import java.util.List;
 @Mapper
 public interface BackTeamMapper {
 
-    @Select("select distinct * from project where team_id = #{teamId}")
+
+    @Select("  SELECT " +
+            "p.project_id , " +
+            "p.team_id, " +
+            "p.project_name,    " +
+            "p.project_msg, " +
+            "p.project_archive, " +
+            "p.project_create_time  " +
+            "FROM   " +
+            "project p  " +
+            "WHERE  " +
+            "team_id = #{teamId} ")
     public List<Project> findAllProjectByTeamId(Integer teamId);
 
-    @Select("select distinct r.role_msg As teamRoleName, " +
-            " ut.member_join_time As memberJoinTime,u.user_name As userName" +
-            " from role r, user u,user_team ut " +
-            " where r.role_id = ut.role_id  AND u.user_id = ut.user_id AND ut.team_id = #{tId2} AND r.role_id != '5'")
+    @Select("SELECT " +
+            " r.role_msg AS teamRoleName, " +
+            " ut.member_join_time AS memberJoinTime, " +
+            " u.user_name AS userName  " +
+            "FROM " +
+            " role r, " +
+            " USER u, " +
+            " user_team ut  " +
+            "WHERE " +
+            " r.role_id = ut.role_id  " +
+            " AND u.user_id = ut.user_id  " +
+            " AND ut.team_id = #{tId2} " +
+            "AND r.role_id IN ( SELECT max( role_id ) FROM user_team WHERE user_id = ut.user_id )")
     public List<BackTeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 
-    @Select("select distinct * from idea where team_id = #{teamId}")
+    @Select("  SELECT " +
+            "   i.idea_id AS ideaId, " +
+            "   i.team_id AS teamId, " +
+            "   i.tag_id AS tagId," +
+            "   i.user_id AS userId," +
+            "   i.idea_name AS ideaName," +
+            "   i.idea_msg AS ideaMsg," +
+            "   i.idea_supports AS ideaSupports," +
+            "   i.idea_create_time AS ideaCreateTime" +
+            "   FROM" +
+            "   idea i" +
+            "   WHERE" +
+            "   i.team_id = #{tId3}")
     public List<Idea> findAllTeamIdea(@Param("tId3") Integer teamId);
 
     /**
@@ -33,7 +65,7 @@ public interface BackTeamMapper {
      */
     @Select("select distinct u.user_name " +
             "from role r, user_team ut ,user u" +
-            " where ut.team_id = #{teamId} AND ut.role_id = '4' AND ut.user_id = u.user_id")
+            " where ut.team_id = #{teamId} AND ut.role_id = '5' AND ut.user_id = u.user_id")
     public String findTeamCaptainByTeamId(Integer teamId);
 
 

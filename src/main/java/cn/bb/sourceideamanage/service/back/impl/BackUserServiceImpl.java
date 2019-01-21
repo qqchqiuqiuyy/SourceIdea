@@ -6,6 +6,7 @@ import cn.bb.sourceideamanage.entity.Team;
 import cn.bb.sourceideamanage.service.back.BackUserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,12 +28,6 @@ public class BackUserServiceImpl implements BackUserService {
         return adminMapper.findAllTeamByUserId(userId);
     }
 
-    /*@Override
-    public PageInfo<BackUser> searchBackUser(int page, int size,String userName) {
-        PageHelper.startPage(page,size);
-        List<BackUser> back_users = adminMapper.searchBackUser(userName);
-        return new PageInfo<>(back_users);
-    }*/
 
     @Override
     public PageInfo<BackUser> findUserByPage(int page, int size, String userName){

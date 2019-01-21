@@ -9,19 +9,22 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Generated;
 import java.util.List;
 
 @Controller
-@RequestMapping("/AdminC")
+@RequestMapping("/adminC")
 public class BackIdeaController {
 
     @Autowired
     BackIdeaService backIdeaService;
 
-    @RequestMapping("/toIdeas")
+    @Autowired
+    JSONObject jsonObject;
+
+    @GetMapping("/toIdeas")
     public String toIdea(Model model, String ideaName, String tagName, Integer page){
         if(null == page || page < 1){
             page = 1;
@@ -38,22 +41,14 @@ public class BackIdeaController {
         model.addAttribute("indexPage",page);
         model.addAttribute("totalPage",pageInfo.getPages());
         model.addAttribute("ideas",pageInfo.getList());
-
         return "/pages/back/back_idea";
     }
 
-    @Autowired
-    JSONObject jsonObject;
 
-    @RequestMapping("/toDeleteIdea")
+
+    @DeleteMapping("/toDeleteIdea/{ideaId}")
     @ResponseBody
-    public String deleteIdea(Integer ideaId){
-        if(ideaId == null){
-            jsonObject.put("msg","0");
-            return jsonObject.toString();
-        }
-        backIdeaService.deleteIdea(ideaId);
-        jsonObject.put("msg","1");
-        return jsonObject.toString();
+    public String deleteIdea(@PathVariable("ideaId") Integer ideaId){
+        return backIdeaService.deleteIdea(ideaId);
     }
 }

@@ -7,10 +7,11 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/AdminC")
+@RequestMapping("/adminC")
 public class BackUserController {
 
     @Autowired
@@ -23,7 +24,7 @@ public class BackUserController {
      * @param page
      * @return
      */
-    @RequestMapping("/toUsers")
+    @GetMapping("/toUsers")
     public String toUser(Model model, String userName,Integer page)
     {
 

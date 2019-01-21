@@ -9,7 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface BackUserMapper {
-    @Select("select  * from team where team_id IN " +
+    @Select("select  team_id,team_name,team_msg,team_nums,team_create_time " +
+            "from team where team_id IN " +
             "(select team_id from user_team where user_id = #{userId})")
     public List<Team> findAllTeamByUserId(Integer userId);
 

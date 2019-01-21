@@ -87,7 +87,7 @@ public class IdeaServiceImpl implements IdeaService {
     @Override
     @Cacheable(cacheNames = "supportsList",key = "'ideaSupports'")
     public List<Idea> getIdeaSupports() {
-        return ideaMapper.getTagSupports();
+        return ideaMapper.getIdeaSupportsRank();
     }
 
     /**

@@ -28,7 +28,7 @@
             <tr>
               <td> <div href="" class="layui-this" style="width:350px"><h1>想法列表</h1></div></td>
               <!--搜索框-->
-               <form class="form-inline layui-form" th:action="@{/IdeaC/toIdea}" type="post" >
+               <form class="form-inline layui-form" th:action="@{/ideaC/toIdea}" type="post" >
                <td>
                    <input type="text"  name="ideaName"   placeholder="搜索想法" autocomplete="off" class="layui-input" style="width:150px">
                </td>
@@ -46,7 +46,7 @@
                  <button style="float: left" type="submit" class="layui-btn layui-btn-normal" >确认</button>
                </td>
                </form>
-              <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/IdeaC/toBrainStorming}">头脑风暴</a></td>
+              <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/ideaC/toBrainStorming}">头脑风暴</a></td>
             </tr>
           </table>
         </div>
@@ -54,7 +54,7 @@
         <ul class="fly-list" th:each="idea:${ideas}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a   th:href="@{/IdeaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+              <a   th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
             </h3>
             <div class="fly-list-info" style="display: flex; align-items: center;justify-content: space-between;">
               <span style="display: inline-block;margin-right: 20px">
@@ -86,15 +86,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}}">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/IdeaC/toIdea?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
             </ul>
 
           </div>
@@ -107,7 +107,7 @@
       <dl class="fly-panel fly-list-one" >
         <dt class="fly-panel-title">点赞排名排行榜</dt>
         <dd th:each="idea : ${ideasSupports} " >
-          <a th:href="@{/IdeaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+          <a th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
           <span style="display: inline-block;float:right;margin-right: 150px"><i class="iconfont icon-zan"  th:text="${idea.ideaSupports}"></i></span>
         </dd>
       </dl>
@@ -141,8 +141,8 @@
 <script src="../../../../../res/layui/layui.js"></script>
 <script>
   function toComment(ideaId) {
-    console.log("/IdeaC/toIdeaComments?ideaId=" + ideaId+"ideaName="+$("#ideaName"+ideaId).text());
-    window.location.href = "/IdeaC/toIdeaComments?ideaId=" + ideaId+"&ideaName="+$("#ideaName"+ideaId).text();
+    console.log("/ideaC/toIdeaComments?ideaId=" + ideaId+"ideaName="+$("#ideaName"+ideaId).text());
+    window.location.href = "/ideaC/toIdeaComments?ideaId=" + ideaId+"&ideaName="+$("#ideaName"+ideaId).text();
   }
   function msg(val){
     layer.open({
@@ -162,7 +162,7 @@ function supports(ideaId){
   var supports = parseInt(s);
 
   $.ajax({
-    url:"/IdeaC/upIdeaSupports",
+    url:"/ideaC/upIdeaSupports",
     data:{ "ideaId" : ideaId,
             "userId" : userId
         },

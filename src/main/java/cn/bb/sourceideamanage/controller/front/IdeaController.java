@@ -14,8 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -24,18 +23,18 @@ import java.util.Map;
 import static cn.bb.sourceideamanage.common.config.PageSize.PAGE_SIZE;
 
 @Controller
-@RequestMapping("/IdeaC")
+@RequestMapping("/ideaC")
 @Slf4j
 public class IdeaController {
 
     @Autowired
-    IdeaService ideaService;
+    private IdeaService ideaService;
     @Autowired
-    BackIdeaService backIdeaService;
+    private BackIdeaService backIdeaService;
 
 
-        @Autowired
-        UserService userService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 去idea想法列表 并且有分页
@@ -71,15 +70,16 @@ public class IdeaController {
         return "/pages/front/html/idea/ideaList";
     }
 
-    @RequestMapping("toIdeaMsg")
-    public String ideaMsg(Model model,Integer ideaId){
+    @GetMapping("/toIdeaMsg")
+    public String ideaMsg(Model model,@RequestParam("ideaId") Integer ideaId){
         IdeaMsg ideaMsg = ideaService.getIdeaMsg(ideaId);
         model.addAttribute("ideaMsg",ideaMsg);
         return "/pages/front/html/idea/ideaMsg";
     }
 
-    @RequestMapping("/toIdeaComments")
-    public String toIdeaComments(Integer ideaId,String ideaName,Model model){
+    @GetMapping("/toIdeaComments")
+    public String toIdeaComments(@RequestParam("ideaId") Integer ideaId,
+                                 @RequestParam("ideaName") String ideaName,Model model){
         List<Comment> comments = ideaService.getAllComment(ideaId);
         model.addAttribute("ideaId",ideaId);
         model.addAttribute("ideaName",ideaName);
