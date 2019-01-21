@@ -61,4 +61,6 @@ public interface IdeaService {
     public Integer getBrainTime(Integer brainid);
 
     public List<Map<String ,String >> allBrains();
+
+    public String upBrainSupports(String brainName,Integer userId);
 }

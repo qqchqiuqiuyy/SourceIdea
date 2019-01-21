@@ -136,6 +136,9 @@ public class IdeaServiceImpl implements IdeaService {
         return ideaMapper.getAllComment(ideaId);
     }
 
+    /**
+     * 评论想法
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "comments", key = "'comments=['+#ideaId+']'")
@@ -149,6 +152,7 @@ public class IdeaServiceImpl implements IdeaService {
             log.error("评论错误!!e={}",e.getMessage());
         }
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -184,6 +188,11 @@ public class IdeaServiceImpl implements IdeaService {
         return ideas;
     }
 
+    /**
+     * 删除想法
+     * @param ideaId
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "myIdeas",allEntries = true)
@@ -204,6 +213,11 @@ public class IdeaServiceImpl implements IdeaService {
         return jsonObject.toString();
     }
 
+    /**
+     *
+     * @param ideId
+     * @param supports
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void durSupports(Integer ideId,Long supports) {
@@ -216,6 +230,18 @@ public class IdeaServiceImpl implements IdeaService {
 
     }
 
+    /**
+     * 评论想法部分
+     * @param uid
+     * @param ideaId
+     * @param ideaName
+     * @param userId
+     * @param userName
+     * @param parentId
+     * @param parentName
+     * @param content
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "comments" ,key = "'comments=['+#ideaId+']'")
@@ -233,6 +259,7 @@ public class IdeaServiceImpl implements IdeaService {
         }
         return jsonObject.toString();
     }
+
 
     @Override
     @Cacheable(cacheNames = "allBrainTime",key = "'findAllTime'")
@@ -321,6 +348,38 @@ public class IdeaServiceImpl implements IdeaService {
             log.error("去头脑风暴页面失败!!e={}",e);
         }
         return brains;
+    }
+
+    /**
+     * 点赞
+     * @param brainName
+     * @return
+     */
+    @Override
+    public String upBrainSupports(String brainName,Integer uuserId) {
+            String userKey = BrainKey.BRAIN_SUPPORT_USER.getKey() +brainName;
+            String supportsKey = BrainKey.BRAIN_KEY.getKey()+brainName;
+            String userId = uuserId.toString();
+            Boolean exist = jedis.sismember(userKey, userId);
+            //判断集合Set之中是否有相同userId  如果有相同的userId 就删除 同时 点赞-1
+            if(exist){
+                //删除某个用户点赞, 之后点赞数-1
+                jedis.srem(userKey,userId);
+                jedis.hincrBy(supportsKey,"supports",-1);
+                jsonObject.put("msg","取消赞成功!");
+                jsonObject.put("msg","取消赞成功!!");
+                jsonObject.put("success","0");
+            }else{
+                //用户点赞
+                jedis.sadd(userKey,userId);
+                jedis.hincrBy(supportsKey,"supports",1);
+                log.info("点赞成功!!");
+                jsonObject.put("msg","点赞成功!!");
+                jsonObject.put("success","1");
+            }
+
+
+        return jsonObject.toString();
     }
 
 

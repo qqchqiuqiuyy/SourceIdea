@@ -1,6 +1,7 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
 import cn.bb.sourceideamanage.common.config.upload;
+import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.LoginMapper;
 import cn.bb.sourceideamanage.entity.User;
 import cn.bb.sourceideamanage.service.front.LoginService;
@@ -52,7 +53,7 @@ public class LoginServiceImpl implements LoginService {
     public void addUser(User user) {
       loginMapper.addUser(user);
         //新增用户直接赋值1
-      loginMapper.addRole(user.getUserId(),1);
+      loginMapper.addRole(user.getUserId(), Roles.UserCommon.getRoleId());
     }
 
     @Override

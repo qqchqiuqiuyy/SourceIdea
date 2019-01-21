@@ -34,7 +34,7 @@
         <ul class="fly-list" th:each="brain:${brains}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a    th:text="${brain.brainName}"></a>
+              <a    th:text="${brain.brainName}" style="font-size: 20px" th:id="'fontSize'+ ${brain.brainName}"></a>
             </h3>
             <div class="fly-list-info" style="display: flex; align-items: center;justify-content: space-between;">
               <cite th:text="'发起人: '+${brain.userName}"></cite>
@@ -70,14 +70,24 @@
       content : val
     });
   }
-function supports(brainId){
+function supports(brainName){
     console.log("进入supports方法")
-  console.log('brainId' + brainId);
+  console.log('brainName' + brainName);
+  var supportstring = $('#branId'+brainName).text();
+  var supports = parseInt(supportstring);
+
+  /*字体*/
+  var thisEle = $('#fontSize'+brainName).css("font-size");
+  console.log("thisEle=" +thisEle);
+  var fontsize = parseFloat( thisEle ,10 );
+  console.log("fontsize=" +fontsize);
+
+  var incre = 10;
 
   $.ajax({
     url:"/IdeaC/upBrainSupports",
     data:{
-            "brainId" : brainId
+            "brainName" : brainName
         },
     type:"post",
     dataType:"json",
@@ -85,18 +95,30 @@ function supports(brainId){
     success:function(data){//ajax返回的数据
       console.log(data);
       if(data.success == "1"){
-        $("#branId"+brainId).text(supports + 1)
+        $("#branId"+brainName).text(supports + 1)
         console.log("supportNums" + supports);
-        console.log("brainId "+brainId);
+        console.log("brainName "+brainName);
         /*点击改变颜色*/
-        $("#buttonId"+brainId).removeClass("layui-btn-normal").addClass("layui-btn-danger");
-        console.log("#buttonId"+brainId)
+        $("#buttonId"+brainName).removeClass("layui-btn-normal").addClass("layui-btn-danger");
+        console.log("#brainName"+brainName)
+        /*改变字体大小*/
+        fontsize += incre;
+        if( fontsize >= 80){
+          fontsize = 80;
+        }
+        $('#fontSize'+brainName).css("font-size",fontsize);
       }
       if(data.success == "0"){
         console.log("取消赞!");
-        $("#branId"+brainId).text(supports - 1);
+        $("#branId"+brainName).text(supports - 1);
         /*点击改变颜色*/
-        $("#buttonId"+brainId).removeClass("layui-btn-danger").addClass("layui-btn-normal");
+        $("#buttonId"+brainName).removeClass("layui-btn-danger").addClass("layui-btn-normal");
+        /*改变字体大小*/
+        fontsize -= incre;
+        if( fontsize <= 80){
+          fontsize = 20;
+        }
+        $('#fontSize'+brainName).css("font-size",fontsize);
       }
       layer.msg(data.msg);
     },

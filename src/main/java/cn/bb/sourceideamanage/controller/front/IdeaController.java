@@ -158,9 +158,9 @@ public class IdeaController {
 
     @RequestMapping("/upBrainSupports")
     @ResponseBody
-    public String upBrainSupports(HttpServletRequest request,String brainId ){
+    public String upBrainSupports(HttpServletRequest request,String brainName ){
         Integer userId = (Integer) request.getSession().getAttribute("userId");
-        return "";
+        return ideaService.upBrainSupports(brainName,userId);
     }
 
 }

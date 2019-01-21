@@ -73,30 +73,9 @@ public class UserServiceImplTest {
     Jedis jedis;
     @Test
     public void redis(){
-        String cursor = "0";
-        ScanResult<String> keys = null;
-        List<String> allMapKeys = null;
-        List<String> userIds = new ArrayList<>() ;
-        List<Map<String,String>> brains = new ArrayList<>();
-        ScanParams scanParams = new ScanParams();
-        String mach;
-        do {
-            mach = BrainKey.BRAIN_KEY.getKey()+"*";
-            keys = jedis.scan(cursor, scanParams.match(mach));
-            //得到所有的keyName
-            allMapKeys = keys.getResult();
-            //取出: 后面的userId;
-            if(null != allMapKeys && allMapKeys.size() > 0 ){
-                //通过key得到所有的map
-                for(String key : allMapKeys){
-                    Map<String, String> map = jedis.hgetAll(key);
-                    brains.add(map);
-                    System.out.println("key = " + key);
-                }
-            }
-            cursor = keys.getStringCursor();
-            System.out.println("CURSOR = "+cursor);
-
-        }while (Integer.parseInt(cursor) != 0);
+       jedis.hset("test","size","1");
+       System.out.println(jedis.hgetAll("test"));
+       jedis.hincrBy("test","size",-1);
+        System.out.println(jedis.hgetAll("test"));
     }
 }
