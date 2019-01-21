@@ -2,8 +2,8 @@ package cn.bb.sourceideamanage.dao.front;
 
 import cn.bb.sourceideamanage.dto.front.ApplyUser;
 import cn.bb.sourceideamanage.dto.front.FrontProject;
-import cn.bb.sourceideamanage.dto.front.frontUser;
-import cn.bb.sourceideamanage.dto.front.inviteUser;
+import cn.bb.sourceideamanage.dto.front.FrontUser;
+import cn.bb.sourceideamanage.dto.front.InviteUser;
 import cn.bb.sourceideamanage.entity.*;
 import org.apache.ibatis.annotations.*;
 
@@ -44,8 +44,8 @@ public interface UserMapper {
     @Select("select * from idea where user_id = #{userId}")
     public List<Idea> findUserAllIdea(@Param("userId") Integer userId);
 
-    @Select("select * from commentIdea where user_id = #{userId}")
-    public List<commentIdea> findUserAllCommentIdea(@Param("userId") Integer userId);
+    @Select("select * from CommentIdea where user_id = #{userId}")
+    public List<CommentIdea> findUserAllCommentIdea(@Param("userId") Integer userId);
 
 
     @Select("select * from user where user_account=#{account}")
@@ -104,13 +104,13 @@ public interface UserMapper {
     @Select("SELECT u.user_id AS userId, u.user_name AS userName ,u.user_msg AS userMsg , u.user_create_time AS userCreateTime  " +
             " FROM  user u" +
             "   WHERE u.user_name LIKE CONCAT( '%',#{userName}, '%' )")
-    public List<frontUser> findAllFrontUser(@Param("userName") String userName);
+    public List<FrontUser> findAllFrontUser(@Param("userName") String userName);
 
     @Select("SELECT u.user_id AS userId ,u.user_name AS userName,u.user_msg AS userMsg, " +
             "   u.user_create_time AS userCreateTime" +
             "   FROM user u" +
             "   WHERE u.user_id = #{userId}")
-    public frontUser getUserMsg(@Param("userId") Integer userId);
+    public FrontUser getUserMsg(@Param("userId") Integer userId);
 
     @Select("select user_id from invite where user_id = #{userId} AND team_id = #{teamId}")
     public String checkUserInInvite(@Param("userId") Integer userId, @Param("teamId") Integer teamId);
@@ -120,7 +120,7 @@ public interface UserMapper {
             "   FROM invite it ,team t" +
             "   WHERE it.user_id = #{userId} AND" +
             "         it.team_id = t.team_id  ")
-    public List<inviteUser> getUserInvite(@Param("userId") Integer userId);
+    public List<InviteUser> getUserInvite(@Param("userId") Integer userId);
 
     @Delete("DELETE FROM invite WHERE user_id = #{userId} AND team_id = #{teamId}")
     public void delInvite(@Param("userId") Integer userId,@Param("teamId") Integer teamId);

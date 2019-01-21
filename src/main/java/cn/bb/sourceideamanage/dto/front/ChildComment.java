@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @ToString
-public class childComment implements Serializable {
+public class ChildComment implements Serializable {
     private static final long serialVersionUID = -6383919776860160881L;
     private Integer id;
     private Integer uid;

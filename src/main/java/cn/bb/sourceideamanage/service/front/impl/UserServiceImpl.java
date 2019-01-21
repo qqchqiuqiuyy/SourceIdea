@@ -7,7 +7,6 @@ import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dao.front.UserMapper;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.*;
-import cn.bb.sourceideamanage.service.front.ProjectService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageHelper;
@@ -66,7 +65,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    public List<commentIdea> findUserAllCommentIdea(Integer userId) {
+    public List<CommentIdea> findUserAllCommentIdea(Integer userId) {
         return userMapper.findUserAllCommentIdea(userId);
     }
 
@@ -76,7 +75,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public String delMember(Integer userId, String teamName) {
         try {
@@ -104,7 +103,7 @@ public class UserServiceImpl  implements UserService {
      * 团长审批同意部分 同意申请进入团队
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "myTeamMember ",key = "'myTeamMember=[teamName='+#teamName+']'")
     public String agreeMember(Integer userId,String teamName){
         try {
@@ -233,9 +232,9 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    public PageInfo<frontUser> findAllFrontUser(int page, int size, String userName) {
+    public PageInfo<FrontUser> findAllFrontUser(int page, int size, String userName) {
         PageHelper.startPage(page,size);
-        List<frontUser> allFrontUser = userMapper.findAllFrontUser(userName);
+        List<FrontUser> allFrontUser = userMapper.findAllFrontUser(userName);
         return new PageInfo<>(allFrontUser);
     }
 
@@ -274,8 +273,8 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     @Cacheable(cacheNames = "userMsg",key = "'userMsg=[userId='+#userId+']'")
-    public frontUser getUserMsg(Integer userId) {
-        frontUser userMsg = userMapper.getUserMsg(userId);
+    public FrontUser getUserMsg(Integer userId) {
+        FrontUser userMsg = userMapper.getUserMsg(userId);
         return userMsg;
     }
 
@@ -294,7 +293,7 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     @Cacheable(cacheNames = "inviteList",key = "'inviteList=[userId='+#userId+']'")
-    public List<inviteUser> getUserInvite(Integer userId) {
+    public List<InviteUser> getUserInvite(Integer userId) {
 
         return userMapper.getUserInvite(userId);
     }

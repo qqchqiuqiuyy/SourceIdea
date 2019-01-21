@@ -80,10 +80,10 @@ public class IdeaController {
 
     @RequestMapping("/toIdeaComments")
     public String toIdeaComments(Integer ideaId,String ideaName,Model model){
-        List<Comment> Comments = ideaService.getAllComment(ideaId);
+        List<Comment> comments = ideaService.getAllComment(ideaId);
         model.addAttribute("ideaId",ideaId);
         model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments", Comments);
+        model.addAttribute("comments", comments);
         return "/pages/front/html/idea/ideaComments";
     }
 
@@ -102,10 +102,10 @@ public class IdeaController {
 
 
         ideaService.commentIdea(content,ideaName,ideaId,request);
-        List<Comment> Comments = ideaService.getAllComment(ideaId);
+        List<Comment> comments = ideaService.getAllComment(ideaId);
         model.addAttribute("ideaId",ideaId);
         model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments", Comments);
+        model.addAttribute("comments", comments);
         return "/pages/front/html/idea/ideaComments";
     }
 

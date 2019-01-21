@@ -36,7 +36,7 @@ public class BackIdeaServiceImpl implements BackIdeaService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteIdea(Integer ideaId) {
         mapper.deleteIdea(ideaId);
     }

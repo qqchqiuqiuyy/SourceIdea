@@ -5,7 +5,6 @@ import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.*;
 import com.github.pagehelper.PageInfo;
-import org.apache.ibatis.annotations.Select;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -19,7 +18,7 @@ public interface IdeaService {
 
     public Tag findTag(Integer tagId);
 
-    public List<commentIdea> findComment(Integer ideaId);
+    public List<CommentIdea> findComment(Integer ideaId);
 
     public PageInfo<FrontIdea> findAllFrontIdea(int page, int size, String ideaName, String tagName);
 

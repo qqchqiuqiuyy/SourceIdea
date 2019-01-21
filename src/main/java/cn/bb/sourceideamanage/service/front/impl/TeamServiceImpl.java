@@ -43,8 +43,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<User> findAllMembers(Integer team_id) {
-        return teamMapper.findAllMembers(team_id);
+    public List<User> findAllMembers(Integer teamId) {
+        return teamMapper.findAllMembers(teamId);
     }
 
     @Override

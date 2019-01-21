@@ -2,26 +2,21 @@ package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
 import cn.bb.sourceideamanage.common.enums.Roles;
-import cn.bb.sourceideamanage.dto.back.BackTeam;
 import cn.bb.sourceideamanage.dto.front.*;
-import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Tag;
 import cn.bb.sourceideamanage.service.back.BackIdeaService;
 import cn.bb.sourceideamanage.service.front.IdeaService;
 import cn.bb.sourceideamanage.service.front.ProjectService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
-import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -49,8 +44,8 @@ public class UserController {
     @RequestMapping("/toHome")
     public String toHome(HttpServletRequest request,Model model){
         Integer userId = (Integer)request.getSession().getAttribute("userId");
-        frontUser user = userService.getUserMsg(userId);
-        List<inviteUser> invites = userService.getUserInvite(userId);
+        FrontUser user = userService.getUserMsg(userId);
+        List<InviteUser> invites = userService.getUserInvite(userId);
         model.addAttribute("invites",invites);
         model.addAttribute("user",user);
         return "pages/front/html/home";
@@ -246,9 +241,9 @@ public class UserController {
         if(userName == null){
             userName = "";
         }
-        PageInfo<frontUser> info = userService.findAllFrontUser(page, PAGE_SIZE, userName);
+        PageInfo<FrontUser> info = userService.findAllFrontUser(page, PAGE_SIZE, userName);
 
-        List<frontUser> users = info.getList();
+        List<FrontUser> users = info.getList();
         model.addAttribute("users",users);
         model.addAttribute("indexPage",page);
         model.addAttribute("totalPage",info.getPages());
@@ -261,7 +256,7 @@ public class UserController {
     public String toUserMsg(Model model,HttpServletRequest request,Integer userId,String teamName){
 
         //查找当前用户信息
-       frontUser userMsg = userService.getUserMsg(userId);
+       FrontUser userMsg = userService.getUserMsg(userId);
        Boolean flag = userService.checkUserInInvite(userId, teamName);
        //查找这个用户的所有teamName
         List<String> userTeams = teamService.findAllTeam(userId);

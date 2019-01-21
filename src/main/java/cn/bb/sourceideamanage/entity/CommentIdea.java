@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 @Data
 @ToString
-public class commentIdea implements Serializable {
+public class CommentIdea implements Serializable {
     private static final long serialVersionUID = 270055613039150909L;
     private Integer id;
     private Integer ideaId;

@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public String joinProject(Integer userId, Integer projectId) {
         //加入项目同时也要加入团队
         Integer teamId = projectMapper.getTeamId(projectId);
@@ -139,7 +139,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(cacheNames = "myProject", key = "'myProject=[teamName='+#teamName+']'")
     public String archiveProject(Integer projectId){
         try{

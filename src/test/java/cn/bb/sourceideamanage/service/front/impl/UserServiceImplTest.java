@@ -1,23 +1,17 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.enums.BrainKey;
 import cn.bb.sourceideamanage.dto.front.ApplyUser;
 import cn.bb.sourceideamanage.entity.*;
 import cn.bb.sourceideamanage.service.front.UserService;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -53,8 +47,8 @@ public class UserServiceImplTest {
 
     @Test
     public void findUserAllCommentIdea(){
-        List<commentIdea> commentIdeas = userService.findUserAllCommentIdea(1);
-        log.warn("commentIdeas = {} " , commentIdeas.toString());
+        List<CommentIdea> CommentIdeas = userService.findUserAllCommentIdea(1);
+        log.warn("CommentIdeas = {} " , CommentIdeas.toString());
     }
 
     @Test

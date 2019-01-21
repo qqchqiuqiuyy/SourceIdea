@@ -15,7 +15,6 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -67,7 +66,7 @@ public class IdeaServiceImpl implements IdeaService {
     }
 
     @Override
-    public List<commentIdea> findComment(Integer ideaId) {
+    public List<CommentIdea> findComment(Integer ideaId) {
         return ideaMapper.findComment(ideaId);
     }
 

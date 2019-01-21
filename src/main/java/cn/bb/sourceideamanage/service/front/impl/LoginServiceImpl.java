@@ -1,6 +1,5 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.config.upload;
 import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.LoginMapper;
 import cn.bb.sourceideamanage.entity.User;
@@ -18,22 +17,20 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
 import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author s
+ */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class LoginServiceImpl implements LoginService {
 
@@ -63,8 +60,8 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String ,String> register(String account, String password, String repassword,String username) {
-        Map<String ,String> hashMap = new HashMap<>();
-        if(account.equals("") || password.equals("") || username.equals("") || repassword.equals("")){
+        Map<String ,String> hashMap = new HashMap<>(16);
+        if("".equals(account)|| "".equals(password)  || "".equals(username)  || "".equals(repassword) ){
             hashMap.put("msg","信息输入不完整不能空白");
             hashMap.put("success","0");
             log.error("信息输入不完整 msg={}",hashMap);
@@ -101,7 +98,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public Map<String,String> check(String account, String password, HttpServletRequest request, HttpServletResponse response){
-        Map<String,String> info = new HashMap<>();
+        Map<String,String> info = new HashMap<>(16);
         //获取Subject
         Subject subject = SecurityUtils.getSubject();
         //封装用户数据

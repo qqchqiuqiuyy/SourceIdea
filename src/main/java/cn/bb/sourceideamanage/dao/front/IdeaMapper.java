@@ -1,13 +1,11 @@
 package cn.bb.sourceideamanage.dao.front;
 
-import cn.bb.sourceideamanage.dto.front.childComment;
+import cn.bb.sourceideamanage.dto.front.ChildComment;
 import cn.bb.sourceideamanage.entity.Comment;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.*;
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.mapping.FetchType;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -24,7 +22,7 @@ public interface IdeaMapper {
     public Tag findTag(@Param("tagId") Integer tagId);
 
     @Select("select * from comment_idea where idea_id = #{ideaId}")
-    public List<commentIdea> findComment(@Param("ideaId") Integer ideaId);
+    public List<CommentIdea> findComment(@Param("ideaId") Integer ideaId);
 
     @Select("select i.idea_id AS ideaId, i.idea_name AS ideaName, i.idea_msg AS ideaMsg,t.tag_name AS ideaTag ," +
             " i.idea_supports AS ideaSupports, i.idea_create_time AS ideaCreateTime , u.user_name AS ideaUserName" +
@@ -82,7 +80,7 @@ public interface IdeaMapper {
             "           ci.id as uuid" +
             " FROM comment_idea ci" +
             " WHERE ci.idea_id = #{ideaId}")
-    @Results({  //todo 要一对多啦
+    @Results({
             @Result(column = "uuid",javaType = List.class, property = "childComments",
                     many = @Many(   //一对多
                             select="cn.bb.sourceideamanage.dao.front.IdeaMapper.getChildComment" //上面搜索的方法
@@ -106,7 +104,7 @@ public interface IdeaMapper {
             "FROM " +
             " comment_idea ci " +
             "WHERE ci.uid = #{uuid}")
-    public List<childComment> getChildComment(@Param("uuid") Integer uuid);
+    public List<ChildComment> getChildComment(@Param("uuid") Integer uuid);
 
     @Select("SELECT user_id from user where user_name = #{userName}")
     public Integer getUserId(@Param("userName") String userName);
@@ -153,15 +151,7 @@ public interface IdeaMapper {
     public void delIdeaComment(@Param("ideaId") Integer ideaId);
 
 
-   /* @Update({
-           *//* "<script>" +*//*
-                    " <foreach collection = 'supports' iteam = 'value' index='key' separator=';'> " +
-                    "       UPDATE idea SET " +
-                    "       idea_supports = ${value} WHERE ide_id = #{key}" +
-                    "</foreach>"
-           *//* "</script>"*//*
-    })
-    public void durSupports(@Param("supports") Map<Integer, Long> supports);*/
+
 
     @Update("UPDATE idea SET idea_supports = #{supports} WHERE idea_id = #{ideaId}")
     public void durSupports(@Param("ideaId") Integer ideId, @Param("supports") Long supports);

@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.entity;
 
-import cn.bb.sourceideamanage.dto.front.childComment;
+import cn.bb.sourceideamanage.dto.front.ChildComment;
 import lombok.Data;
 import lombok.ToString;
 
@@ -21,6 +21,6 @@ public class Comment implements Serializable {
     private Integer parentId;
     private String parentName;
     private String content;
-    private List<childComment> childComments;
+    private List<ChildComment> childComments;
     private Timestamp commentTime;
 }

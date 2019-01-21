@@ -129,8 +129,8 @@ public class RedisCacheConfig {
     @Autowired
     Jedis jedis;
 
-    private static final String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
-    private static final String supportsKey = IdeaSupportsKey.SupportsKey.getKey();
+    /*private static final String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
+    private static final String supportsKey = IdeaSupportsKey.SupportsKey.getKey();*/
 
 
 }

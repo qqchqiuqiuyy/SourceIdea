@@ -17,7 +17,7 @@ import java.util.List;
 public interface TeamService {
     public List<Project> findAllProject( Integer teamId);
     public List<Idea> findAllIdea( Integer ideaId);
-    public List<User> findAllMembers( Integer team_id);
+    public List<User> findAllMembers( Integer teamId);
     public List<UserTeam> findSearchTeam( String teamName);
     public PageInfo<FrontTeam> findAllFrontTeam(int page, int size, String teamName);
     public BackTeam findAllTeamMember( String teamName);

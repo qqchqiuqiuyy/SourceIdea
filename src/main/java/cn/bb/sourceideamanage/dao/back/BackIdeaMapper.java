@@ -7,13 +7,28 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 
 import java.util.List;
+
+/**
+ * @ahuthor b
+ */
 @Mapper
 public interface BackIdeaMapper {
+    /**
+     * 根据userId找到所有的团队
+     * @param userId
+     * @return
+     */
     @Select("select  * from team where team_id IN " +
             "(select team_id from user_team where user_id = #{user_id})")
     public List<Team> findAllTeamByUserId(@Param("user_id") Integer userId);
 
 
+    /**
+     * 根据想法名和想法标签  查找所有的想法
+     * @param ideaName
+     * @param tagName
+     * @return
+     */
     @Select("select u.user_id ,u.user_name AS userName,t.tag_name, i.idea_msg, i.idea_supports,i.idea_create_time, i.idea_id" +
             " from user u, idea i,tag t  " +
             " where t.tag_name LIKE CONCAT('%',#{tagName},'%') AND idea_name LIKE CONCAT('%',#{ideaName},'%') AND i.user_id = u.user_id AND t.tag_id = i.tag_id")
@@ -28,11 +43,17 @@ public interface BackIdeaMapper {
     public List<BackIdea> findAllBackIdea(@Param("ideaName") String ideaName, @Param("tagName") String tagName);
 
 
-
+    /**
+     * 查找所有的标签
+     * @return
+     */
     @Select("select * from tag")
     public List<Tag> findAllTag();
 
-    //TODO 需要连同评论表一起删
+    /**
+     * 删除评论
+     * @param ideaId
+     */
     @Delete("delete from  idea where idea_id = #{ideaId}")
     public void deleteIdea(Integer ideaId);
  }

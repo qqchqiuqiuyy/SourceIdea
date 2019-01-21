@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 @Data
 @ToString
-public class inviteUser implements Serializable {
+public class InviteUser implements Serializable {
     private static final long serialVersionUID = 7131831770237863322L;
     private Integer userId;
     private Integer teamId;

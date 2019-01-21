@@ -80,7 +80,8 @@ public class ShiroConfig {
 
 
         //设置拦截路径 和 过滤器  拦截这些请求URL(controller) 如果没有对应的权限就会定向到login页面
-        Map<String,String> filterMap = new LinkedHashMap<>(); //只能用Link
+        //只能用Link
+        Map<String,String> filterMap = new LinkedHashMap<>();
         filterMap.put("/AdminC/*","roles[Administrator]");
         filterMap.put("/LoginC/*","anon");
         filterMap.put("/IndexC/*","anon");

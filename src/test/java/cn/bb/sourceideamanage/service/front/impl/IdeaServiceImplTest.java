@@ -48,7 +48,7 @@ public class IdeaServiceImplTest {
 
     @Test
     public void findComment() {
-        List<commentIdea> comment = ideaService.findComment(1);
+        List<CommentIdea> comment = ideaService.findComment(1);
         log.warn("coment={}",comment);
     }
 

@@ -17,11 +17,11 @@ public interface TeamMapper {
     public List<Project> findAllProject(@Param("teamId") Integer teamId);
 
     @Select("select * from idea where team_id = #{teamId}")
-    public List<Idea> findAllIdea(@Param("teamId") Integer team_id);
+    public List<Idea> findAllIdea(@Param("teamId") Integer teamId);
 
     @Select("select * from user_team ut, user u where " +
             "ut.user_id = u.user_id AND ut.team_id = #{teamId}")
-    public List<User> findAllMembers(@Param("teamId") Integer team_id);
+    public List<User> findAllMembers(@Param("teamId") Integer teamId);
 
     @Select("select * from user_team where team_id IN " +
             " (select team_id from team where team_name LIKE CONCAT('%',#{teamName},'%')) ")
