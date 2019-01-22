@@ -1,6 +1,7 @@
 package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.dto.front.FrontProject;
 import cn.bb.sourceideamanage.dto.front.FrontProjectMsg;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
@@ -12,15 +13,14 @@ import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/ProjectC")
+@RequestMapping("/projectC")
 public class ProjectController {
 
     @Autowired
@@ -36,33 +36,35 @@ public class ProjectController {
         }
         PageInfo<FrontProject> info = projectService.findAllFrontProject(page, PageSize.PAGE_SIZE, projectName);
         List<FrontProject> projects = info.getList();
-        model.addAttribute("projects",projects);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         return "/pages/front/html/project/projectList";
     }
 
     @Autowired
     TeamService teamService;
+
     @RequestMapping("/toProjectMsg")
     public String toProjectMsg(Model model, Integer projectId, HttpServletRequest request){
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         Integer teamId = projectService.getTeamIdByProjectId(projectId);
         List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
 
         FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);
-        model.addAttribute("projectMsg",projectMsg);
-        model.addAttribute("members",members);
+        model.addAttribute(ModelMsg.PROJECT_MSG.getMsg(),projectMsg);
+        model.addAttribute(ModelMsg.MEMBERS.getMsg(),members);
 
         List<String> projects = projectService.getAllProjects(userId);
         JSONArray projectsName = JSONArray.fromObject(projects);
-        model.addAttribute("projectsName",projectsName);
+        model.addAttribute(ModelMsg.PROJECTS_NAME.getMsg(),projectsName);
         return "/pages/front/html/project/projectMsg";
     }
 
-    @RequestMapping("/joinProject")
+    @PostMapping("/joinProject/{userId}/{projectId}")
     @ResponseBody
-    public String joinProject(Integer userId,Integer projectId){
+    public String joinProject(@PathVariable("userId") Integer userId,
+                              @PathVariable("parojectId") Integer projectId){
         String msg = projectService.joinProject(userId, projectId);
         return msg;
     }
@@ -82,9 +84,9 @@ public class ProjectController {
         return projectService.editProject(projectName,projectId,projectMsg);
     }
 
-    @RequestMapping("/archiveProject")
+    @PutMapping("/archiveProject/{projectId}")
     @ResponseBody
-    public String archiveProject(Integer projectId){
+    public String archiveProject(@PathVariable("projectId") Integer projectId){
             return projectService.archiveProject(projectId);
     }
 }

@@ -42,16 +42,6 @@
                       <input type="hidden" name="teamName" id="teamName" th:value="${teamName}">
                   </div>
               </div>
-              <!--<div class="layui-form-item">
-                  <label class="layui-form-label" style="width: 100px">项目管理员</label>
-                  <div class="layui-input-block" lay-verify="required" >
-                      <select name="projectManagerId" id="projectManagerId">
-                          <i th:each="tag:${tags}">
-                              <option th:value="${tag.userId}" th:text="${tag.userName}"></option>
-                          </i>
-                      </select>
-                  </div>
-              </div>-->
 
               <div class="layui-form-item layui-form-text">
                   <label class="layui-form-label">内容</label>
@@ -80,13 +70,8 @@
     function addProject(){
         console.log("addProject!!")
         $.ajax({
-            url:"/UserC/addTeamProject",
+            url:"/userC/addTeamProject",
             data:$('#myForm').serialize(),
-            /*data:{ "teamName" : $('#teamName').text(),
-                "projectName" : $('#projectName').text(),
-                "projectManagerId" : $('#projectManagerId').value(),
-                "projectMsg": $('#projectMsg').text()
-            },*/
             type:"post",
             dataType:"json",
             cache:false,

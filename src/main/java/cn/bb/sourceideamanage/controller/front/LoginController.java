@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/LoginC")
+@RequestMapping("/loginC")
 @Slf4j
 public class LoginController {
 
@@ -30,16 +30,6 @@ public class LoginController {
     @Autowired
     UserService userService;
 
-   /* @RequestMapping("/toLogin")
-    public String toLogin(){
-        return "pages/common/login";
-    }
-
-    @RequestMapping("/toRegister")
-    public String toRegister(){
-        return "pages/common/register";
-}*/
-
     /**
      *     进行注册
      * @param account
@@ -48,25 +38,19 @@ public class LoginController {
      * @param username
      * @return
      */
-    @RequestMapping("/register")
+    @PostMapping("/register")
+    @ResponseBody
     public String register(String account, String password, String repassword, String username, Model model){
-        Map<String, String> info = loginService.register(account, password, repassword, username);
+        String info  = loginService.register(account, password, repassword, username);
         log.info("info={}",info);
-        String success = info.get("success");
-        String successFlag = "1";
-        if(successFlag.equals(success)){
-            return "forward:/UserC/toLogin";
-        }else{
-            model.addAttribute("info",info.get("msg"));
-        }
-        return  "/pages/front/html/user/reg";
-
+        return info;
     }
 
     @RequestMapping("/check")
+    @ResponseBody
     public String check(Model model,String account, String password, HttpServletRequest request, HttpServletResponse response){
-        Map<String, String> info = loginService.check(account, password, request, response);
-        String success = info.get("success");
+        String info = loginService.check(account, password, request, response);
+       /* String success = info.get("success");
         String successFlag = "1";
         if( successFlag.equals(success)){
             return "forward:/IndexC/toIndex";
@@ -74,7 +58,8 @@ public class LoginController {
             String msg = info.get("msg");
             model.addAttribute("msg",msg);
             return "/pages/front/html/user/login";
-        }
+        }*/
+        return info;
     }
 
     @RequestMapping("/toErr")
@@ -86,6 +71,6 @@ public class LoginController {
     public String toLogout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "forward:/IndexC/toIndex";
+        return "forward:/indexC/toIndex";
     }
 }

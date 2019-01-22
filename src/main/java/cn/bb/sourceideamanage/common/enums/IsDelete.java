@@ -18,7 +18,7 @@ public enum IsDelete {
      * 如果是1表示已删除
      * 2表示未删除
      */
-    private Integer isDelete;
+    private Integer state;
     /**
      * 说明信息
      */
@@ -26,11 +26,11 @@ public enum IsDelete {
 
     /**
      * 构造函数
-     * @param isDelete
+     * @param state
      * @param msg
      */
-    IsDelete(Integer isDelete,String msg){
-        this.isDelete = isDelete;
+    IsDelete(Integer state, String msg){
+        this.state = state;
         this.msg = msg;
     }
 }

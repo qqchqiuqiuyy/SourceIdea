@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.back.impl;
 
+import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.dao.back.BackIdeaMapper;
 import cn.bb.sourceideamanage.dto.back.BackIdea;
@@ -10,7 +11,6 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +31,12 @@ public class BackIdeaServiceImpl implements BackIdeaService {
     @Override
     public PageInfo<BackIdea> findBackIdeaByPage(int page, int size, String ideaName, String tagName) {
         PageHelper.startPage(page,size);
-        List<BackIdea> ideas = mapper.findAllBackIdea(ideaName, tagName, IsDelete.NOTDELETE.getIsDelete());
+        List<BackIdea> ideas = mapper.findAllBackIdea(ideaName, tagName, IsDelete.NOTDELETE.getState());
         return new PageInfo<>(ideas);
     }
 
     @Override
-    @Cacheable( cacheNames = "allTag",key = "'findAllTag'")
+    @Cacheable( cacheNames = {CacheConstant.ALL_TAG},key = "'allTag'")
     public List<Tag> findAllTag() {
         return mapper.findAllTag();
     }

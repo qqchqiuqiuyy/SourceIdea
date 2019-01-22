@@ -18,13 +18,13 @@
   <div class="fly-panel fly-panel-user" pad20>
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
-        <li><a th:href="@{/UserC/toLogin}">登入</a></li>
+        <li><a th:href="@{/userC/toLogin}">登入</a></li>
         <li class="layui-this">注册</li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
-            <form method="post" th:action="@{/LoginC/register}" id="dataFrom">
+            <form method="post"  id="dataFrom">
               <div class="layui-form-item">
                 <label for="L_account" class="layui-form-label">账号</label>
                 <div class="layui-input-inline">
@@ -52,10 +52,10 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <label th:text="${info}" style="color: #FF5722"></label>
+                <label  id="errMsg" style="color: #FF5722"></label>
               </div>
               <div class="layui-form-item">
-                <button class="layui-btn" type="submit" id="submit"  >立即注册</button>
+                <button class="layui-btn" type="button" id="submit" onclick="reg()"  >立即注册</button>
               </div>
             </form>
           </div>
@@ -88,42 +88,30 @@ layui.config({
 }).use('fly');
 </script>
 <script>
-/*  $(function() {
-    $("#back").click(function () {
-      alert("123")
-    });
-    $("#submit").click(function () {//点击按钮提交
-      console.log("222");
-      $.ajax({
-        url: "/LoginC/register",
-        data: new FormData($("#dataFrom")[0]) ,  //$("#dataFrom").serialize(),
-        type: "post",
-        dataType : "json",
-        cache: false,
-        processData : false,  //必须false才会避开jQuery对 formdata 的默认处理
-        contentType : false,  //必须false才会自动加上正确的Content-Type
-        success: function (data) {//ajax返回的数据
-          console.log(data);
-          if(data.isSuccess == "1"){
-            console.log("111");
-            alert("注册成功!!");
-            window.location.href = "/UserC/toLogin";
-          }else{
-            alert(data.msg);
-          }
-        },
-        error:function (data){
-          console.log(data);
-          if(data.isSuccess == "1"){
-            alert("注册成功!!");
-            window.location.href = "/UserC/toLogin";
-          }else{
-            alert(data.msg);
-          }
+  function reg() {
+    console.log("submit!!")
+    $.ajax({
+      url:"/loginC/register",
+      data:$('#dataFrom').serialize(),
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        layer.msg(data.msg);
+        if(data.success == '1'){
+          console.log("success")
+          window.location.href = '/userC/toLogin' ;
+        }else if(data.success == '0'){
+          $('#errMsg').text(data.msg);
         }
-      });
+      },
+      error:function (data) {
+        layer.msg("发生一个错误 请重试")
+      }
+
     });
-  });*/
+  }
 </script>
 </body>
 </html>

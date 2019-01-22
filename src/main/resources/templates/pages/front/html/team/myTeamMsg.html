@@ -31,19 +31,19 @@
 
              <!--团员都可以看-->
               <shiro:hasAnyRoles name="|user:teamMember:${teamId}, user:projectMember:${teamId} , user:projectManager:${teamId}, user:teamManager:${teamId}|">
-                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/UserC/toUsers(teamName=${teamName})}">邀请</a></td>
+                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal" th:href="@{/userC/toUsers(teamName=${teamName})}">邀请</a></td>
               </shiro:hasAnyRoles>
 
 
               <!--项目管理员和团长可以看-->
               <shiro:hasAnyRoles name="|user:teamManager:${teamId} , user:projectManager:${teamId}|" >
-                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal addProject" th:href="@{/UserC/toAddProject(teamName=${teamName})}">新增项目</a></td>
+                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal addProject" th:href="@{/userC/toAddProject(teamName=${teamName})}">新增项目</a></td>
               </shiro:hasAnyRoles>
 
 
             <!--团长可以看-->
               <shiro:hasRole name="|user:teamManager:${teamId}|" >
-                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal addIdea" th:href="@{/UserC/toAddTeamIdea(teamName=${teamName})}">新增想法</a></td>
+                <td><a style="float: left;margin-left: 30px;color:white" type="button" class="layui-btn layui-btn-normal addIdea" th:href="@{/userC/toAddTeamIdea(teamName=${teamName})}">新增想法</a></td>
               </shiro:hasRole>
 
 
@@ -88,7 +88,7 @@
         <ul class="fly-list" th:each="project : ${projects}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/ProjectC/toProjectMsg(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
+              <a th:href="@{/projectC/toProjectMsg(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
             </h3>
             <div class="fly-list-info">
               <span th:text="${project.projectCreateTime}"></span>
@@ -98,7 +98,7 @@
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
                    </span>
                  <span style="display: inline-block;" class="editP" th:if="${project.projectArchive == 0}">
-                     <a class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue"  th:href="@{/ProjectC/toEditProject(projectId=${project.projectId})}" th:value="${project.projectId}" type="button" th:id="'editProject'+${project.projectId}">修改项目</a>
+                     <a class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue"  th:href="@{/projectC/toEditProject(projectId=${project.projectId})}" th:value="${project.projectId}" type="button" th:id="'editProject'+${project.projectId}">修改项目</a>
                    </span>
                   <span th:if="${project.projectArchive == 0}">
                     <span style="display: inline-block;" class="archiveP" >
@@ -216,11 +216,11 @@ layui.config({
   function delIdea(ideaId) {
     console.log(ideaId);
     $.ajax({
-      url:"/UserC/delIdea",
-      data:{
+      url:"/userC/delIdea/"+ideaId,
+    /*  data:{
         "ideaId" : ideaId
-      },
-      type:"post",
+      },*/
+      type:"delete",
       dataType:"json",
       cache:false,
       success:function(data){//ajax返回的数据
@@ -247,12 +247,12 @@ layui.config({
     console.log(teamName);
     var mamager = '[[${manager}]]';
     $.ajax({
-      url:"/UserC/awardManager",
-      data:{
+      url:"/userC/awardManager/"+userId+"/"+teamName,
+  /*    data:{
         "userId" : userId,
         "teamName":teamName
-      },
-      type:"post",
+      },*/
+      type:"put",
       dataType:"json",
       cache:false,
       success:function(data){//ajax返回的数据
@@ -276,12 +276,12 @@ layui.config({
     var teamName = $("#i"+userId).text();
     console.log(teamName);
     $.ajax({
-      url:"/UserC/delMember",
-      data:{
+      url:"/userC/delMember/" +userId +"/" + teamName,
+     /* data:{
         "userId" : userId,
         "teamName":teamName
-      },
-      type:"post",
+      },*/
+      type:"delete",
       dataType:"json",
       cache:false,
       success:function(data){//ajax返回的数据
@@ -304,11 +304,11 @@ layui.config({
   function archiveProject(projectId) {
     console.log(projectId);
     $.ajax({
-      url:"/ProjectC/archiveProject",
-      data:{
+      url:"/projectC/archiveProject/"+projectId,
+ /*     data:{
         "projectId" : projectId
-      },
-      type:"post",
+      },*/
+      type:"put",
       dataType:"json",
       cache:false,
       success:function(data){//ajax返回的数据
@@ -328,11 +328,9 @@ layui.config({
   function delProject(projectId) {
     console.log(projectId);
     $.ajax({
-      url:"/UserC/delProject",
-      data:{
-        "projectId" : projectId
-      },
-      type:"post",
+      url:"/userC/delProject/"+projectId,
+
+      type:"delete",
       dataType:"json",
       cache:false,
       success:function(data){//ajax返回的数据
@@ -357,11 +355,11 @@ layui.config({
     var teamName = $("#agreei"+userId).text();
     console.log(teamName);
     $.ajax({
-      url:"/UserC/agreeMember",
-      data:{
+      url:"/userC/agreeMember/"+userId+"/"+teamName,
+   /*   data:{
         "userId" : userId,
         "teamName":teamName
-      },
+      },*/
       type:"post",
       dataType:"json",
       cache:false,

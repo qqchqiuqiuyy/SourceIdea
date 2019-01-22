@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="../../../../../res/css/global.css">
 </head>
 <body>
-
 <!---->
 <div th:include=" /pages/front/html/common/common :: commonHeader"></div>
 <!--横-->
@@ -22,12 +21,12 @@
     <div class="layui-tab layui-tab-brief" lay-filter="user">
       <ul class="layui-tab-title">
         <li class="layui-this">登入</li>
-        <li><a th:href="@{/UserC/toReg}">注册</a></li>
+        <li><a th:href="@{/userC/toReg}">注册</a></li>
       </ul>
       <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
         <div class="layui-tab-item layui-show">
           <div class="layui-form layui-form-pane">
-            <form method="post" th:action="@{/LoginC/check}">
+            <form method="post" id="myForm">
               <div class="layui-form-item">
                 <label for="L_email" class="layui-form-label">账号</label>
                 <div class="layui-input-inline">
@@ -41,10 +40,10 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <label th:text="${msg}" style="color: #FF5722"></label>
+                <label id="errMsg" style="color: #FF5722"></label>
               </div>
               <div class="layui-form-item">
-                <button class="layui-btn"  type="submit">立即登录</button>
+                <button class="layui-btn"  type="button" id="sub" onclick="login()">立即登录</button>
                 <span style="padding-left:20px;">
                   <a href="forget.html">忘记密码？</a>
                 </span>
@@ -57,7 +56,7 @@
     </div>
   </div>
 </div>
-
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <div  th:include="/pages/front/html/common/common :: footer"></div>
 <script src="../../../../../res/layui/layui.js"></script>
 <script>
@@ -75,6 +74,32 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
+
+
+function login() {
+  console.log("login!!")
+  $.ajax({
+    url:"/loginC/check",
+    data:$('#myForm').serialize(),
+    type:"post",
+    dataType:"json",
+    cache:false,
+    success:function(data){//ajax返回的数据
+      console.log(data);
+      layer.msg(data.msg);
+      if(data.success == '1'){
+        console.log("success")
+        window.location.href = '/indexC/toIndex' ;
+      }else if(data.success == '0'){
+        $('#errMsg').text(data.msg);
+      }
+    },
+    error:function (data) {
+      layer.msg("发生一个错误 请重试")
+    }
+
+  });
+}
 </script>
 
 </body>

@@ -52,13 +52,13 @@ public interface UserMapper {
     public User findUserByAccount(@Param("account") String account);
 
 
-    @Delete(" DELETE " +
-            "FROM " +
-            " user_team " +
+    @Update(" UPDATE " +
+            " user_team SET is_delete = #{isSuccess} " +
             " WHERE" +
             " user_id = #{userId} " +
             " AND team_id IN ( SELECT t.team_id FROM team t WHERE t.team_name = #{teamName} )")
-    public void delMember(@Param("userId") Integer userId ,@Param("teamName") String teamName);
+    public void delMember(@Param("userId") Integer userId ,@Param("teamName") String teamName,
+                          @Param("isSuccess") Integer state);
 
     @Update("UPDATE team set team_nums = team_nums - 1 WHERE team_id #{teamId}")
     public void decrMemberNums(@Param("teamId") Integer teamId);
@@ -76,8 +76,9 @@ public interface UserMapper {
             " WHERE t.team_name = #{teamName}")
     public Integer getTeamId(@Param("teamName") String  teamName);
 
-    @Delete("DELETE FROM apply  WHERE user_id = #{userId} AND team_id = #{teamId}")
-    public void delApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    @Update("Update  apply SET is_delete = #{isDelete} WHERE user_id = #{userId} AND team_id = #{teamId}")
+    public void delApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                         @Param("isDelete") Integer state);
 
     @Insert("INSERT INTO user_team (team_id,role_id,user_id,role_name) " +
             "   VALUES (#{teamId}, #{roleId} , #{userId},#{roleName})")
@@ -94,8 +95,8 @@ public interface UserMapper {
             "   ORDER BY projectCreateTime DESC ")
     public List<FrontProject> findProjects(@Param("teamName") String teamName);
 
-    @Delete("DELETE FROM project WHERE project_id = #{projectId}")
-    public void delProject(@Param("projectId") Integer projectId);
+    @Update("UPDATE  project SET is_delete = #{isDelete} WHERE project_id = #{projectId}")
+    public void delProject(@Param("projectId") Integer projectId,@Param("isDelete") Integer state);
 
     @Update("UPDATE team SET team_nums = team_nums + 1 " +
             "   WHERE team_id = #{teamId}")
@@ -122,8 +123,9 @@ public interface UserMapper {
             "         it.team_id = t.team_id  ")
     public List<InviteUser> getUserInvite(@Param("userId") Integer userId);
 
-    @Delete("DELETE FROM invite WHERE user_id = #{userId} AND team_id = #{teamId}")
-    public void delInvite(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    @Update("Update  invite set is_delete = #{isDelete} WHERE user_id = #{userId} AND team_id = #{teamId}")
+    public void delInvite(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                          @Param("isDelete") Integer state);
 
     @Select("SELECT " +
             " ut.role_id  " +

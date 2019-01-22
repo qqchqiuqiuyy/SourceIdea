@@ -33,19 +33,19 @@
             <dl class="layui-nav-child">
               <dd><a href="../user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
               <dd><a href="../user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-              <dd><a th:href="@{/UserC/toHome}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+              <dd><a th:href="@{/userC/toHome}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
               <hr style="margin: 5px 0;">
-              <dd><a th:href="@{/LoginC/toLogout}" style="text-align: center;">退出</a></dd>
+              <dd><a th:href="@{/loginC/toLogout}" style="text-align: center;">退出</a></dd>
             </dl>
           </li>
         </shiro:hasRole>
 
         <shiro:lacksRole name="user:common">　　
             <li class="layui-nav-item">
-              <a th:href="@{/UserC/toLogin}">登入</a>
+              <a th:href="@{/userC/toLogin}">登入</a>
             </li>
             <li class="layui-nav-item">
-              <a th:href="@{/UserC/toReg}">注册</a>
+              <a th:href="@{/userC/toReg}">注册</a>
             </li>
             <li class="layui-nav-item layui-hide-xs">
               <a href="/app/qq/" onclick="layer.msg('正在通过QQ登入', {icon:16, shade: 0.1, time:0})" title="QQ登入" class="iconfont icon-qq"></a>
@@ -68,19 +68,19 @@
     <div class="layui-container">
       <ul class="layui-clear">
         <li class="layui-hide-xs "><a th:href="@{/indexC/toIndex}">首页</a></li>
-        <li ><a th:href="@{/TeamC/toTeam}">团队</a></li>
+        <li ><a th:href="@{/teamC/toTeam}">团队</a></li>
         <li><a th:href="@{/ideaC/toIdea}">想法</a></li>
-        <li ><a th:href="@{/ProjectC/toProject}">项目</a></li>
+        <li ><a th:href="@{/projectC/toProject}">项目</a></li>
           <shiro:hasRole name="user:common">
-              <li><a th:href="@{/UserC/toHome}">个人信息</a></li>
+              <li><a th:href="@{/userC/toHome}">个人信息</a></li>
           </shiro:hasRole>
         <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
 
         <shiro:hasRole name="user:common">　　
             <!-- 用户登入后显示 -->
-            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block "><a th:href="@{/UserC/toMyIdea}">我发表的想法</a></li>
-            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyTeam}">我参与的团队</a></li>
-            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/UserC/toMyProject}">我参与的项目</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block "><a th:href="@{/userC/toMyIdea}">我发表的想法</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/userC/toMyTeam}">我参与的团队</a></li>
+            <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/userC/toMyProject}">我参与的项目</a></li>
            <shiro:hasRole name="Administrator">　　
              <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a th:href="@{/adminC/toUsers}">管理员页面</a></li>
            </shiro:hasRole>

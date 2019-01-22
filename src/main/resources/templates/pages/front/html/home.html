@@ -42,7 +42,7 @@
         <h3 class="fly-panel-title" >邀请列表 </h3>
         <ul class="jie-row" th:each="invite : ${invites}">
           <li>
-            <a th:href="@{/TeamC/toTeamMsg(teamName=${invite.teamName})}" class="jie-title" th:text="${invite.teamName}"> </a>
+            <a th:href="@{/teamC/toTeamMsg(teamName=${invite.teamName})}" class="jie-title" th:text="${invite.teamName}"> </a>
             <span th:text="${invite.inviteTime}"></span>
             <button class="layui-btn layui-btn-xs" style="color:white" th:id="'agree'+${invite.teamId}" th:value="${invite.teamId}" onclick="agree(this.value)">同意</button>
             <i th:text="${invite.userId}" id="userId" style="visibility: hidden"></i>
@@ -111,7 +111,7 @@ function agree(teamId) {
   var userId = parseInt($('#userId').text()) ;
   console.log(userId);
   $.ajax({
-    url:"/UserC/agree",
+    url:"/userC/agree",
     data:{
       "teamId" : teamId,
       "userId" : userId
@@ -133,6 +133,10 @@ function agree(teamId) {
   });
 }
 </script>
-
+<script type="text/javascript">
+  $(function () {
+    $(".layui-clear li").eq(4).addClass("layui-this");
+  });
+</script>
 </body>
 </html>

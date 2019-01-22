@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/IndexC")
+@RequestMapping("/indexC")
 public class IndexController {
 
-    @RequestMapping("/toIndex")
+    @GetMapping("/toIndex")
     public String toIndex(){
         return "/pages/front/html/index";
     }

@@ -54,7 +54,7 @@
         <ul class="fly-list" th:each="idea:${ideas}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a   th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+              <a   th:href="@{/ideaC/toIdeaMsg/{ideaId}(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
             </h3>
             <div class="fly-list-info" style="display: flex; align-items: center;justify-content: space-between;">
               <span style="display: inline-block;margin-right: 20px">
@@ -141,8 +141,12 @@
 <script src="../../../../../res/layui/layui.js"></script>
 <script>
   function toComment(ideaId) {
-    console.log("/ideaC/toIdeaComments?ideaId=" + ideaId+"ideaName="+$("#ideaName"+ideaId).text());
-    window.location.href = "/ideaC/toIdeaComments?ideaId=" + ideaId+"&ideaName="+$("#ideaName"+ideaId).text();
+    console.log("/ideaC/toIdeaComments/" + ideaId+"/"+$("#ideaName"+ideaId).text());
+    window.location.href = "/ideaC/toIdeaComments/" + ideaId+"/"+$("#ideaName"+ideaId).text();
+  }
+  function ideaMsg(ideaId) {
+      console.log("ideaMsg")
+      window.location.href = "/ideaC/toIdeaMsg/" + ideaId;
   }
   function msg(val){
     layer.open({
@@ -151,22 +155,22 @@
       content : val
     });
   }
+
+  /*点赞*/
 function supports(ideaId){
     console.log("进入supports方法")
     /*得到点赞用户的Id*/
   var a = $("#userId"+ideaId).text();
   var userId = parseInt(a);
-
+    console.log(userId);
   /* 获得点赞的想法 Id */
   var s = $("#ideaId"+ideaId).text()
   var supports = parseInt(s);
-
+    console.log(supports);
+    console.log("/ideaC/upIdeaSupports/"+ideaId+"/"+userId);
   $.ajax({
-    url:"/ideaC/upIdeaSupports",
-    data:{ "ideaId" : ideaId,
-            "userId" : userId
-        },
-    type:"post",
+    url:"/ideaC/upIdeaSupports/"+ideaId+"/"+userId,
+    type:"put",
     dataType:"json",
     cache:false,
     success:function(data){//ajax返回的数据

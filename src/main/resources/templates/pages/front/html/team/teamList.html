@@ -29,7 +29,7 @@
             <tr>
               <td> <div href="" class="layui-this" style="width:480px"><h1>团队列表</h1></div></td>
               <!--搜索框-->
-              <form class="form-inline" th:action="@{/TeamC/toTeam}" type="post" >
+              <form class="form-inline" th:action="@{/teamC/toTeam}" type="post" >
               <td>
                   <input type="text"  name="teamName"   placeholder="搜索团队" autocomplete="off" class="layui-input" style="width:200px">
               </td>
@@ -49,7 +49,7 @@
         <ul class="fly-list" th:each="team : ${teams}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/TeamC/toTeamMsg(teamName=${team.teamName})}" th:text="${team.teamName}"></a>
+              <a th:href="@{/teamC/toTeamMsg/{teamName}(teamName=${team.teamName})}" th:text="${team.teamName}"></a>
             </h3>
             <div class="fly-list-info">
 
@@ -70,15 +70,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-1}}">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/TeamC/toTeam?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
             </ul>
 
           </div>

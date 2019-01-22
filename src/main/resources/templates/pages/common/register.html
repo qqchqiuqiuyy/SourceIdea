@@ -77,11 +77,11 @@
 <script>
   $(function() {
     $("#back").click(function () {
-      window.location.href = "/LoginC/toLogin";
+      window.location.href = "/loginC/toLogin";
     });
     $('#commit').click(function () {//点击按钮提交
       $.ajax({
-        url: "/LoginC/register",
+        url: "/loginC/register",
         data: new FormData($("#dataFrom")[0]) ,  //$("#dataFrom").serialize(),
         type: "post",
         dataType : "json",
@@ -92,7 +92,7 @@
           console.log(data);
           if(data.isSuccess == "1"){
             alert("注册成功!!");
-            window.location.href = "/LoginC/toLogin";
+            window.location.href = "/loginC/toLogin";
           }else{
             alert(data.msg);
           }
@@ -101,7 +101,7 @@
           console.log(data);
           if(data.isSuccess == "1"){
             alert("注册成功!!");
-            window.location.href = "/LoginC/toLogin";
+            window.location.href = "/loginC/toLogin";
           }else{
             alert(data.msg);
           }

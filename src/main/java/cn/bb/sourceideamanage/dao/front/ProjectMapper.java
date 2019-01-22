@@ -111,8 +111,9 @@ public interface ProjectMapper {
                             @Param("projectId") Integer projectId,
                             @Param("projectMsg") String projectMsg);
 
-    @Update("UPDATE project SET project_archive = 1 WHERE project_id = #{projectId}")
-    public void archiveProject(@Param("projectId") Integer projectId);
+    @Update("UPDATE project SET project_archive = #{archive} WHERE project_id = #{projectId}")
+    public void archiveProject(@Param("projectId") Integer projectId,
+                               @Param("archive") Integer archive);
 
     @Select("SELECT project_archive from project where project_id= #{projectId}")
     public Integer checkArchive(@Param("projectId") Integer projectId);

@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.LoginMapper;
 import cn.bb.sourceideamanage.entity.User;
@@ -23,8 +24,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author s
@@ -46,6 +45,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     Jedis jedis;
 
+
     @Override
     public void addUser(User user) {
       loginMapper.addUser(user);
@@ -59,19 +59,19 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Map<String ,String> register(String account, String password, String repassword,String username) {
-        Map<String ,String> hashMap = new HashMap<>(16);
+    public String register(String account, String password, String repassword,String username) {
         if("".equals(account)|| "".equals(password)  || "".equals(username)  || "".equals(repassword) ){
-            hashMap.put("msg","信息输入不完整不能空白");
-            hashMap.put("success","0");
-            log.error("信息输入不完整 msg={}",hashMap);
-            return hashMap;
+
+            jsonObject.put(ModelMsg.MSG.getMsg(),"信息输入不完整不能空白");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"0");
+            log.error("信息输入不完整 msg={}",jsonObject);
+            return jsonObject.toString();
         }
         if(!password.equals(repassword)){
-            hashMap.put("msg","两次密码不一致请重新输入");
-            hashMap.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"两次密码不一致请重新输入");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"0");
             log.error("两次密码不一致 !! p1={},p2={}",password, repassword);
-            return hashMap;
+            return jsonObject.toString();
         }
         User user = userService.findUserByAccount(account);
         if(null == user){
@@ -79,29 +79,26 @@ public class LoginServiceImpl implements LoginService {
             Md5Hash pwd = new Md5Hash(password, ByteSource.Util.bytes(account));
             user.setUserAccount(account).setUserPassword(pwd.toString()).setUserName(username).setUserMsg("这个人很懒...还没有个人简介");
             loginMapper.addUser(user);
-
             //新增用户直接赋值1
             loginMapper.addRole(user.getUserId(),1);
-
-            hashMap.put("msg","success");
-            hashMap.put("success","1");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"注册成功!!");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"1");
         }else{
-            hashMap.put("msg","账号已存在请重新输入");
-            hashMap.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"账号已存在请重新输入");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"0");
             log.error("账号已存在 account={}" ,account);
         }
 
 
-        return hashMap;
+        return jsonObject.toString();
 
     }
 
     @Override
-    public Map<String,String> check(String account, String password, HttpServletRequest request, HttpServletResponse response){
-        Map<String,String> info = new HashMap<>(16);
+    public String check(String account, String password, HttpServletRequest request, HttpServletResponse response){
         //获取Subject
         Subject subject = SecurityUtils.getSubject();
-        //封装用户数据
+        //封装用户数据 加密
         Md5Hash pwd = new Md5Hash(password, ByteSource.Util.bytes(account));
         password = pwd.toString();
         UsernamePasswordToken token = new UsernamePasswordToken(account, password);
@@ -111,23 +108,21 @@ public class LoginServiceImpl implements LoginService {
             HttpSession session = request.getSession();
             String id = session.getId();
             log.info("session Id ={}",id);
-            session.setAttribute("userName",user.getUserName());
-            session.setAttribute("account",account);
-            session.setAttribute("password",password);
-            session.setAttribute("userId", user.getUserId());
+            session.setAttribute(ModelMsg.USER_NAME.getMsg(),user.getUserName());
+            session.setAttribute(ModelMsg.USER_ID.getMsg(), user.getUserId());
             session.setMaxInactiveInterval(60*30);
-            info.put("success","1");
-            info.put("account",account);
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"1");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"登录成功!!");
         }catch (UnknownAccountException e){
             log.error("账号不存在={}", account);
-            info.put("msg","用户不存在");
-            info.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"用户不存在");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"0");
         }catch (IncorrectCredentialsException e){
             log.error("密码错误={}",password);
-            info.put("msg","密码错误");
-            info.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"密码错误");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),"0");
         }
-        return info;
+        return jsonObject.toString();
     }
 
 

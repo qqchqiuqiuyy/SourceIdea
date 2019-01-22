@@ -41,16 +41,6 @@
                       <input type="text" name="teamName"  id="teamName" style="width: 200px" required  lay-verify="required" placeholder="请输入团队名" autocomplete="off" class="layui-input">
                   </div>
               </div>
-              <!--<div class="layui-form-item">
-                  <label class="layui-form-label" style="width: 100px">项目管理员</label>
-                  <div class="layui-input-block" lay-verify="required" >
-                      <select name="projectManagerId" id="projectManagerId">
-                          <i th:each="tag:${tags}">
-                              <option th:value="${tag.userId}" th:text="${tag.userName}"></option>
-                          </i>
-                      </select>
-                  </div>
-              </div>-->
 
               <div class="layui-form-item layui-form-text">
                   <label class="layui-form-label">介绍</label>
@@ -79,7 +69,7 @@
     function addTeam(){
         console.log("addTeam!!")
         $.ajax({
-            url:"/TeamC/addTeam",
+            url:"/teamC/addTeam",
             data:$('#myForm').serialize(),
             type:"post",
             dataType:"json",

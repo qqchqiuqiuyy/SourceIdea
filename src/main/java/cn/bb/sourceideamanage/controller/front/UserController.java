@@ -1,6 +1,7 @@
 package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.Tag;
@@ -11,11 +12,11 @@ import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 import static cn.bb.sourceideamanage.common.config.PageSize.PAGE_SIZE;
 
 @Controller
-@RequestMapping("/UserC")
+@RequestMapping("/userC")
 public class UserController {
 
     @Autowired
@@ -41,13 +42,13 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/toHome")
+    @GetMapping("/toHome")
     public String toHome(HttpServletRequest request,Model model){
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         FrontUser user = userService.getUserMsg(userId);
         List<InviteUser> invites = userService.getUserInvite(userId);
-        model.addAttribute("invites",invites);
-        model.addAttribute("user",user);
+        model.addAttribute(ModelMsg.INVITES.getMsg(),invites);
+        model.addAttribute(ModelMsg.USER.getMsg(),user);
         return "pages/front/html/home";
     }
 
@@ -71,17 +72,17 @@ public class UserController {
         if(tagName == null){
             tagName = "";
         }
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
 
         PageInfo<FrontIdea> info = ideaService.findAllMyIdea(page, PAGE_SIZE, ideaName, tagName,userId);
         List<FrontIdea> ideas = info.getList();
 
         List<Tag> tags = backIdeaService.findAllTag();
-        model.addAttribute("tagName",tagName);
-        model.addAttribute("tags",tags);
-        model.addAttribute("ideas",ideas);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute(ModelMsg.TAG_NAME.getMsg(),tagName);
+        model.addAttribute(ModelMsg.TAGS.getMsg(),tags);
+        model.addAttribute(ModelMsg.IDEAS.getMsg(),ideas);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         return "/pages/front/html/idea/myIdea";
     }
 
@@ -101,12 +102,12 @@ public class UserController {
         if(projectName == null){
             projectName = "";
         }
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         PageInfo<FrontProject> info = projectService.findAllMyProject(page, PageSize.PAGE_SIZE, projectName,userId);
         List<FrontProject> projects = info.getList();
-        model.addAttribute("projects",projects);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         return "/pages/front/html/project/myProject";
     }
 
@@ -120,31 +121,31 @@ public class UserController {
             teamName = "";
         }
 
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         PageInfo<FrontTeam> info = teamService.findAllMyTeam(page, PageSize.PAGE_SIZE, teamName,userId);
         List<FrontTeam> teams = info.getList();
-        model.addAttribute("teams",teams);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute(ModelMsg.TEAMS.getMsg(),teams);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         return "/pages/front/html/team/myTeam";
     }
 
-    @RequestMapping("/toLogin")
+    @GetMapping("/toLogin")
     public String toLogin(){
         return "/pages/front/html/user/login";
     }
-    @RequestMapping("/toReg")
+    @GetMapping("/toReg")
     public String toReg(){
         return "/pages/front/html/user/reg";
     }
 
 
-    @RequestMapping("/toMyTeamMsg")
-    public String toMyTeamMsg(Model model, String teamName, HttpServletRequest request){
+    @GetMapping("/toMyTeamMsg/{teamName}")
+    public String toMyTeamMsg(Model model, @PathVariable("teamName") String teamName, HttpServletRequest request){
         //获取团员列表
         List<MyTeamMember> members = teamService.findAllMyTeamMember(teamName);
         //获取当前用户名
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
 
         //查找这个团队的Id
         Integer teamId = teamService.getTeamId(teamName);
@@ -156,20 +157,21 @@ public class UserController {
         //找到该团队所有想法
         List<FrontIdea> ideas = ideaService.findAllTeamIdea(teamName);
 
-        model.addAttribute("userId",userId);
-        model.addAttribute("manager", Roles.UserProjectManager.getRoleMsg());
-        model.addAttribute("ideas",ideas);
-        model.addAttribute("projects",projects);
-        model.addAttribute("applies",applies);
-        model.addAttribute("teamName",teamName);
-        model.addAttribute("members",members);
-        model.addAttribute("teamId",teamId);
+        model.addAttribute(ModelMsg.USER_ID.getMsg(),userId);
+        model.addAttribute(ModelMsg.MANAGER.getMsg(), Roles.UserProjectManager.getRoleMsg());
+        model.addAttribute(ModelMsg.IDEAS.getMsg(),ideas);
+        model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
+        model.addAttribute(ModelMsg.APPLIES.getMsg(),applies);
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
+        model.addAttribute(ModelMsg.MEMBERS.getMsg(),members);
+        model.addAttribute(ModelMsg.TEAM_ID.getMsg(),teamId);
         return "pages/front/html/team/myTeamMsg";
     }
 
-    @RequestMapping("/delMember")
+    @DeleteMapping("/delMember/{userId}/{teamName}")
     @ResponseBody
-    public String delMember(Integer userId,String teamName){
+    public String delMember(@PathVariable("userId") Integer userId,
+                            @PathVariable("teamName") String teamName){
         String info = userService.delMember(userId, teamName);
         return info;
     }
@@ -180,15 +182,16 @@ public class UserController {
      * @param teamName
      * @return
      */
-    @RequestMapping("/agreeMember")
+    @PostMapping("/agreeMember/{userId}/{teamName}")
     @ResponseBody
-    public String agreeMember(Integer userId,String teamName){
+    public String agreeMember(@PathVariable("userId") Integer userId,
+                              @PathVariable("teamName") String teamName){
         String s = userService.agreeMember(userId,teamName);
         return s;
     }
-    @RequestMapping("/delProject")
+    @DeleteMapping("/delProject/{projectId}")
     @ResponseBody
-    public String delProject(Integer projectId){
+    public String delProject(@PathVariable("projectId") Integer projectId){
         String info = userService.delProject(projectId);
         return info;
     }
@@ -209,9 +212,9 @@ public class UserController {
     }
 
 
-    @RequestMapping("/delIdea")
+    @DeleteMapping("/delIdea/{ideaId}")
     @ResponseBody
-    public String delIdea(Integer ideaId){
+    public String delIdea(@PathVariable("ideaId") Integer ideaId){
         String s = ideaService.delIdea(ideaId);
         return s;
     }
@@ -292,9 +295,9 @@ public class UserController {
 
 
 
-    @RequestMapping("/awardManager")
+    @PutMapping("/awardManager/{userId}/{teamName}")
     @ResponseBody
-    public String awardManager(Integer userId, String teamName){
+    public String awardManager(@PathVariable("userId") Integer userId,@PathVariable("teamName") String teamName){
         return userService.awardManager(userId,teamName);
     }
 }

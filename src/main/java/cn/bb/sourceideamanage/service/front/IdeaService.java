@@ -120,7 +120,7 @@ public interface IdeaService {
      * @param ideaMsg
      * @param request
      */
-    public void addIdea(String ideaName,Integer tagId,String ideaMsg,HttpServletRequest request);
+    public String addIdea(String ideaName,Integer tagId,String ideaMsg,HttpServletRequest request);
 
     /**
      * 增加团队想法

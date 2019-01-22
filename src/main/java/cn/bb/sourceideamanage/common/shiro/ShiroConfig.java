@@ -76,25 +76,25 @@ public class ShiroConfig {
        // filterMap.put("/*","authc");
 
         //修改认证失败后跳转页面
-        shiroFilterFactoryBean.setLoginUrl("/UserC/toLogin");
+        shiroFilterFactoryBean.setLoginUrl("/userC/toLogin");
 
 
         //设置拦截路径 和 过滤器  拦截这些请求URL(controller) 如果没有对应的权限就会定向到login页面
         //只能用Link
         Map<String,String> filterMap = new LinkedHashMap<>();
         filterMap.put("/adminC/*","roles[Administrator]");
-        filterMap.put("/LoginC/*","anon");
-        filterMap.put("/IndexC/*","anon");
-        filterMap.put("/UserC/toLogin","anon");
-        filterMap.put("/UserC/toReg","anon");
-        filterMap.put("/UserC/toUsers","anon");
-        filterMap.put("/TeamC/toTeam","anon");
-        filterMap.put("/TeamC/toTeamMsg","anon");
-        filterMap.put("/IdeaC/upIdeaSupports","authc");
-        filterMap.put("/IdeaC/toIdea","anon");
-        filterMap.put("/ProjectC/toProject","anon");
-        filterMap.put("/TeamC/*","authc");
-        filterMap.put("/UserC/*","authc");
+        filterMap.put("/loginC/*","anon");
+        filterMap.put("/indexC/*","anon");
+        filterMap.put("/userC/toLogin","anon");
+        filterMap.put("/userC/toReg","anon");
+        filterMap.put("/userC/toUsers","anon");
+        filterMap.put("/teamC/toTeam","anon");
+        filterMap.put("/teamC/toTeamMsg","anon");
+        filterMap.put("/ideaC/upIdeaSupports","authc");
+        filterMap.put("/ideaC/toIdea","anon");
+        filterMap.put("/projectC/toProject","anon");
+        filterMap.put("/teamC/*","authc");
+        filterMap.put("/userC/*","authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return shiroFilterFactoryBean;
     }

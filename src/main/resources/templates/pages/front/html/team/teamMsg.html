@@ -118,10 +118,7 @@ layui.config({
     var userId = parseInt(u);
     console.log(userId)
     $.ajax({
-      url:"/TeamC/joinTeam",
-      data:{ "userId" : userId,
-            "teamId" : teamId
-      },
+      url:"/teamC/joinTeam/"+userId+"/"+teamId,
       type:"post",
       dataType:"json",
       cache:false,

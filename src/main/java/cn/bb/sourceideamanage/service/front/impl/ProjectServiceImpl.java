@@ -1,5 +1,9 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.enums.IsDelete;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
+import cn.bb.sourceideamanage.common.enums.ProjectArchive;
 import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.ProjectMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;
@@ -34,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
     JSONObject jsonObject;
 
     @Override
-    @Cacheable(cacheNames = "projectPage",key = "'projectPage=[page='+#page+'][size='+#size+'][projectName='+#projectName+']'")
+    @Cacheable(cacheNames = {CacheConstant.PROJECT_PAGE},key = "'projectPage=[page='+#page+'][size='+#size+'][projectName='+#projectName+']'")
     public PageInfo<FrontProject> findAllFrontProject(int page, int size, String projectName) {
         PageHelper.startPage(page,size);
         List<FrontProject> projects = projectMapper.findAllFrontProject(projectName, Roles.UserTeamManager.getRoleId());
@@ -42,7 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Cacheable(cacheNames = "projectMsg", key = "'projectMsg=[projectId='+#projectId+']'")
+    @Cacheable(cacheNames = {CacheConstant.PROJECT_MSG}, key = "'projectMsg=[projectId='+#projectId+']'")
     public FrontProjectMsg getProjectMsgByProjectId(Integer projectId) {
         return projectMapper.getProjectMsgByProjectId(projectId);
     }
@@ -58,25 +62,25 @@ public class ProjectServiceImpl implements ProjectService {
     public String joinProject(Integer userId, Integer projectId) {
         //加入项目同时也要加入团队
         Integer teamId = projectMapper.getTeamId(projectId);
-        String checkProject = teamMapper.checkTeamMember(userId, teamId);
+        String checkProject = teamMapper.checkTeamMember(userId, teamId, IsDelete.NOTDELETE.getState());
         //判断是否已经在项目
         if(null == checkProject){
-            String checkApply = teamMapper.checkApply(userId,teamId);
+            String checkApply = teamMapper.checkApply(userId,teamId,IsDelete.NOTDELETE.getState());
             //判断是否已经进入申请列表
             if(null == checkApply){
                 teamMapper.apply(userId,teamId);
                 log.info("申请加入成功!! 等待团长审批!");
-                jsonObject.put("msg","申请加入成功!! 等待团长审批!");
-                jsonObject.put("success","1");
+                jsonObject.put(ModelMsg.MSG.getMsg(),"申请加入成功!! 等待团长审批!");
+                jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);
             }else{
                 log.error("错误! 已经申请过了!");
-                jsonObject.put("msg","已提交过申请,等待审批中,请勿重复申请!!");
-                jsonObject.put("success","0");
+                jsonObject.put(ModelMsg.MSG.getMsg(),"已提交过申请,等待审批中,请勿重复申请!!");
+                jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
             }
         }else{
             log.error("已加入该项目! 请勿重复操作");
-            jsonObject.put("msg","已加入该项目! 请勿重复操作");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"已加入该项目! 请勿重复操作");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
 
         }
         return jsonObject.toString();
@@ -84,13 +88,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Cacheable(cacheNames = "allProjectsByUserId" ,key = "'allProjectsByUserId=[userId='+#userId+']'")
+    @Cacheable(cacheNames = {CacheConstant.GET_ALL_PROJECTS} ,key = "'getAllProjects=[userId='+#userId+']'")
     public List<String> getAllProjects(Integer userId) {
         return projectMapper.getAllProjects(userId);
     }
 
     @Override
-    @Cacheable(cacheNames = "myProjects",key = "'myProjects=[page='+#page+'][size='+#size+'][projectName='+#projectName+'][userId='+#userId+']'")
+    @Cacheable(cacheNames = {CacheConstant.MY_PROJECTS},key = "'myProjects=[page='+#page+'][size='+#size+'][projectName='+#projectName+'][userId='+#userId+']'")
     public PageInfo<FrontProject> findAllMyProject(int page, int size, String projectName, Integer userId) {
         PageHelper.startPage(page,size);
         List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId);
@@ -98,7 +102,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Cacheable(cacheNames = "getTeamIdByProjectId" ,key = "'getTeamIdByProjectId=[projectId='+#projectId+']'")
+    @Cacheable(cacheNames = {CacheConstant.GET_TEAMID_BY_PROJECTID} ,key = "'getTeamIdByProjectId=[projectId='+#projectId+']'")
     public Integer getTeamIdByProjectId(Integer projectId) {
         return projectMapper.getTeamIdByProjectId(projectId);
     }
@@ -112,24 +116,24 @@ public class ProjectServiceImpl implements ProjectService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "projectMsg", key = "'projectMsg=[projectId='+#projectId+']'")
+    @CacheEvict(cacheNames = {CacheConstant.PROJECT_MSG}, key = "'projectMsg=[projectId='+#projectId+']'")
     public String editProject(String projectName, Integer projectId, String projectMsg) {
         try {
             Integer integer = projectMapper.checkArchive(projectId);
             if(integer == 1){
                 log.error("已归档 无法修改!");
-                jsonObject.put("msg","修改项目失败! 已归档 无法修改!");
-                jsonObject.put("success","0");
+                jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目失败! 已归档 无法修改!");
+                jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
                 return jsonObject.toString();
             }
             projectMapper.editProject(projectName,projectId,projectMsg);
-            jsonObject.put("msg","修改项目成功!");
-            jsonObject.put("success","1");
-            jsonObject.put("successUrl","redirect:/ProjectC/toProjectMsg?projectId="+projectId);
+            jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目成功!");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);
+            jsonObject.put(ModelMsg.SUCCESS_URL.getMsg(),"redirect:/projectC/toProjectMsg?projectId="+projectId);
             log.info("修改项目成功!");
         }catch (Exception e){
-            jsonObject.put("msg","修改项目失败!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目失败!");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
             log.error("修改项目失败!");
         }
 
@@ -140,17 +144,17 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myProject", key = "'myProject=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = {CacheConstant.MY_PROJECT}, key = "'myProject=[teamName='+#teamName+']'")
     public String archiveProject(Integer projectId){
         try{
-             projectMapper.archiveProject(projectId);
-            jsonObject.put("msg","归档成功!");
-            jsonObject.put("success","1");
+             projectMapper.archiveProject(projectId, ProjectArchive.FINISH.getArchive());
+            jsonObject.put(ModelMsg.MSG.getMsg(),"归档成功!");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(), CacheConstant.SUCCESS);
             log.info("归档成功!");
         }catch (Exception e){
             log.error("归档失败!!{}",e.toString());
-            jsonObject.put("msg","归档失败!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG.getMsg(),"归档失败!");
+            jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
         }
         return jsonObject.toString();
 

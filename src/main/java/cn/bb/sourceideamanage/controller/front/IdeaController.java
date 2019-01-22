@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.controller.front;
 
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.dto.front.FrontIdea;
 import cn.bb.sourceideamanage.dto.front.IdeaMsg;
 import cn.bb.sourceideamanage.entity.BrainTime;
@@ -61,79 +62,94 @@ public class IdeaController {
 
         List<Tag> tags = backIdeaService.findAllTag();
         List<Idea> ideasSupports = ideaService.getIdeaSupports();
-        model.addAttribute("tagName",tagName);
-        model.addAttribute("tags",tags);
-        model.addAttribute("ideas",ideas);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
-        model.addAttribute("ideasSupports",ideasSupports);
+        model.addAttribute(ModelMsg.TAG_NAME.getMsg(),tagName);
+        model.addAttribute(ModelMsg.TAGS.getMsg(),tags);
+        model.addAttribute(ModelMsg.IDEAS.getMsg(),ideas);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.IDEAS_SUPPORTS.getMsg(),ideasSupports);
         return "/pages/front/html/idea/ideaList";
     }
 
-    @GetMapping("/toIdeaMsg")
-    public String ideaMsg(Model model,@RequestParam("ideaId") Integer ideaId){
-        IdeaMsg ideaMsg = ideaService.getIdeaMsg(ideaId);
-        model.addAttribute("ideaMsg",ideaMsg);
+    /**
+     * 想法详细
+     * @param model
+     * @param ideaid
+     * @return
+     */
+    @GetMapping("/toIdeaMsg/{ideaId}")
+    public String ideaMsg(@PathVariable("ideaId") Integer  ideaid,Model model){
+
+        IdeaMsg ideaMsg = ideaService.getIdeaMsg(ideaid);
+        model.addAttribute(ModelMsg.IDEA_MSG.getMsg(),ideaMsg);
         return "/pages/front/html/idea/ideaMsg";
     }
 
-    @GetMapping("/toIdeaComments")
-    public String toIdeaComments(@RequestParam("ideaId") Integer ideaId,
-                                 @RequestParam("ideaName") String ideaName,Model model){
+    @GetMapping("/toIdeaComments/{ideaId}/{ideaName}")
+    public String toIdeaComments(@PathVariable("ideaId") Integer ideaId,
+                                 @PathVariable("ideaName") String ideaName,Model model){
         List<Comment> comments = ideaService.getAllComment(ideaId);
-        model.addAttribute("ideaId",ideaId);
-        model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments", comments);
+        model.addAttribute(ModelMsg.IDEA_ID.getMsg(),ideaId);
+        model.addAttribute(ModelMsg.IDEA_NAME.getMsg(),ideaName);
+        model.addAttribute(ModelMsg.COMMENTS.getMsg(), comments);
         return "/pages/front/html/idea/ideaComments";
     }
 
 
-    @RequestMapping("/upIdeaSupports")
+    @PutMapping("/upIdeaSupports/{ideaId}/{userId}")
     @ResponseBody
-    public String upIdeaSupports(String ideaId,String userId){
+    public String upIdeaSupports(@PathVariable("ideaId") String ideaId,@PathVariable("userId") String userId){
         String info = ideaService.upIdeaSupports(ideaId, userId);
         return info;
     }
 
-    @RequestMapping("/commentIdea")
+    /**
+     * 评论想法
+     * @param model
+     * @param request
+     * @param content
+     * @param ideaName
+     * @param ideaId
+     * @return
+     */
+    @PostMapping("/commentIdea")
     public String commentIdea(Model model,HttpServletRequest request,
                               String content, String ideaName,
                               Integer ideaId ){
-
-
         ideaService.commentIdea(content,ideaName,ideaId,request);
         List<Comment> comments = ideaService.getAllComment(ideaId);
-        model.addAttribute("ideaId",ideaId);
-        model.addAttribute("ideaName",ideaName);
-        model.addAttribute("comments", comments);
+        model.addAttribute(ModelMsg.IDEA_ID.getMsg(),ideaId);
+        model.addAttribute(ModelMsg.IDEA_NAME.getMsg(),ideaName);
+        model.addAttribute(ModelMsg.COMMENTS.getMsg(), comments);
         return "/pages/front/html/idea/ideaComments";
     }
 
-    @RequestMapping("/toAddIdea")
+    @GetMapping("/toAddIdea")
     public String toAddIdea(Model model){
         List<Tag> tags = backIdeaService.findAllTag();
-        model.addAttribute("tags",tags);
+        model.addAttribute(ModelMsg.TAGS.getMsg(),tags);
         return "/pages/front/html/idea/addIdea";
     }
 
-    @RequestMapping("/addIdea")
+    @PostMapping("/addIdea")
+    @ResponseBody
     public String addIdea(String ideaName, Integer tagId, String ideaMsg, HttpServletRequest request){
-        ideaService.addIdea(ideaName,tagId,ideaMsg,request);
-        return "redirect:/UserC/toMyIdea";
+
+        return ideaService.addIdea(ideaName,tagId,ideaMsg,request);
     }
 
 
-    @RequestMapping("/commentIdeaUser")
+    @PostMapping("/commentIdeaUser")
     @ResponseBody
     public String commentIdeaUser(HttpServletRequest request,String content,
                                   Integer ideaId,String ideaName,
                                   Integer uid,Integer parentId,String parentName){
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         String userName = userService.getUserName(userId);
         return ideaService.commentIdeaUser(uid,ideaId,ideaName,userId,userName,parentId,parentName,content);
     }
 
-    @RequestMapping("/toAddBrainStorming")
+    @GetMapping("/toAddBrainStorming")
     public String toAddBrainStorming(Model model){
         List<BrainTime> brainTimes = ideaService.getAllBrainTime();
         model.addAttribute("brainTimes",brainTimes);
@@ -141,25 +157,25 @@ public class IdeaController {
     }
 
 
-    @RequestMapping("/addBrainStorming")
+    @PostMapping("/addBrainStorming")
     @ResponseBody
     public String addBrainStorming(HttpServletRequest request, String brainName,Integer timeId,String brainMsg ){
-        Integer userId = (Integer)request.getSession().getAttribute("userId");
+        Integer userId = (Integer)request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         return  ideaService.addBrainStorming(userId,brainName,timeId,brainMsg);
     }
 
-    @RequestMapping("/toBrainStorming")
+    @GetMapping("/toBrainStorming")
     public String toBrainStorming(Model model){
         List<Map<String, String>> brains = ideaService.allBrains();
-        model.addAttribute("brains",brains);
+        model.addAttribute(ModelMsg.BRAINS.getMsg(),brains);
         return "pages/front/html/idea/brainStorming";
     }
 
 
-    @RequestMapping("/upBrainSupports")
+    @PutMapping("/upBrainSupports")
     @ResponseBody
     public String upBrainSupports(HttpServletRequest request,String brainName ){
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         return ideaService.upBrainSupports(brainName,userId);
     }
 

@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.common.redis;
 
+import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
 import cn.bb.sourceideamanage.common.enums.TimeOut;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,6 @@ import redis.clients.jedis.ScanResult;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 @Configuration
@@ -60,13 +58,31 @@ public class RedisCacheConfig {
     public CacheManager cacheManager(@Autowired RedisTemplate redisTemplate) {
         RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
         // 设置缓存过期时间
-        redisCacheManager.setDefaultExpiration(TimeOut.DefaultTime.getTime());
+        redisCacheManager.setDefaultExpiration(TimeOut.MEDIUM.getTime());
         //对不同场景设定缓存时间
-       Map<String, Long> expires = new ConcurrentHashMap<>(16);
+           Map<String, Long> expires = new ConcurrentHashMap<>(32);
         //对于缓存名 设置时间
-        //团队page
-        expires.put(TimeOut.TeamPage.getCacheName(), TimeOut.TeamPage.getTime());
-        //想法page
+        //对于tag 可以设置很长
+        expires.put(CacheConstant.FIND_TAG,TimeOut.FOREVER.getTime());
+        expires.put(CacheConstant.ALL_TAG,TimeOut.FOREVER.getTime());
+
+        //想法排行
+        expires.put(CacheConstant.GET_IDEA_SUPPORTS,TimeOut.SHORTEST.getTime());
+
+        //头脑风暴
+        expires.put(CacheConstant.ALL_BRAIN_TIME,TimeOut.FOREVER.getTime());
+        expires.put(CacheConstant.BRAIN_TIME,TimeOut.FOREVER.getTime());
+
+
+        //teamServoceImpl
+        /*expires.put(CacheConstant.TEAM_PAGE, TimeOut.MEDIUM.getTime());
+        expires.put(CacheConstant.FIND_ALL_TEAM_MEMBER, TimeOut.MEDIUM.getTime());
+        expires.put(CacheConstant.ALL_TEAM_MSG, TimeOut.MEDIUM.getTime());
+        expires.put(CacheConstant.ALL_TEAM_BY_USERID, TimeOut.MEDIUM.getTime());
+        expires.put(CacheConstant.MY_TEAMS, TimeOut.MEDIUM.getTime());
+        expires.put(CacheConstant.MY_TEAM_MEMBER, TimeOut.MEDIUM.getTime());*/
+
+       /* //想法page
         expires.put(TimeOut.IdeaPage.getCacheName(),TimeOut.IdeaPage.getTime());
         //项目page
         expires.put(TimeOut.ProjectPage.getCacheName(),TimeOut.ProjectPage.getTime());
@@ -112,7 +128,7 @@ public class RedisCacheConfig {
         //我的项目
         expires.put(TimeOut.MyProject.getCacheName(),TimeOut.MyProject.getTime());
         //头脑风暴时间
-        expires.put(TimeOut.AllBrainTime.getCacheName(),TimeOut.AllBrainTime.getTime());
+        expires.put(TimeOut.AllBrainTime.getCacheName(),TimeOut.AllBrainTime.getTime());*/
 
        redisCacheManager.setExpires(expires);
         return redisCacheManager;

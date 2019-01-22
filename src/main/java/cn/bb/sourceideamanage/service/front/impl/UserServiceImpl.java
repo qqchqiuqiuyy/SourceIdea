@@ -1,5 +1,8 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
+import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.enums.IsDelete;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.ProjectArchive;
 import cn.bb.sourceideamanage.common.enums.Roles;
 import cn.bb.sourceideamanage.dao.front.ProjectMapper;
@@ -7,6 +10,7 @@ import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dao.front.UserMapper;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.*;
+import cn.bb.sourceideamanage.service.front.IdeaService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageHelper;
@@ -40,6 +44,7 @@ public class UserServiceImpl  implements UserService {
     @Autowired
     TeamService teamService;
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_USER_BY_ID} ,key = "'findUserById=[userId='+#userId+']'")
     public User findUserById(Integer userId) {
         return userMapper.findUserById(userId);
     }
@@ -55,45 +60,50 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_USER_ALL_TEAM} ,key = "'findUserAllTeam=[userId='+#userId+']'")
     public List<UserTeam> findUserAllTeam(Integer userId) {
         return userMapper.findUserAllTeam(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_USER_ALL_IDEA} , key = "'findUserAllIdea=[userId='+#userId+']'")
     public List<Idea> findUserAllIdea(Integer userId) {
         return userMapper.findUserAllIdea(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_USER_ALL_COMMENT_IDEA} ,key = "'findUserAllCommentIdea=[userId'+#userId+']'")
     public List<CommentIdea> findUserAllCommentIdea(Integer userId) {
         return userMapper.findUserAllCommentIdea(userId);
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_USER_BY_ACCOUNT} ,key = "'findUserByAccount=[account='+#account+']'")
     public User findUserByAccount(String account) {
         return userMapper.findUserByAccount(account);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = {CacheConstant.MY_TEAM_MEMBER} ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public String delMember(Integer userId, String teamName) {
         try {
             Integer teamId = teamService.getTeamId(teamName);
-            userMapper.delMember(userId,teamName);
+            userMapper.delMember(userId,teamName,IsDelete.DELETE.getState());
             userMapper.decrMemberNums(teamId);
-            jsonObject.put("msg","删除成功!");
-            jsonObject.put("success","1");
+            jsonObject.put(ModelMsg.MSG,"删除成功!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
         }catch (Exception e){
             log.error("删除错误");
-            jsonObject.put("msg","删除错误 请重试");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"删除错误 请重试");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
 
         return jsonObject.toString();
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.GET_ALL_APPY} ,key = "'getAllAppy=[teamName'+#teamName+']'")
     public List<ApplyUser> getAllAppy(String teamName) {
         return userMapper.getAllAppy(teamName);
     }
@@ -104,7 +114,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myTeamMember ",key = "'myTeamMember=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = {CacheConstant.MY_TEAM_MEMBER},key = "'myTeamMember=[teamName='+#teamName+']'")
     public String agreeMember(Integer userId,String teamName){
         try {
 
@@ -116,15 +126,15 @@ public class UserServiceImpl  implements UserService {
             //团队人数+1
             userMapper.addMemberNums(teamId);
             //删除审核表
-            userMapper.delApply(userId,teamId);
+            userMapper.delApply(userId,teamId,IsDelete.DELETE.getState());
             //删除邀请表
-            userMapper.delInvite(userId,teamId);
-            jsonObject.put("msg","同意成功!!");
-            jsonObject.put("success","1");
+            userMapper.delInvite(userId,teamId,IsDelete.DELETE.getState());
+            jsonObject.put(ModelMsg.MSG,"同意成功!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
         }catch (Exception e){
             log.warn("同意进团队错误!!");
-            jsonObject.put("msg","同意进团队发生错误!!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"同意进团队发生错误!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
 
         return jsonObject.toString();
@@ -148,49 +158,51 @@ public class UserServiceImpl  implements UserService {
             //团队人数+1
             userMapper.addMemberNums(teamId);
             //删除邀请表
-            userMapper.delInvite(userId,teamId);
+            userMapper.delInvite(userId,teamId,IsDelete.DELETE.getState());
             //如果同时存在团队邀请 和 申请 继续删除 审核表
-            userMapper.delApply(userId,teamId);
+            userMapper.delApply(userId,teamId,IsDelete.DELETE.getState());
             log.info("成功进入团队!!");
-            jsonObject.put("msg","成功进入团队!!");
-            jsonObject.put("success","1");
+            jsonObject.put(ModelMsg.MSG,"成功进入团队!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
         }catch (Exception e){
             log.warn("同意进团队错误!!");
-            jsonObject.put("msg","同意进团队发生错误!!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"同意进团队发生错误!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
         return jsonObject.toString();
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.GET_ALL_TEAM_ROLE} ,key = "'getAllTeamRole=[userId'+#userId+'][teamId'+#teamId+']' ")
     public List<Integer> getAllTeamRole(Integer userId, Integer teamId) {
         return userMapper.getAllTeamRole(userId,teamId);
     }
 
     @Override
-    @Cacheable(cacheNames = "myProject", key = "'myProject=[teamName='+#teamName+']'")
+    @Cacheable(cacheNames = {CacheConstant.MY_PROJECT}, key = "'myProject=[teamName='+#teamName+']'")
     public List<FrontProject> findProjects(String teamName) {
         return userMapper.findProjects(teamName);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myProject",key = "'myProject=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = {CacheConstant.MY_PROJECT},key = "'myProject=[teamName='+#teamName+']'")
     public String delProject(Integer projectId) {
         try {
-            userMapper.delProject(projectId);
+            userMapper.delProject(projectId,IsDelete.DELETE.getState());
             log.info("删除项目成功!");
-            jsonObject.put("msg","删除成功");
-            jsonObject.put("success","1");
+            jsonObject.put(ModelMsg.MSG,"删除成功");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
         }catch (Exception e){
             log.warn("删除项目失败!");
-            jsonObject.put("msg","删除项目失败!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"删除项目失败!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
         return jsonObject.toString();
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.GET_USERS_FOR_TAG} ,key = "'getUsersForTag=[teamName=' + #teamName+']'")
     public List<UserTag> getUsersForTag(String teamName) {
         Integer teamId = userMapper.getTeamId(teamName);
         List<UserTag> tags = projectMapper.getUsersForTag(teamId);
@@ -206,32 +218,33 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myTeams",allEntries = true)
+    @CacheEvict(cacheNames = {CacheConstant.MY_TEAMS},allEntries = true)
     public String addTeamProject(String teamName, String projectName, String projectMsg) {
         try {
             Integer teamId = userMapper.getTeamId(teamName);
             Integer projectId = projectMapper.checkProjectName(projectName);
             if(projectId != null){
                 log.error("已经存在该项目名!! 请勿重复");
-                jsonObject.put("msg","已经存在该项目名!! 请勿重复");
-                jsonObject.put("success","2");
+                jsonObject.put(ModelMsg.MSG,"已经存在该项目名!! 请勿重复");
+                jsonObject.put(ModelMsg.SUCCESS,CacheConstant.ERROR);
                 return jsonObject.toString();
             }
             projectMapper.addTeamProject(teamId,projectName,projectMsg, ProjectArchive.NOTFINISH.getArchive());
             log.info("添加项目成功!!");
-            jsonObject.put("msg","添加项目成功!!");
-            jsonObject.put("success","1");
-            jsonObject.put("successUrl","/UserC/toMyTeamMsg?teamName=" + teamName);
+            jsonObject.put(ModelMsg.MSG,"添加项目成功!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
+            jsonObject.put(ModelMsg.SUCCESS_URL,"/UserC/toMyTeamMsg?teamName=" + teamName);
         }catch (Exception e){
             log.error("添加项目失败!!");
-            jsonObject.put("msg","添加项目失败!!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"添加项目失败!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
 
         return jsonObject.toString();
     }
 
     @Override
+    @Cacheable(cacheNames = {CacheConstant.FIND_ALL_FRONT_USER} ,key = "'findAllFrontUser=[page='+#page+'][size='+#size+'][userName='+#userName+']'")
     public PageInfo<FrontUser> findAllFrontUser(int page, int size, String userName) {
         PageHelper.startPage(page,size);
         List<FrontUser> allFrontUser = userMapper.findAllFrontUser(userName);
@@ -248,31 +261,31 @@ public class UserServiceImpl  implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public String invite(Integer userId, String teamName) {
         try{
-            Integer teamId = teamMapper.findTeamId(teamName);
+            Integer teamId = teamMapper.findTeamId(teamName, IsDelete.NOTDELETE.getState());
             String s = userMapper.checkUserInInvite(userId, teamId);
-            List<Integer> teamUserId = teamMapper.getTeamUserId(teamId);
+            List<Integer> teamUserId = teamMapper.getTeamUserId(teamId,IsDelete.NOTDELETE.getState());
             boolean contains = teamUserId.contains(userId);
             if(contains){
                 log.error("错误 该用户已在此团队!");
-                jsonObject.put("success","2");
-                jsonObject.put("msg","错误 该用户已在此团队!");
+                jsonObject.put(ModelMsg.SUCCESS,CacheConstant.ERROR);
+                jsonObject.put(ModelMsg.MSG,"错误 该用户已在此团队!");
             }else if(s == null){
                 teamMapper.teamInvite(teamId,userId);
                 log.info("邀请成功");
-                jsonObject.put("success","1");
-                jsonObject.put("msg","邀请成功");
+                jsonObject.put(ModelMsg.SUCCESS,"1");
+                jsonObject.put(ModelMsg.MSG,"邀请成功");
             }
         }catch (Exception e){
             log.error("邀请发生错误!");
-            jsonObject.put("msg","发生错误!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"发生错误!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
 
         return jsonObject.toString();
     }
 
     @Override
-    @Cacheable(cacheNames = "userMsg",key = "'userMsg=[userId='+#userId+']'")
+    @Cacheable(cacheNames = {CacheConstant.USER_MSG},key = "'userMsg=[userId='+#userId+']'")
     public FrontUser getUserMsg(Integer userId) {
         FrontUser userMsg = userMapper.getUserMsg(userId);
         return userMsg;
@@ -286,13 +299,13 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     public Boolean checkUserInInvite(Integer userId, String teamName) {
-        Integer teamId = teamMapper.findTeamId(teamName);
+        Integer teamId = teamMapper.findTeamId(teamName,IsDelete.NOTDELETE.getState());
         String s = userMapper.checkUserInInvite(userId, teamId);
         return s == null ? true : false;
     }
 
     @Override
-    @Cacheable(cacheNames = "inviteList",key = "'inviteList=[userId='+#userId+']'")
+    @Cacheable(cacheNames = {CacheConstant.INVITE_LIST},key = "'inviteList=[userId='+#userId+']'")
     public List<InviteUser> getUserInvite(Integer userId) {
 
         return userMapper.getUserInvite(userId);
@@ -307,7 +320,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = "myTeamMember" ,key = "'myTeamMember=[teamName='+#teamName+']'")
+    @CacheEvict(cacheNames = {CacheConstant.MY_TEAM_MEMBER} ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public String awardManager(Integer userId, String  teamName){
         try{
             Integer teamId = teamService.getTeamId(teamName);
@@ -315,25 +328,25 @@ public class UserServiceImpl  implements UserService {
             Integer roleId = teamService.checkManager(userId, teamId,Roles.UserProjectManager.getRoleId());
             if(null != roleId && roleId.equals(Roles.UserProjectManager.getRoleId())){
                 log.info("该成员已经是项目管理员!");
-                jsonObject.put("msg","该成员已经是项目管理员!");
-                jsonObject.put("success","0");
+                jsonObject.put(ModelMsg.MSG,"该成员已经是项目管理员!");
+                jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
                 return jsonObject.toString();
             }
             //对用户所在团队 的团员职位进行授权为项目管理员
             teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectManager.getRoleName()+":"+teamId);
             log.info("授予项目管理员成功!!");
-            jsonObject.put("msg","授予项目管理员成功!!");
-            jsonObject.put("success","1");
+            jsonObject.put(ModelMsg.MSG,"授予项目管理员成功!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.SUCCESS);
         }catch (Exception e){
             log.error("授予项目管理员失败!! {}",e.getMessage());
-            jsonObject.put("msg","授予项目管理员失败!!");
-            jsonObject.put("success","0");
+            jsonObject.put(ModelMsg.MSG,"授予项目管理员失败!!");
+            jsonObject.put(ModelMsg.SUCCESS,CacheConstant.FAILURE);
         }
         return jsonObject.toString();
 
     }
     @Override
-    @Cacheable(cacheNames = "userName",key = "'userName=[userId='+#userId+']'")
+    @Cacheable(cacheNames = {CacheConstant.USER_NAME},key = "'userName=[userId='+#userId+']'")
     public String getUserName(Integer userId){
         return userMapper.getUserName(userId);
     }

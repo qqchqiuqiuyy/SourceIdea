@@ -28,7 +28,7 @@
             <tr>
               <td> <div href="" class="layui-this" style="width:480px"><h1 th:text="${session.userName}+'的项目列表'"></h1></div></td>
               <!--搜索框-->
-              <form class="form-inline" th:action="@{/UserC/toMyProject}" type="post" >
+              <form class="form-inline" th:action="@{/userC/toMyProject}" type="post" >
               <td>
                   <input type="text"  name="projectName"   placeholder="搜索项目" autocomplete="off" class="layui-input" style="width:200px">
               </td>
@@ -48,7 +48,7 @@
         <ul class="fly-list" th:each="project : ${projects}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/ProjectC/toProjectMsg(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
+              <a th:href="@{/projectC/toProjectMsg(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
             </h3>
             <div class="fly-list-info">
 
@@ -69,15 +69,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/userC/toMyProject?page=' + ${indexPage-1}}">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/UserC/toMyProject?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/userC/toMyProject?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
             </ul>
 
           </div>

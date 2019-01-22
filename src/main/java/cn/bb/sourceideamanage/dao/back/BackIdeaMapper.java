@@ -24,7 +24,7 @@ public interface BackIdeaMapper {
             "        team_nums AS teamNums" +
             "        team_create_time AS teamCreateTime" +
             "from team where team_id IN " +
-            "(select team_id from user_team where user_id = #{user_id})")
+            "(select team_id from user_team where user_id = #{user_id} AND is_delete = 0)")
     public List<Team> findAllTeamByUserId(@Param("user_id") Integer userId);
 
 
@@ -38,7 +38,8 @@ public interface BackIdeaMapper {
     @Select("select u.user_id ,u.user_name AS userName,t.tag_name AS tagName, i.idea_msg AS ideaMsg," +
             "   i.idea_supports AS ideaSupports ,i.idea_create_time AS ideaCreateTime, i.idea_id AS ideaId" +
             " from user u, idea i,tag t  " +
-            " where t.tag_name LIKE CONCAT('%',#{tagName},'%') AND idea_name LIKE CONCAT('%',#{ideaName},'%') AND i.user_id = u.user_id AND t.tag_id = i.tag_id")
+            " where t.tag_name LIKE CONCAT('%',#{tagName},'%') AND idea_name LIKE CONCAT('%',#{ideaName},'%') AND i.user_id = u.user_id AND t.tag_id = i.tag_id " +
+            "   AND u.is_delete = 0 AND i.is_delete = 0")
     @Results(
             //colums是数据库列,以这个id为一组 , property是back_user对象里面的属性
             @Result(column = "user_id",javaType = List.class, property = "userTeams",
@@ -55,7 +56,7 @@ public interface BackIdeaMapper {
      * 查找所有的标签
      * @return
      */
-    @Select("select * from tag")
+    @Select("select tag_id,tag_name from tag")
     public List<Tag> findAllTag();
 
     /**

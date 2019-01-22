@@ -1,13 +1,12 @@
 package cn.bb.sourceideamanage.controller.front;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
-import cn.bb.sourceideamanage.dto.back.BackTeam;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.dto.front.FrontTeam;
 import cn.bb.sourceideamanage.dto.front.TeamMember;
 import cn.bb.sourceideamanage.dto.front.TeamMsg;
 import cn.bb.sourceideamanage.entity.Idea;
 import cn.bb.sourceideamanage.entity.Project;
-import cn.bb.sourceideamanage.service.front.IdeaService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
@@ -15,14 +14,13 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/TeamC")
+@RequestMapping("/teamC")
 public class TeamController {
 
     @Autowired
@@ -32,7 +30,6 @@ public class TeamController {
     JSONObject jsonObject;
 
     @RequestMapping("/toTeam")
-
     public String toTeam(Model model, String teamName, Integer page){
         if(null == page || page < 1){
             page = 1;
@@ -42,14 +39,14 @@ public class TeamController {
         }
         PageInfo<FrontTeam> info = teamService.findAllFrontTeam(page, PageSize.PAGE_SIZE, teamName);
         List<FrontTeam> teams = info.getList();
-        model.addAttribute("teams",teams);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
+        model.addAttribute(ModelMsg.TEAMS.getMsg(),teams);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         return "pages/front/html/team/teamList";
     }
 
-    @RequestMapping("/toTeamMsg")
-    public String toTeamMsg(Model model, String teamName, HttpServletRequest request){
+    @GetMapping("/toTeamMsg/{teamName}")
+    public String toTeamMsg(Model model, @PathVariable("teamName") String teamName, HttpServletRequest request){
         Integer teamId = teamService.getTeamId(teamName);
         /*teamService*/
         TeamMsg team = teamService.findTeamMsg(teamName);
@@ -60,33 +57,36 @@ public class TeamController {
         //查询想法
         List<Idea> ideas = teamService.findAllTeamIdeas(teamId);
         //获取当前用户名
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
+
         List<String> userTeams = teamService.findAllTeam(userId);
         JSONArray userteamsJson = JSONArray.fromObject(userTeams);
-        model.addAttribute("userteamsJson",userteamsJson);
-        model.addAttribute("team",team);
-        model.addAttribute("members",members);
-        model.addAttribute("projects",projects);
-        model.addAttribute("ideas",ideas);
+
+        model.addAttribute(ModelMsg.USER_TEAMS_JSON.getMsg(),userteamsJson);
+        model.addAttribute(ModelMsg.TEAM.getMsg(),team);
+        model.addAttribute(ModelMsg.MEMBERS.getMsg(),members);
+        model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
+        model.addAttribute(ModelMsg.IDEAS.getMsg(),ideas);
         return "pages/front/html/team/teamMsg";
     }
 
-    @RequestMapping("/joinTeam")
+    @PostMapping("/joinTeam/{userId}/{teamId}")
     @ResponseBody
-    public String joinTeam(Integer userId,Integer teamId){
+    public String joinTeam(@PathVariable("userId") Integer userId,
+                           @PathVariable("teamIds") Integer teamId){
         String info = teamService.joinTeam(userId, teamId);
         return info;
     }
 
-    @RequestMapping("/toAddTeam")
+    @GetMapping("/toAddTeam")
     public String toAddTeam(){
         return "pages/front/html/team/addTeam";
     }
 
-    @RequestMapping("/addTeam")
+    @PostMapping("/addTeam")
     @ResponseBody
     public String addTeam(String teamName,String teamMsg,HttpServletRequest request){
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         String s = teamService.addTeam(teamName, teamMsg, userId);
         return s;
     }

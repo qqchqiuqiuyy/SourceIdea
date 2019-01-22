@@ -28,7 +28,7 @@
             <tr>
               <td> <div href="" class="layui-this" style="width:350px"><h1>用户列表</h1></div></td>
               <!--搜索框-->
-               <form class="form-inline layui-form" th:action="@{/UserC/toUsers}" type="post" >
+               <form class="form-inline layui-form" th:action="@{/userC/toUsers}" type="post" >
                <td>
                    <input type="text"  name="userName"   placeholder="搜索用户" autocomplete="off" class="layui-input" style="width:200px">
                     <input type="hidden" name="teamName" th:value="${teamName}">
@@ -44,7 +44,7 @@
         <ul class="fly-list" th:each="user:${users}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a   th:href="@{/UserC/toUserMsg(userId=${user.userId},teamName=${teamName})}" th:text="${user.userName}"></a>
+              <a   th:href="@{/userC/toUserMsg(userId=${user.userId},teamName=${teamName})}" th:text="${user.userName}"></a>
             </h3>
             <div class="fly-list-info">
               <span th:text="'创建时间: '+${user.userCreateTime}" style="display: inline-block;margin-left: 30px"></span>
@@ -63,14 +63,14 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/UserC/toUsers?page=' + ${indexPage-1} +'&teamName='+${teamName}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage-3}+'&teamName='+${teamName}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage-2}+'&teamName='+${teamName}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage-1}+'&teamName='+${teamName}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/userC/toUsers?page=' + ${indexPage-1} +'&teamName='+${teamName}}">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage-3}+'&teamName='+${teamName}}" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage-2}+'&teamName='+${teamName}}" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage-1}+'&teamName='+${teamName}}" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage+2}+'&teamName='+${teamName}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/UserC/toUsers?page=' + ${indexPage+3}+'&teamName='+${teamName}}" th:text="${indexPage +3}" >1</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+2}+'&teamName='+${teamName}}" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+3}+'&teamName='+${teamName}}" th:text="${indexPage +3}" >1</a></li>
               <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/ideaC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" href="#">&raquo;</a></li>
             </ul>
 
@@ -103,7 +103,7 @@ function invite(userId){
   console.log(teamName)
 
   $.ajax({
-    url:"/UserC/invite",
+    url:"/userC/invite",
     data:{ "userId" : userId,
             "teamName" : teamName
         },

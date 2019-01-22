@@ -75,7 +75,7 @@
   $(function(){
     $('#commit').click(function(){//点击按钮提交
       $.ajax({
-        url:"/LoginC/check",
+        url:"/loginC/check",
         data:$("#myForm").serialize(),
         type:"post",
         dataType:"json",
@@ -83,7 +83,7 @@
         success:function(data){//ajax返回的数据
             console.log(data);
             if(data.isSuccess == "1"){
-                window.location.href = "/AdminC/toUsers";
+                window.location.href = "/adminC/toUsers";
             }else{
                 alert(data.msg);
             }
@@ -94,7 +94,7 @@
     });
 
     $('#register').click(function () {
-      window.location.href = "/LoginC/toRegister";
+      window.location.href = "/loginC/toRegister";
     });
 
 

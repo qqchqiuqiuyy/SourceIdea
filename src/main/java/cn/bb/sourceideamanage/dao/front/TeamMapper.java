@@ -13,34 +13,109 @@ import java.util.List;
 @Mapper
 public interface TeamMapper {
 
-    @Select("select * from project where team_id = #{teamId}")
-    public List<Project> findAllProject(@Param("teamId") Integer teamId);
+    @Select("SELECT " +
+            " project_id, " +
+            " team_id, " +
+            " project_name, " +
+            " project_msg, " +
+            " project_archive, " +
+            " project_create_time  " +
+            "FROM " +
+            " project " +
+            "WHERE team_id = #{teamId} " +
+            "AND is_delete = #{isDelete}")
+    public List<Project> findAllProject(@Param("teamId") Integer teamId,
+                                        @Param("isDelete") Integer state);
 
-    @Select("select * from idea where team_id = #{teamId}")
-    public List<Idea> findAllIdea(@Param("teamId") Integer teamId);
-
-    @Select("select * from user_team ut, user u where " +
-            "ut.user_id = u.user_id AND ut.team_id = #{teamId}")
-    public List<User> findAllMembers(@Param("teamId") Integer teamId);
-
-    @Select("select * from user_team where team_id IN " +
-            " (select team_id from team where team_name LIKE CONCAT('%',#{teamName},'%')) ")
-    public List<UserTeam> findSearchTeam(@Param("teamName") String teamName);
-
-    @Select("select distinct t.team_id AS teamId, t.team_name AS teamName,t.team_create_time AS teamCreateTime, " +
-            "  u.user_name AS teamCaptain" +
-            " from team t,user_team ut , role r , user u " +
-            " where t.team_id = ut.team_id AND ut.role_id = #{teamManager} AND " +
-            "ut.user_id = u.user_id AND t.team_name LIKE CONCAT('%',#{teamName},'%') ")
-    public List<FrontTeam> findAllFrontTeam(@Param("teamName") String teamName,@Param("teamManager") Integer teamManager);
-
+    @Select("SELECT " +
+            " idea_id, " +
+            " team_id, " +
+            " tag_id, " +
+            " user_id, " +
+            " idea_name, " +
+            " idea_msg, " +
+            " idea_supports, " +
+            " idea_create_time  " +
+            "FROM " +
+            " idea  " +
+            "WHERE " +
+            " team_id = #{teamId}  " +
+            " AND is_delete = #{isDelete}")
+    public List<Idea> findAllIdea(@Param("teamId") Integer teamId,
+                                  @Param("isDelete") Integer state);
 
 
+    @Select("SELECT " +
+            " u.user_id, " +
+            " u.user_name, " +
+            " u.user_msg, " +
+            " u.user_create_time  " +
+            "FROM " +
+            " user_team ut, " +
+            " USER u  " +
+            "WHERE " +
+            " ut.user_id = u.user_id  " +
+            " AND ut.team_id = #{teamId}  " +
+            " AND u.is_delete = #{isDelete}  " +
+            " AND ut.is_delete = #{isDelete}")
+    public List<User> findAllMembers(@Param("teamId") Integer teamId,
+                                     @Param("isDelete") Integer state);
 
-    @Select("select distinct * from project where team_id = #{teamId}")
-    public List<Project> findAllProjectByTeamId(Integer teamId);
+    @Select(" SELECT " +
+            " id, " +
+            " team_id, " +
+            " role_id, " +
+            " user_id, " +
+            " member_join_time  " +
+            "FROM " +
+            " user_team  " +
+            "WHERE " +
+            " team_id IN ( SELECT team_id FROM team WHERE team_name LIKE CONCAT( '%', #{teamName}, '%' )  ) " +
+            " AND is_delete = #{state}")
+    public List<UserTeam> findSearchTeam(@Param("teamName") String teamName,
+                                         @Param("isDelete") Integer state);
 
-    @Select("SELECT DISTINCT" +
+    @Select("SELECT   " +
+            " t.team_id AS teamId, " +
+            " t.team_name AS teamName, " +
+            " t.team_create_time AS teamCreateTime, " +
+            " u.user_name AS teamCaptain, " +
+            " t.is_delete  " +
+            "FROM " +
+            " team t, " +
+            " user_team ut, " +
+            " role r, " +
+            " USER u  " +
+            "WHERE " +
+            " t.team_id = ut.team_id  " +
+            " AND ut.role_id = #{teamManager}  " +
+            " AND ut.user_id = u.user_id  " +
+            " AND t.team_name LIKE CONCAT( '%', '', '%' )  " +
+            " AND t.is_delete = #{isDelete}  " +
+            " AND ut.is_delete = #{isDelete}  " +
+            " AND u.is_delete = #{isDelete}" +
+            " GROUP BY teamId")
+    public List<FrontTeam> findAllFrontTeam(@Param("teamName") String teamName,@Param("teamManager") Integer teamManager,
+                                            @Param("isDelete") Integer isDelete);
+
+
+
+
+    @Select("SELECT " +
+            " project_id, " +
+            " team_id, " +
+            " project_name, " +
+            " project_msg,  " +
+            " project_archive, " +
+            " project_create_time  " +
+            "FROM " +
+            " project  " +
+            "WHERE " +
+            " team_id = #{teamId}  " +
+            " AND is_delete = 0")
+    public List<Project> findAllProjectByTeamId(@Param("teamId") Integer teamId);
+
+    @Select("SELECT " +
             " r.role_msg AS teamRoleName, " +
             " ut.member_join_time AS memberJoinTime, " +
             " u.user_name AS userName  " +
@@ -50,13 +125,28 @@ public interface TeamMapper {
             " user_team ut  " +
             "WHERE " +
             " r.role_id = ut.role_id  " +
-            " AND u.user_id = ut.user_id " +
-            " AND  ut.team_id = #{tId2}" +
-            " AND ut.role_id = (select max(role_id) from user_team where ut.user_id = user_id)")
+            " AND u.user_id = ut.user_id  " +
+            " AND ut.team_id = #{tId2} " +
+            " AND ut.role_id = ( SELECT role_id FROM user_team WHERE user_id  = ut.user_id ORDER BY role_id DESC LIMIT 1)  " +
+            " AND ut.is_delete = 0  " +
+            " AND u.is_delete = 0 " )
     public List<TeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 
-    @Select("select distinct * from idea where team_id = #{teamId}")
+    @Select("SELECT " +
+            " idea_id, " +
+            " team_id, " +
+            " tag_id, " +
+            " user_id, " +
+            " idea_name, " +
+            " idea_msg, " +
+            " idea_supports, " +
+            " idea_create_time  " +
+            "FROM " +
+            " idea  " +
+            "WHERE " +
+            " team_id = #{tId3} " +
+            " AND is_delete = 0")
     public List<Idea> findAllTeamIdea(@Param("tId3") Integer teamId);
 
     /**
@@ -64,10 +154,16 @@ public interface TeamMapper {
      * @param teamId
      * @return String
      */
-    @Select("select distinct u.user_name " +
-            "from role r, user_team ut ,user u" +
-            " where ut.team_id = #{teamId} AND ut.role_id = '5' AND ut.user_id = u.user_id")
-    public String findTeamCaptainByTeamId(Integer teamId);
+    @Select("SELECT DISTINCT " +
+            " u.user_name  " +
+            "FROM " +
+            " role r, " +
+            " user_team ut, " +
+            " USER u  " +
+            "WHERE " +
+            " ut.team_id = #{teamId} AND ut.role_id = '5' AND ut.user_id = u.user_id " +
+            " AND u.is_delete = 0 AND ut.is_delete = 0")
+    public String findTeamCaptainByTeamId(@Param("teamId") Integer teamId);
 
 
     /**
@@ -92,6 +188,7 @@ public interface TeamMapper {
             " role r " +
             "WHERE " +
             " t.team_name = #{teamName} AND ut.team_id = t.team_id AND ut.role_id = r.role_id  " +
+            "   AND ut.is_delete = #{state} AND t.is_delete = #{state} " +
             "GROUP BY  " +
             " teamId ")
     @Results({
@@ -118,28 +215,35 @@ public interface TeamMapper {
                     )),
 
     })
-    public BackTeam findAllTeamMember(@Param("teamName") String teamName);
+    public BackTeam findAllTeamMember(@Param("teamName") String teamName,
+                                      @Param("isDelete") Integer state);
 
    /* @Insert("INSERT INTO user_team (team_id,role_id,user_id) " +
             "   VALUES" +
             "   (#{teamId} , '6',#{userId})")
     public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId);*/
 
-    @Select("SELECT role_id FROM user_team ut WHERE ut.user_id = #{userId} AND ut.team_id = #{teamId}")
-    public String checkTeamMember(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    @Select("SELECT role_id FROM user_team ut WHERE ut.user_id = #{userId} AND ut.team_id = #{teamId} AND ut.is_delete = #{isDelete}")
+    public String checkTeamMember(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                                  @Param("isDelete") Integer state);
 
     @Insert("INSERT INTO apply (user_id,team_id) VALUES (#{userId},#{teamId})")
     public void apply(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
 
-    @Select("select team_id from apply where user_id = #{userId} AND team_id = #{teamId}")
-    public String checkApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
+    @Select("select team_id from apply where user_id = #{userId} AND team_id = #{teamId} AND is_delete = #{isDelete}")
+    public String checkApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                             @Param("isDelete") Integer state);
 
     @Select("select t.team_name" +
             "   FROM user u,user_team ut, team t" +
             "   WHERE u.user_id = #{userId} AND" +
             "         u.user_id = ut.user_id AND" +
-            "           ut.team_id = t.team_id")
-    public List<String> findAllTeam(@Param("userId") Integer userId);
+            "           ut.team_id = t.team_id " +
+            "          AND ut.is_delete = #{isDelete}" +
+            "           AND u.is_delete = #{isDelete}" +
+            "           AND t.is_delete = #{isDelete}")
+    public List<String> findAllTeam(@Param("userId") Integer userId,
+                                    @Param("isDelete") Integer state);
 
 
 
@@ -159,13 +263,13 @@ public interface TeamMapper {
             " AND ut.role_id = #{teamManager}  " +
             " AND ut.role_id = r.role_id AND  t.team_name LIKE CONCAT( '%',#{teamName}, '%' ) " +
             " AND u.user_id = ut.user_id " +
+            " AND u.is_delete = #{isDelete} AND ut.is_delete = #{isDelete} And t.is_delete = #{isDelete}" +
             " AND ut.team_id IN ( SELECT ut.team_id FROM user_team ut WHERE ut.user_id = #{userId})" +
             "   ORDER BY teamCreateTime DESC")
     public List<FrontTeam> findAllMyTeam(@Param("teamName") String teamName,@Param("userId") Integer userId,
-                                        @Param("teamManager") Integer teamManager);
+                                        @Param("teamManager") Integer teamManager,@Param("isDelete") Integer state);
 
     /**
-     * TODO
      * /UserC/toMyTeamMsg
      * @param teamName
      * @return
@@ -186,28 +290,34 @@ public interface TeamMapper {
             " AND t.team_id = ut.team_id  " +
             " AND ut.user_id = u.user_id " +
             " AND ut.role_id = r.role_id " +
+            " AND u.is_delete = #{isDelete} AND ut.is_delete = #{isDelete} AND t.is_delete = #{isDelete} " +
             " AND ut.role_id = (select max(role_id) from user_team  where user_id = ut.user_id)" )
-    public List<MyTeamMember> findAllMyTeamMember(@Param("teamName") String teamName);
+    public List<MyTeamMember> findAllMyTeamMember(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
     @Select("select r.role_name " +
             "   FROM team t,user_team ut, role r" +
             "   where t.team_name = #{teamName} AND ut.user_id = #{userId} AND t.team_id = ut.team_id AND" +
-            "         ut.role_id = r.role_id  ")
-    public List<String> findTeamRoleByTeamNameAndUserId(@Param("teamName") String teamName,@Param("userId") Integer userId);
+            "         ut.role_id = r.role_id " +
+            "   AND t.is_delete = #{isDelete} AND ut.is_delete = #{isDelete} ")
+    public List<String> findTeamRoleByTeamNameAndUserId(@Param("teamName") String teamName,@Param("userId") Integer userId,
+                                                        @Param("isDelete") Integer state );
 
     @Select("select t.team_id from team t where t.team_name = #{teamName}")
-    public Integer findTeamId(@Param("teamName") String teamName);
+    public Integer findTeamId(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
-    @Select("SELECT ut.user_id from user_team ut where ut.team_id = #{teamId} ")
-    public List<Integer> getTeamUserId(@Param("teamId") Integer teamId);
+    @Select("SELECT ut.user_id from user_team ut where ut.team_id = #{teamId} AND ut.is_delete = #{isDelete}")
+    public List<Integer> getTeamUserId(@Param("teamId") Integer teamId,@Param("isDelete") Integer state);
 
     @Insert("INSERT INTO invite (team_id , user_id) VALUES ( #{teamId},#{userId}  )")
     public void teamInvite(@Param("teamId") Integer teamId,@Param("userId") Integer userId);
+
+
+
     @Select("SELECT t.team_id " +
             " FROM" +
             "  team t" +
-            " WHERE t.team_name = #{teamName}")
-    public Integer getTeamId(@Param("teamName") String  teamName);
+            " WHERE t.team_name = #{teamName} AND t.is_delete = #{isDelete} ")
+    public Integer getTeamId(@Param("teamName") String  teamName,@Param("isDelete") Integer state);
 
     @Insert("INSERT INTO team  (team_name , team_msg) VALUES (#{newTeam.teamName} ,#{newTeam.teamMsg})")
     @Options(useGeneratedKeys = true,keyProperty = "newTeam.teamId",keyColumn = "team_id")
@@ -221,16 +331,26 @@ public interface TeamMapper {
 
     @Select("SELECT i.idea_name " +
             "   FROM idea i " +
-            "   WHERE i.team_id = #{teamId}")
-    public List<Idea> findAllTeamIdeas(@Param("teamId") Integer teamId);
+            "   WHERE i.team_id = #{teamId} AND i.is_delete = #{isDelete}")
+    public List<Idea> findAllTeamIdeas(@Param("teamId") Integer teamId,@Param("isDelete") Integer state);
 
 
-    @Select("SELECT * FROM team WHERE team_name = #{teamName}")
-    public TeamMsg findTeamMsg(@Param("teamName") String teamName);
+    @Select("SELECT " +
+            " team_id, " +
+            " team_name, " +
+            " team_msg, " +
+            " team_create_time, " +
+            " team_nums  " +
+            "FROM " +
+            " team  " +
+            "WHERE " +
+            " team_name = #{teamName} AND is_delete = #{isDelete}")
+    public TeamMsg findTeamMsg(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
 
-    @Select("SELECT role_id FROM user_team where user_id = #{userId} AND team_id = #{teamId} AND role_id = #{roleId}")
-    public Integer checkManager(@Param("userId") Integer userId,@Param("teamId") Integer teamId,@Param("roleId") Integer roleId);
+    @Select("SELECT role_id FROM user_team where user_id = #{userId} AND team_id = #{teamId} AND role_id = #{roleId} AND is_delete = #{isDelete}")
+    public Integer checkManager(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
+                                @Param("roleId") Integer roleId,@Param("isDelete") Integer state);
 
     @Update("UPDATE user_team SET role_id = #{roleId},role_name = #{roleName} WHERE user_id = #{userId} AND team_id = #{teamId} AND role_id = #{originRoleId}")
     public void awardManager(@Param("userId") Integer userId, @Param("teamId") Integer teamId ,@Param("originRoleId") Integer originRoleId,

@@ -105,10 +105,10 @@ layui.config({
     var userId = parseInt(u);
     console.log(userId)
     $.ajax({
-      url:"/ProjectC/joinProject",
-      data:{ "userId" : userId,
+      url:"/projectC/joinProject/"+userId+"/"+projectId,
+/*      data:{ "userId" : userId,
         "projectId" : projectId
-      },
+      },*/
       type:"post",
       dataType:"json",
       cache:false,

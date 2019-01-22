@@ -28,7 +28,7 @@
             <tr>
               <td> <div href="" class="layui-this" style="width:400px"><h1 th:text="${session.userName} + '的想法列表'"></h1></div></td>
               <!--搜索框-->
-               <form class="form-inline layui-form" th:action="@{/UserC/toMyIdea}" type="post" >
+               <form class="form-inline layui-form" th:action="@{/userC/toMyIdea}" type="post" >
                <td>
                    <input type="text"  name="ideaName"   placeholder="搜索想法" autocomplete="off" class="layui-input" style="width:200px">
                </td>
@@ -55,7 +55,7 @@
         <ul class="fly-list" th:each="idea:${ideas}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a   th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+              <a   th:href="@{/ideaC/toIdeaMsg/{ideaId}(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
             </h3>
             <div class="fly-list-info">
               <span style="display: inline-block;margin-right: 20px">
@@ -87,15 +87,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage-1}}">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/UserC/toMyIdea?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/userC/toMyIdea?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
             </ul>
 
           </div>
@@ -113,7 +113,7 @@
 <script>
   function toComment(ideaId) {
       console.log("/ideaC/toIdeaComments?ideaId=" + ideaId+"ideaName="+$("#ideaName"+ideaId).text());
-      window.location.href = "/ideaC/toIdeaComments?ideaId=" + ideaId+"&ideaName="+$("#ideaName"+ideaId).text();
+      window.location.href = "/ideaC/toIdeaComments/" + ideaId+"/"+$("#ideaName"+ideaId).text();
   }
   function msg(val){
     layer.open({
@@ -133,11 +133,11 @@ function supports(ideaId){
   var supports = parseInt(s);
 
   $.ajax({
-    url:"/ideaC/upIdeaSupports",
-    data:{ "ideaId" : ideaId,
+    url:"/ideaC/upIdeaSupports/"+ideaId+"/"+userId,
+    /*data:{ "ideaId" : ideaId,
             "userId" : userId
-        },
-    type:"post",
+        },*/
+    type:"put",
     dataType:"json",
     cache:false,
     success:function(data){//ajax返回的数据
@@ -169,11 +169,11 @@ function supports(ideaId){
       console.log(ideaId);
 
       $.ajax({
-          url:"/UserC/delIdea",
-          data:{
+          url:"/userC/delIdea/"+ideaId,
+      /*    data:{
               "ideaId" : ideaId
-          },
-          type:"post",
+          },*/
+          type:"delete",
           dataType:"json",
           cache:false,
           success:function(data){//ajax返回的数据

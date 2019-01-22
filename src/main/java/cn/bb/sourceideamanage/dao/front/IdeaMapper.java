@@ -12,8 +12,8 @@ import java.util.List;
 @Mapper
 public interface IdeaMapper {
 
-    @Select(" SELECT team_id,team_name,team_msg,team_nums,team_create_time from team where team_id = 30")
-    public Team findTeam(@Param("teamId") Integer teamId);
+    @Select(" SELECT team_id,team_name,team_msg,team_nums,team_create_time from team where team_id = #{teamId} AND is_delete = #{isDelete}")
+    public Team findTeam(@Param("teamId") Integer teamId,@Param("isDelete") Integer state );
 
     @Select("SELECT " +
             " user_id, " +
@@ -25,8 +25,9 @@ public interface IdeaMapper {
             "FROM " +
             "USER  " +
             "WHERE " +
-            " user_id = #{userId}")
-    public User findUser(@Param("userId") Integer userId);
+            " user_id = #{userId}" +
+            "   AND is_delete = #{isDelete}")
+    public User findUser(@Param("userId") Integer userId ,@Param("isDelete") Integer state);
 
     @Select("select tag_id,tag_name from tag where tag_id = #{tagId}")
     public Tag findTag(@Param("tagId") Integer tagId);
@@ -40,50 +41,54 @@ public interface IdeaMapper {
             "FROM " +
             " comment_idea  " +
             "WHERE " +
-            " idea_id = #{ideaId}")
-    public List<CommentIdea> findComment(@Param("ideaId") Integer ideaId);
+            " idea_id = #{ideaId}" +
+            "   AND is_delete = #{isDelete}")
+    public List<CommentIdea> findComment(@Param("ideaId") Integer ideaId ,@Param("isDelete") Integer state);
 
     @Select("select i.idea_id AS ideaId, i.idea_name AS ideaName, i.idea_msg AS ideaMsg,t.tag_name AS ideaTag ," +
             " i.idea_supports AS ideaSupports, i.idea_create_time AS ideaCreateTime , u.user_name AS ideaUserName" +
             " from tag t, idea i, user u" +
             " where t.tag_id = i.tag_id AND t.tag_name LIKE CONCAT('%',#{tagName},'%') AND i.idea_name LIKE CONCAT('%',#{ideaName},'%') " +
-            "  AND u.user_id = i.user_id " +
+            "  AND u.user_id = i.user_id AND i.is_delete = #{isDelete} AND u.is_delete = #{isDelete}" +
             "  ORDER BY ideaCreateTime DESC" )
-    public List<FrontIdea> findAllFrontIdea(@Param("tagName") String tagName,@Param("ideaName") String ideaName);
+    public List<FrontIdea> findAllFrontIdea(@Param("tagName") String tagName,@Param("ideaName") String ideaName ,@Param("isDelete") Integer state);
 
     @Select("select i.idea_msg AS ideaMsg,i.idea_name AS ideaName,i.idea_create_time AS ideaCreateTime, " +
             " u.user_name AS ideaUser" +
             " from  idea i, user u" +
-            " where i.idea_id = #{ideaId} AND i.user_id = u.user_id")
-    public IdeaMsg getIdeaMsg(Integer ideaId);
+            " where i.idea_id = #{ideaId} AND i.user_id = u.user_id AND i.is_delete = #{isDelete} AND u.is_delete = #{isDelete}")
+    public IdeaMsg getIdeaMsg(@Param("ideaId") Integer ideaId,@Param("isDelete") Integer state);
 
     @Select("select i.idea_name ,i.idea_supports, i.idea_id" +
-            " from idea i " +
+            " from idea i WHERE i.is_delete = #{isDelete} " +
             " ORDER BY i.idea_supports DESC" +
             " limit 0 ,10")
-    public List<Idea> getIdeaSupportsRank();
+    public List<Idea> getIdeaSupportsRank(@Param("isDelete") Integer state);
 
     @Select("select u.user_name AS ideaUserName ,i.idea_id AS ideaId, i.idea_name AS ideaName , " +
             "   i.idea_msg AS ideaMsg , t.tag_name AS ideaTag, i.idea_supports AS ideaSupports" +
             "   ,i.idea_create_time AS ideaCreateTime " +
             " FROM user u, idea i ,tag t" +
-            " WHERE u.user_id = #{userId} AND u.user_id = i.user_id AND i.tag_id = t.tag_id")
-    public List<FrontIdea> findAllIdea(@Param("userId") Integer userId);
+            " WHERE u.user_id = #{userId} AND u.user_id = i.user_id AND i.tag_id = t.tag_id" +
+            "       AND u.is_delete = #{state} AND i.is_delete = #{state} ")
+    public List<FrontIdea> findAllIdea(@Param("userId") Integer userId,@Param("isDelete") Integer state);
 
     @Select("select i.idea_id AS ideaId, i.idea_name AS ideaName, i.idea_msg AS ideaMsg,t.tag_name AS ideaTag ," +
             " i.idea_supports AS ideaSupports, i.idea_create_time AS ideaCreateTime , u.user_name AS ideaUserName" +
             " from tag t, idea i, user u" +
             " where t.tag_id = i.tag_id AND t.tag_name LIKE CONCAT('%',#{tagName},'%') AND i.idea_name LIKE CONCAT('%',#{ideaName},'%') " +
             "  AND u.user_id = i.user_id " +
-            "  AND u.user_id = #{userId}" +
+            "  AND u.user_id = #{userId} " +
+            "   AND i.is_delete = #{isDelete} " +
+            "   AND u.is_delete = #{isDelete}" +
             "  ORDER BY ideaCreateTime DESC" )
-    public List<FrontIdea> findAllMyIdea(@Param("tagName") String tagName,@Param("ideaName") String ideaName,@Param("userId") Integer userId);
+    public List<FrontIdea> findAllMyIdea(@Param("tagName") String tagName,@Param("ideaName") String ideaName,@Param("userId") Integer userId,@Param("isDelete") Integer state);
 
 
     @Select("SELECT  idea_name" +
             " FROM idea i" +
-            "   WHERE i.idea_name = #{ideaId}")
-    public String getIdeaName(@Param("ideaId") Integer ideaId);
+            "   WHERE i.idea_name = #{ideaId} AND i.is_delete = #{isDelete}")
+    public String getIdeaName(@Param("ideaId") Integer ideaId,@Param("isDelete") Integer state);
 
 
     @Select(" SELECT    ci.id As id ," +
@@ -98,15 +103,14 @@ public interface IdeaMapper {
             "           ci.parent_name AS parentName ," +
             "           ci.id as uuid" +
             " FROM comment_idea ci" +
-            " WHERE ci.idea_id = #{ideaId}")
+            " WHERE ci.idea_id = #{ideaId} AND ci.is_delete = #{isDelete}")
     @Results({
             @Result(column = "uuid",javaType = List.class, property = "childComments",
                     many = @Many(   //一对多
                             select="cn.bb.sourceideamanage.dao.front.IdeaMapper.getChildComment" //上面搜索的方法
-                            //,fetchType = FetchType.LAZY
                     ))
     })
-    public List<Comment> getAllComment(@Param("ideaId") Integer ideaId);
+    public List<Comment> getAllComment(@Param("ideaId") Integer ideaId,@Param("isDelete") Integer state);
 
     @Select("SELECT " +
             " ci.id AS id, " +
@@ -157,23 +161,22 @@ public interface IdeaMapper {
             "idea i, " +
             "tag t  " +
             "WHERE " +
-            "i.team_id = #{teamId} AND i.tag_id = t.tag_id " +
+            "i.team_id = #{teamId} AND i.tag_id = t.tag_id  AND i.is_delete = #{isDelete} " +
             "ORDER BY ideaCreateTime DESC")
-    public List<FrontIdea> findAllTeamIdea(@Param("teamId") Integer teamId);
+    public List<FrontIdea> findAllTeamIdea(@Param("teamId") Integer teamId,@Param("isDelete") Integer state);
 
 
-    @Delete("DELETE FROM idea" +
+    @Update("Update  idea SET is_delete = #{isDelete}" +
             "   WHERE idea_id = #{ideaId}")
-    public void delIdea(@Param("ideaId") Integer ideaId);
+    public void delIdea(@Param("ideaId") Integer ideaId,@Param("isDelete") Integer state);
 
-    @Delete("DELETE FROM  comment_idea  WHERE idea_id = #{ideaId}")
-    public void delIdeaComment(@Param("ideaId") Integer ideaId);
-
-
+    @Update("Update  comment_idea SET is_delete = #{isDelete} WHERE idea_id = #{ideaId}")
+    public void delIdeaComment(@Param("ideaId") Integer ideaId,@Param("isDelete") Integer state);
 
 
-    @Update("UPDATE idea SET idea_supports = #{supports} WHERE idea_id = #{ideaId}")
-    public void durSupports(@Param("ideaId") Integer ideId, @Param("supports") Long supports);
+    @Update("UPDATE idea SET idea_supports = #{supports} WHERE idea_id = #{ideaId} AND is_delete = #{isDelete}")
+    public void durSupports(@Param("ideaId") Integer ideId, @Param("supports") Long supports
+                              ,@Param("isDelete") Integer state);
 
 
 
@@ -198,5 +201,10 @@ public interface IdeaMapper {
 
     @Select("SELECT time FROM brainstorming WHERE id = #{id}")
     public Integer getBrainTime(@Param("id") Integer brainid);
+
+    @Select("SELECT  idea_name from idea where idea_name = #{ideaName} AND is_delete = #{isDelete}" +
+            "   GROUP BY idea_name")
+    public String getIdeaIdByIdeaName(@Param("ideaName") String ideaName,
+                                       @Param("isDelete") Integer state);
 }
 
