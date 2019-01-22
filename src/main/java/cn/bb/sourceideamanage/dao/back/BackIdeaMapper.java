@@ -32,6 +32,7 @@ public interface BackIdeaMapper {
      * 根据想法名和想法标签  查找所有的想法
      * @param ideaName
      * @param tagName
+     * @param isDelete 删除标志 这里是0
      * @return
      */
     @Select("select u.user_id ,u.user_name AS userName,t.tag_name AS tagName, i.idea_msg AS ideaMsg," +
@@ -46,7 +47,8 @@ public interface BackIdeaMapper {
                             fetchType = FetchType.LAZY
                     ))
     )
-    public List<BackIdea> findAllBackIdea(@Param("ideaName") String ideaName, @Param("tagName") String tagName);
+    public List<BackIdea> findAllBackIdea(@Param("ideaName") String ideaName, @Param("tagName") String tagName,
+                                          @Param("isDelete") Integer isDelete);
 
 
     /**

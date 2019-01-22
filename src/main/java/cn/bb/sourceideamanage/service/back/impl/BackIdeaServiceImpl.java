@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.back.impl;
 
+import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.dao.back.BackIdeaMapper;
 import cn.bb.sourceideamanage.dto.back.BackIdea;
 import cn.bb.sourceideamanage.entity.Tag;
@@ -30,7 +31,7 @@ public class BackIdeaServiceImpl implements BackIdeaService {
     @Override
     public PageInfo<BackIdea> findBackIdeaByPage(int page, int size, String ideaName, String tagName) {
         PageHelper.startPage(page,size);
-        List<BackIdea> ideas = mapper.findAllBackIdea(ideaName, tagName);
+        List<BackIdea> ideas = mapper.findAllBackIdea(ideaName, tagName, IsDelete.NOTDELETE.getIsDelete());
         return new PageInfo<>(ideas);
     }
 
