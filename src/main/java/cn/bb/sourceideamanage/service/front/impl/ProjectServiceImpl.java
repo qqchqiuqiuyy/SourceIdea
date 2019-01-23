@@ -25,6 +25,9 @@ import java.util.List;
 
 import static java.awt.SystemColor.info;
 
+/**
+ * @author bobo
+ */
 @Service
 @Slf4j
 public class ProjectServiceImpl implements ProjectService {
@@ -37,6 +40,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     JSONObject jsonObject;
 
+    /**
+     * 分页部分,和模糊查询
+     * @param page  当前页
+     * @param size  每页长度
+     * @param projectName     项目名
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.PROJECT_PAGE},key = "'projectPage=[page='+#page+'][size='+#size+'][projectName='+#projectName+']'")
     public PageInfo<FrontProject> findAllFrontProject(int page, int size, String projectName) {
@@ -45,6 +55,12 @@ public class ProjectServiceImpl implements ProjectService {
         return new PageInfo<>(projects);
     }
 
+
+    /**
+     * 据项目id查找项目信息
+     * @param projectId 项目id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.PROJECT_MSG}, key = "'projectMsg=[projectId='+#projectId+']'")
     public FrontProjectMsg getProjectMsgByProjectId(Integer projectId) {
@@ -52,9 +68,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     /**
-     * 申请加入项目 同时加入团队
-     * @param userId
-     * @param projectId
+     * 用户加入项目
+     * @param userId 用户id
+     * @param projectId 项目id
      * @return
      */
     @Override
@@ -87,20 +103,41 @@ public class ProjectServiceImpl implements ProjectService {
 
     }
 
+
+    /**
+     * 根据用户id得到该用户的所有项目
+     * @param userId 用户id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.GET_ALL_PROJECTS} ,key = "'getAllProjects=[userId='+#userId+']'")
     public List<String> getAllProjects(Integer userId) {
         return projectMapper.getAllProjects(userId);
     }
 
+
+    /**
+     * 分页显示我的所有项目
+     * @param page  第几页
+     * @param size  每页显示数量
+     * @param projectName   项目名
+     * @param userId    用户的id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.MY_PROJECTS},key = "'myProjects=[page='+#page+'][size='+#size+'][projectName='+#projectName+'][userId='+#userId+']'")
     public PageInfo<FrontProject> findAllMyProject(int page, int size, String projectName, Integer userId) {
         PageHelper.startPage(page,size);
-        List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId);
+        List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId,IsDelete.NOTDELETE.getState());
         return new PageInfo<>(projects);
     }
 
+
+    /**
+     *  根据项目id查找团队id
+     * @param projectId
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.GET_TEAMID_BY_PROJECTID} ,key = "'getTeamIdByProjectId=[projectId='+#projectId+']'")
     public Integer getTeamIdByProjectId(Integer projectId) {
@@ -108,10 +145,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     /**
-     * 修改project
-     * @param projectName
-     * @param projectId
-     * @param projectMsg
+     *  编辑项目
+     * @param projectName 项目名
+     * @param projectId  项目id
+     * @param projectMsg 需要修改的信息
      * @return
      */
     @Override
@@ -119,7 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
     @CacheEvict(cacheNames = {CacheConstant.PROJECT_MSG}, key = "'projectMsg=[projectId='+#projectId+']'")
     public String editProject(String projectName, Integer projectId, String projectMsg) {
         try {
-            Integer integer = projectMapper.checkArchive(projectId);
+            Integer integer = projectMapper.checkArchive(projectId,IsDelete.NOTDELETE.getState());
             if(integer == 1){
                 log.error("已归档 无法修改!");
                 jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目失败! 已归档 无法修改!");
@@ -129,7 +166,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectMapper.editProject(projectName,projectId,projectMsg);
             jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目成功!");
             jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);
-            jsonObject.put(ModelMsg.SUCCESS_URL.getMsg(),"redirect:/projectC/toProjectMsg?projectId="+projectId);
+            jsonObject.put(ModelMsg.SUCCESS_URL.getMsg(),"/projectC/toProjectMsg/"+projectId);
             log.info("修改项目成功!");
         }catch (Exception e){
             jsonObject.put(ModelMsg.MSG.getMsg(),"修改项目失败!");
@@ -141,13 +178,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-
+    /**
+     * 归档项目  归档后无法修改
+     * @param projectId 项目id
+     * @param projectName   项目名
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = {CacheConstant.MY_PROJECT}, key = "'myProject=[teamName='+#teamName+']'")
-    public String archiveProject(Integer projectId){
+    @CacheEvict(cacheNames = {CacheConstant.MY_PROJECT}, key = "'myProject=[teamName='+#projectName+']'")
+    public String archiveProject(Integer projectId,String projectName){
         try{
-             projectMapper.archiveProject(projectId, ProjectArchive.FINISH.getArchive());
+             projectMapper.archiveProject(projectId, ProjectArchive.FINISH.getArchive(),IsDelete.NOTDELETE.getState());
             jsonObject.put(ModelMsg.MSG.getMsg(),"归档成功!");
             jsonObject.put(ModelMsg.SUCCESS.getMsg(), CacheConstant.SUCCESS);
             log.info("归档成功!");

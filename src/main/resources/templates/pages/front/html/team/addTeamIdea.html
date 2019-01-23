@@ -34,7 +34,7 @@
 
         <!-- <div class="fly-none">没有相关数据</div> -->
 
-          <form class="layui-form" th:action="@{/userC/addTeamIdea}">
+          <form class="layui-form" id="myForm">
               <div class="layui-form-item">
                   <label class="layui-form-label" >想法名</label>
                   <div class="layui-input-block">
@@ -61,7 +61,7 @@
               </div>
               <div class="layui-form-item">
                   <div class="layui-input-block">
-                      <button class="layui-btn" type="submit">立即提交</button>
+                      <button class="layui-btn" type="button" onclick="addTeamIdea()">立即提交</button>
                       <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                   </div>
               </div>
@@ -89,6 +89,30 @@
     }).extend({
         fly: 'index'
     }).use('fly');
+</script>
+<script>
+    function addTeamIdea(){
+        console.log("addTeamIdea!!")
+        $.ajax({
+            url:"/userC/addTeamIdea",
+            data:$('#myForm').serialize(),
+            type:"post",
+            dataType:"json",
+            cache:false,
+            success:function(data){//ajax返回的数据
+                console.log(data);
+                console.log(data.successUrl)
+                alert(data.msg);
+                if(data.success == "1"){
+                    window.location.href = data.successUrl ;
+                }
+            },
+            error:function (data) {
+                layer.msg("发生了一个错误!")
+            }
+
+        });
+    }
 </script>
 </body>
 </html>

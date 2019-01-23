@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">>
 <head>
   <meta charset="utf-8">
   <title>SourceIdea</title>
@@ -56,8 +56,11 @@
           <div th:if="${ideas.size() == 0 }">
             <p>暂无想法</p>
           </div>
+          <shiro:hasRole name="user:common">
             <button class="layui-btn layui-btn-lg layui-btn-normal" style="color:white" id="joinTeam" th:value="${team.teamId}" onclick="joinTeam(this.value)">申请加入团队</button>
-             <i th:text="${session.userId}" id="userId" style="visibility: hidden"></i>
+            <i th:text="${session.userId}" id="userId" style="visibility: hidden"></i>
+          </shiro:hasRole>
+
         </div>
       </div>
 
@@ -128,7 +131,7 @@ layui.config({
 
       },
       error:function (data) {
-        layer.msg("未登录无法申请哦! 请登录")
+        layer.msg("发生一个错误!")
       }
 
     });

@@ -40,9 +40,9 @@
     <div class="layui-col-md6 fly-home-jie">
       <div class="fly-panel">
         <h3 class="fly-panel-title" >邀请列表 </h3>
-        <ul class="jie-row" th:each="invite : ${invites}">
-          <li>
-            <a th:href="@{/teamC/toTeamMsg(teamName=${invite.teamName})}" class="jie-title" th:text="${invite.teamName}"> </a>
+        <ul class="jie-row" >
+          <li th:each="invite : ${invites}">
+            <a th:href="@{/teamC/toTeamMsg/{teamName}(teamName=${invite.teamName})}" class="jie-title" th:text="'团队名:'+${invite.teamName}" style="display: inline-block;width: 200px"> </a>
             <span th:text="${invite.inviteTime}"></span>
             <button class="layui-btn layui-btn-xs" style="color:white" th:id="'agree'+${invite.teamId}" th:value="${invite.teamId}" onclick="agree(this.value)">同意</button>
             <i th:text="${invite.userId}" id="userId" style="visibility: hidden"></i>
@@ -57,30 +57,7 @@
       <div class="fly-panel">
         <h3 class="fly-panel-title">最近的回答</h3>
         <ul class="home-jieda">
-          <li>
-          <p>
-          <span>1分钟前</span>
-          在<a href="" target="_blank">tips能同时渲染多个吗?</a>中回答：
-          </p>
-          <div class="home-dacontent">
-            尝试给layer.photos加上这个属性试试：
-<pre>
-full: true         
-</pre>
-            文档没有提及
-          </div>
-        </li>
-        <li>
-          <p>
-          <span>5分钟前</span>
-          在<a href="" target="_blank">在Fly社区用的是什么系统啊?</a>中回答：
-          </p>
-          <div class="home-dacontent">
-            Fly社区采用的是NodeJS。分享出来的只是前端模版
-          </div>
-        </li>
-        
-          <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
+
         </ul>
       </div>
     </div>
@@ -111,11 +88,11 @@ function agree(teamId) {
   var userId = parseInt($('#userId').text()) ;
   console.log(userId);
   $.ajax({
-    url:"/userC/agree",
-    data:{
+    url:"/userC/agree/"+userId+"/"+teamId,
+/*    data:{
       "teamId" : teamId,
       "userId" : userId
-    },
+    },*/
     type:"post",
     dataType:"json",
     cache:false,

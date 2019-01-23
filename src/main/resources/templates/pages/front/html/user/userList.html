@@ -44,7 +44,7 @@
         <ul class="fly-list" th:each="user:${users}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a   th:href="@{/userC/toUserMsg(userId=${user.userId},teamName=${teamName})}" th:text="${user.userName}"></a>
+              <a   th:href="@{/userC/toUserMsg/{userId}/{teamName}(userId=${user.userId},teamName=${teamName}) }" th:text="${user.userName}"></a>
             </h3>
             <div class="fly-list-info">
               <span th:text="'创建时间: '+${user.userCreateTime}" style="display: inline-block;margin-left: 30px"></span>
@@ -71,7 +71,7 @@
               <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" th:text="${indexPage +1}" >1</a></li>
               <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+2}+'&teamName='+${teamName}}" th:text="${indexPage +2}" >1</a></li>
               <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+3}+'&teamName='+${teamName}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/ideaC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" href="#">&raquo;</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/userC/toUsers?page=' + ${indexPage+1}+'&teamName='+${teamName}}" href="#">&raquo;</a></li>
             </ul>
 
           </div>
@@ -84,9 +84,7 @@
   </div>
 </div>
 
-<div class="fly-footer" th:fragment="footer">
-  <p><a href="http://fly.layui.com/" target="_blank">SourceIdea·Cvte社区</a> 2019 &copy; <a href="http://www.layui.com/" target="_blank">Cvte.com 出品</a></p>
-</div>
+<div  th:include="/pages/front/html/common/common :: footer"></div>
 <script src="../../../../../res/layui/layui.js"></script>
 <script>
   function msg(val){
@@ -103,16 +101,16 @@ function invite(userId){
   console.log(teamName)
 
   $.ajax({
-    url:"/userC/invite",
-    data:{ "userId" : userId,
+    url:"/userC/invite/{userId}/{teamName}",
+    /*data:{ "userId" : userId,
             "teamName" : teamName
-        },
+        },*/
     type:"post",
     dataType:"json",
     cache:false,
     success:function(data){//ajax返回的数据
       console.log(data);
-      if(data.isSuccess == "1"){
+      if(data.success == "1"){
         /*点击改变颜色*/
         $("#buttonId"+userId).css("background-color","red");
       }
@@ -120,7 +118,7 @@ function invite(userId){
 
     },
     error:function (data) {
-      layer.msg("未登录无法点赞哦! 请登录")
+      layer.msg("产生一个错误!")
     }
 
   });

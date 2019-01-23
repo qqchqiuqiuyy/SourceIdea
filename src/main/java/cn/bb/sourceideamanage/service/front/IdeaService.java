@@ -10,50 +10,55 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 对想法的操作
+ * @author bobo
+ *
+ */
 public interface IdeaService {
 
     /**
      * 根据团队id查找团队信息
-     * @param teamId
-     * @return
+     * @param teamId 团队id
+     * @return 团队
      */
     public Team findTeam(Integer teamId);
 
     /**
-     * 根据用户id
-     * @param userId
+     * 根据用户id查找用户信息
+     * @param userId    用户id
      * @return 用户信息
      */
     public User findUser(Integer userId);
 
     /**
      * 根据标签id 返回标签信息
-     * @param tagId
+     * @param tagId 标签id
      * @return Tag
      */
     public Tag findTag(Integer tagId);
 
     /**
      * 根据 想法id 返回评论想法内容
-     * @param ideaId
+     * @param ideaId    想法id
      * @return CommentIdea
      */
     public List<CommentIdea> findComment(Integer ideaId);
 
     /**
-     * 分页
+     * 根据以下参数 返回想法模块的分页信息
      *
-     * @param page
-     * @param size
-     * @param ideaName
-     * @param tagName
+     * @param page 当前页
+     * @param size  每页数量
+     * @param ideaName  想法名
+     * @param tagName   标签名
      * @return
      */
     public PageInfo<FrontIdea> findAllFrontIdea(int page, int size, String ideaName, String tagName);
 
     /**
      * 根据想法id 返回想法相关信息
-     * @param ideaId
+     * @param ideaId    想法id
      * @return
      */
     public IdeaMsg getIdeaMsg(Integer ideaId);
@@ -66,21 +71,21 @@ public interface IdeaService {
 
     /**
      * 根据想法id  用户id  定位到某个想法 点赞数+1
-     * @param ideaId
-     * @param userId
+     * @param ideaId    想法id
+     * @param userId    用户id
      * @return
      */
     public String upIdeaSupports(String ideaId, String userId);
 
     /**
      * 根据用户id  返回该用户发表的所有想法
-     * @param userId
+     * @param userId 用户id
      * @return
      */
     public List<FrontIdea> findAllIdea(Integer userId);
 
     /**
-     * 分页显示该用户自己的所有信息
+     * 分页显示该用户自己的想法所有信息
      * @param page  第几页
      * @param size  一页数量
      * @param tagName   标签名
@@ -92,14 +97,14 @@ public interface IdeaService {
 
     /**
      * 根据想法id 得到想法名
-     * @param ideaId
+     * @param ideaId 想法id
      * @return
      */
     public String getIdeaName(Integer ideaId);
 
     /**
      * 根据想法id 得到该想法所有评论
-     * @param ideaId
+     * @param ideaId 想法id
      * @return
      */
     public List<Comment> getAllComment(Integer ideaId);
@@ -115,9 +120,9 @@ public interface IdeaService {
 
     /**
      * 添加想法
-     * @param ideaName
-     * @param tagId
-     * @param ideaMsg
+     * @param ideaName 想法名
+     * @param tagId 标签id
+     * @param ideaMsg 想法内容
      * @param request
      */
     public String addIdea(String ideaName,Integer tagId,String ideaMsg,HttpServletRequest request);
@@ -130,21 +135,21 @@ public interface IdeaService {
      * @param teamName  团队名
      * @param request
      */
-    public void addTeamIdea(String ideaName,Integer tagId,String ideaMsg,String teamName,HttpServletRequest request);
+    public String addTeamIdea(String ideaName,Integer tagId,String ideaMsg,String teamName,HttpServletRequest request);
 
     /**
      * 根据团队名查找该团队所有想法
-     * @param teamName
+     * @param teamName 团队名
      * @return
      */
     public List<FrontIdea> findAllTeamIdea(String teamName);
 
     /**
      * 根据想法id删除某条想法
-     * @param ideaId
+     * @param ideaId    想法id
      * @return
      */
-    public String delIdea(Integer ideaId);
+    public String delIdea(Integer ideaId,String teamName);
 
     /**
      * 将想法持久化回数据库
@@ -188,7 +193,7 @@ public interface IdeaService {
 
     /**
      * 得到头脑风暴剩余时间
-     * @param brainid
+     * @param brainid 头脑风暴id
      * @return
      */
     public Integer getBrainTime(Integer brainid);
@@ -201,8 +206,8 @@ public interface IdeaService {
 
     /**
      * 更新头脑风暴点赞数
-     * @param brainName
-     * @param userId
+     * @param brainName 头脑风暴名
+     * @param userId    用户id
      * @return
      */
     public String upBrainSupports(String brainName,Integer userId);

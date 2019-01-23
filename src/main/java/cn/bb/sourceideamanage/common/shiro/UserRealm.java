@@ -62,9 +62,9 @@ public class UserRealm extends AuthorizingRealm {
         //编写shiro判断逻辑,判断用户名和密码
         //1.转型之后才能得出账号密码 判断用户名
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
+        //根据token得到userName
         User user = userService.findUserByAccount(token.getUsername());
-
-
+        //如果找不到该用户
         if(null == user){
             //shiro底层会自动抛出UnknownAccountException
             return null;

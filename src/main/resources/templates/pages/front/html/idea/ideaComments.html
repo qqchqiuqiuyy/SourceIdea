@@ -35,8 +35,8 @@
         </fieldset>
 
 
-        <ul class="jieda" id="jieda" th:each="comment : ${comments}">
-          <li data-id="111" class="jieda-daan">
+        <ul class="jieda" id="jieda" >
+          <li data-id="111" class="jieda-daan" th:each="comment : ${comments}">
             <div class="detail-about detail-about-reply" style="padding-left: 0px">
               <div class="fly-detail-user">
                 <a href="" class="fly-link">
@@ -177,7 +177,7 @@
         </ul>
         <shiro:hasRole name="user:common">
           <div class="layui-form layui-form-pane">
-            <form th:action="@{/ideaC/commentIdea}" method="post">
+            <form  id="indexForm" method="post">
               <div class="layui-form-item layui-form-text">
                 <a name="comment"></a>
                 <div class="layui-input-block">
@@ -188,7 +188,7 @@
                 <input type="hidden" name="ideaName" th:value="${ideaName}">
                 <input type="hidden" name="ideaId" th:value="${ideaId}">
                 <input type="hidden" name="parentId" >
-                <button class="layui-btn" type="submit">提交回复</button>
+                <button class="layui-btn" type="button"  onclick="index()">提交回复</button>
               </div>
             </form>
           </div>
@@ -287,9 +287,10 @@ layui.config({
       success:function(data){//ajax返回的数据
         console.log(data);
         layer.msg(data.msg);
+        window.location.reload()
       },
       error:function (data) {
-        layer.msg("未登录无法点赞哦! 请登录")
+        layer.msg("出现一个错误")
       }
 
     });
@@ -308,9 +309,31 @@ layui.config({
       success:function(data){//ajax返回的数据
         console.log(data);
         layer.msg(data.msg);
+        window.location.reload()
       },
       error:function (data) {
-        layer.msg("未登录无法点赞哦! 请登录")
+        layer.msg("出现一个错误")
+      }
+
+    });
+  }
+
+  function index() {
+    console.log("indexForm!!c")
+    console.log($('#indexForm').serialize())
+    $.ajax({
+      url:"/ideaC/commentIdeaUser",
+      data:$('#indexForm').serialize(),
+      type:"post",
+      dataType:"json",
+      cache:false,
+      success:function(data){//ajax返回的数据
+        console.log(data);
+        layer.msg(data.msg);
+        window.location.reload()
+      },
+      error:function (data) {
+        layer.msg("出现一个错误")
       }
 
     });

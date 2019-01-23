@@ -46,28 +46,27 @@ public class LoginController {
         return info;
     }
 
-    @RequestMapping("/check")
+    /**
+     * 检查登录信息
+     * @param model
+     * @param account   账号
+     * @param password  密码
+     * @param request
+     * @param response
+     * @return
+     */
+    @PostMapping("/check")
     @ResponseBody
     public String check(Model model,String account, String password, HttpServletRequest request, HttpServletResponse response){
         String info = loginService.check(account, password, request, response);
-       /* String success = info.get("success");
-        String successFlag = "1";
-        if( successFlag.equals(success)){
-            return "forward:/IndexC/toIndex";
-        }else{
-            String msg = info.get("msg");
-            model.addAttribute("msg",msg);
-            return "/pages/front/html/user/login";
-        }*/
         return info;
     }
 
-    @RequestMapping("/toErr")
-    public String toErr(){
-        return "pages/examples/404";
-    }
-
-    @RequestMapping("/toLogout")
+    /**
+     * 退出
+     * @return
+     */
+    @GetMapping("/toLogout")
     public String toLogout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();

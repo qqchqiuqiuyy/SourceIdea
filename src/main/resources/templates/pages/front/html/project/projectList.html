@@ -48,7 +48,7 @@
         <ul class="fly-list" th:each="project : ${projects}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/projectC/toProjectMsg(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
+              <a th:href="@{/projectC/toProjectMsg/{projectId}(projectId=${project.projectId})}" th:text="${project.projectName}"></a>
             </h3>
             <div class="fly-list-info">
 

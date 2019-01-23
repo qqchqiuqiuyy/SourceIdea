@@ -10,9 +10,18 @@ import org.apache.ibatis.mapping.FetchType;
 import javax.annotation.processing.SupportedOptions;
 import java.util.List;
 
+/**
+ * @author bobo
+ */
 @Mapper
 public interface TeamMapper {
 
+    /**
+     * 根据用户id 查找所有未删除项目
+     * @param teamId    用户id
+     * @param state  1删除 0未删除
+     * @return
+     */
     @Select("SELECT " +
             " project_id, " +
             " team_id, " +
@@ -27,6 +36,12 @@ public interface TeamMapper {
     public List<Project> findAllProject(@Param("teamId") Integer teamId,
                                         @Param("isDelete") Integer state);
 
+    /**
+     *
+     * @param teamId 团队id
+     * @param state 1删除 0未删除
+     * @return
+     */
     @Select("SELECT " +
             " idea_id, " +
             " team_id, " +
@@ -44,7 +59,12 @@ public interface TeamMapper {
     public List<Idea> findAllIdea(@Param("teamId") Integer teamId,
                                   @Param("isDelete") Integer state);
 
-
+    /**
+     * 通过团队id 来得到该团队所有团员
+     * @param teamId 团队id
+     * @param state 1删除 0未删除
+     * @return
+     */
     @Select("SELECT " +
             " u.user_id, " +
             " u.user_name, " +
@@ -61,6 +81,12 @@ public interface TeamMapper {
     public List<User> findAllMembers(@Param("teamId") Integer teamId,
                                      @Param("isDelete") Integer state);
 
+    /**
+     * 根据团队名查找该团队团员信息
+     * @param teamName  团队名
+     * @param state 1删除 0未删除
+     * @return
+     */
     @Select(" SELECT " +
             " id, " +
             " team_id, " +
@@ -75,6 +101,13 @@ public interface TeamMapper {
     public List<UserTeam> findSearchTeam(@Param("teamName") String teamName,
                                          @Param("isDelete") Integer state);
 
+    /**
+     * 根据下列信息 返回团队列表分页
+     * @param teamName 团队名
+     * @param teamManager   团队管理员
+     * @param isDelete 1删除 0未删除
+     * @return
+     */
     @Select("SELECT   " +
             " t.team_id AS teamId, " +
             " t.team_name AS teamName, " +
@@ -90,7 +123,7 @@ public interface TeamMapper {
             " t.team_id = ut.team_id  " +
             " AND ut.role_id = #{teamManager}  " +
             " AND ut.user_id = u.user_id  " +
-            " AND t.team_name LIKE CONCAT( '%', '', '%' )  " +
+            " AND t.team_name LIKE CONCAT( '%', #{teamName}, '%' )  " +
             " AND t.is_delete = #{isDelete}  " +
             " AND ut.is_delete = #{isDelete}  " +
             " AND u.is_delete = #{isDelete}" +
@@ -99,8 +132,11 @@ public interface TeamMapper {
                                             @Param("isDelete") Integer isDelete);
 
 
-
-
+    /**
+     *  根据团队id找到高团队所有项目
+     * @param teamId 团队id
+     * @return
+     */
     @Select("SELECT " +
             " project_id, " +
             " team_id, " +
@@ -115,6 +151,12 @@ public interface TeamMapper {
             " AND is_delete = 0")
     public List<Project> findAllProjectByTeamId(@Param("teamId") Integer teamId);
 
+
+    /**
+     * 根据团队id 找到该团队所有团员
+     * @param teamId 团队id
+     * @return
+     */
     @Select("SELECT " +
             " r.role_msg AS teamRoleName, " +
             " ut.member_join_time AS memberJoinTime, " +
@@ -133,6 +175,12 @@ public interface TeamMapper {
     public List<TeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 
+    /**
+     * 根据团队id 查找该团队所有想法
+     * @param teamId    团队id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT " +
             " idea_id, " +
             " team_id, " +
@@ -146,8 +194,8 @@ public interface TeamMapper {
             " idea  " +
             "WHERE " +
             " team_id = #{tId3} " +
-            " AND is_delete = 0")
-    public List<Idea> findAllTeamIdea(@Param("tId3") Integer teamId);
+            " AND is_delete = #{isDelete}")
+    public List<Idea> findAllTeamIdea(@Param("tId3") Integer teamId,@Param("isDelete") Integer state);
 
     /**
      * 根据团队Id找队长
@@ -161,9 +209,10 @@ public interface TeamMapper {
             " user_team ut, " +
             " USER u  " +
             "WHERE " +
-            " ut.team_id = #{teamId} AND ut.role_id = '5' AND ut.user_id = u.user_id " +
-            " AND u.is_delete = 0 AND ut.is_delete = 0")
-    public String findTeamCaptainByTeamId(@Param("teamId") Integer teamId);
+            " ut.team_id = #{teamId} AND ut.role_id = #{CaptianRoleId} AND ut.user_id = u.user_id " +
+            " AND u.is_delete =  #{isDelete} AND ut.is_delete = #{isDelete}")
+    public String findTeamCaptainByTeamId(@Param("teamId") Integer teamId,@Param("isDelete") Integer state,
+                                          @Param("CaptianRoleId") Integer roleId);
 
 
     /**
@@ -223,17 +272,45 @@ public interface TeamMapper {
             "   (#{teamId} , '6',#{userId})")
     public void joinTeam(@Param("userId") Integer userId,@Param("teamId") Integer teamId);*/
 
-    @Select("SELECT role_id FROM user_team ut WHERE ut.user_id = #{userId} AND ut.team_id = #{teamId} AND ut.is_delete = #{isDelete}")
+    /**
+     * 判断该用户是否是该团队成员
+     * @param userId 用户id
+     * @param teamId    团队id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
+    @Select("SELECT role_id FROM user_team ut " +
+            "   WHERE" +
+            "    ut.user_id = #{userId} AND ut.team_id = #{teamId} AND ut.is_delete = #{isDelete}")
     public String checkTeamMember(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
                                   @Param("isDelete") Integer state);
 
+
+    /**
+     * 申请加入团队
+     * @param userId 用户id
+     * @param teamId    团队id
+     */
     @Insert("INSERT INTO apply (user_id,team_id) VALUES (#{userId},#{teamId})")
     public void apply(@Param("userId") Integer userId,@Param("teamId") Integer teamId);
 
+    /**
+     * 检查该用户是否已经申请过该团队
+     * @param userId 用户id
+     * @param teamId    团队id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("select team_id from apply where user_id = #{userId} AND team_id = #{teamId} AND is_delete = #{isDelete}")
     public String checkApply(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
                              @Param("isDelete") Integer state);
 
+    /**
+     * 得到该用户的所有团队
+     * @param userId 用户id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("select t.team_name" +
             "   FROM user u,user_team ut, team t" +
             "   WHERE u.user_id = #{userId} AND" +
@@ -246,8 +323,14 @@ public interface TeamMapper {
                                     @Param("isDelete") Integer state);
 
 
-
-
+    /**
+     * 查找所有的我的团队
+     * @param teamName 团队名
+     * @param userId    用户id
+     * @param teamManager   团队管理员
+     * @param state 1表示删除0表示未删除
+     * @return
+     */
     @Select("SELECT DISTINCT " +
             " t.team_id AS teamId, " +
             " t.team_name AS teamName, " +
@@ -270,8 +353,9 @@ public interface TeamMapper {
                                         @Param("teamManager") Integer teamManager,@Param("isDelete") Integer state);
 
     /**
-     * /UserC/toMyTeamMsg
-     * @param teamName
+     * 得到团队的所有成员
+     * @param teamName 团队名
+     * @param state 1表示删除 0表示未删除
      * @return
      */
     @Select("SELECT " +
@@ -294,6 +378,13 @@ public interface TeamMapper {
             " AND ut.role_id = (select max(role_id) from user_team  where user_id = ut.user_id)" )
     public List<MyTeamMember> findAllMyTeamMember(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
+    /**
+     * 根据团队名和用户id 查找团队的角色
+     * @param teamName 团队名
+     * @param userId    用户id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("select r.role_name " +
             "   FROM team t,user_team ut, role r" +
             "   where t.team_name = #{teamName} AND ut.user_id = #{userId} AND t.team_id = ut.team_id AND" +
@@ -302,39 +393,86 @@ public interface TeamMapper {
     public List<String> findTeamRoleByTeamNameAndUserId(@Param("teamName") String teamName,@Param("userId") Integer userId,
                                                         @Param("isDelete") Integer state );
 
+    /**
+     * 根据团队名 查找到该团队id]
+     * @param teamName  团队名
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("select t.team_id from team t where t.team_name = #{teamName}")
     public Integer findTeamId(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
+    /**
+     * 根据团队id 查找到所有的团队成员id
+     * @param teamId 团队id
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT ut.user_id from user_team ut where ut.team_id = #{teamId} AND ut.is_delete = #{isDelete}")
     public List<Integer> getTeamUserId(@Param("teamId") Integer teamId,@Param("isDelete") Integer state);
 
+    /**
+     * 发出团队邀请
+     * @param teamId    团队id
+     * @param userId    用户id
+     */
     @Insert("INSERT INTO invite (team_id , user_id) VALUES ( #{teamId},#{userId}  )")
     public void teamInvite(@Param("teamId") Integer teamId,@Param("userId") Integer userId);
 
 
-
+    /**
+     * 根据团队名 找到团队id
+     * @param teamName  团队名
+     * @param state 1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT t.team_id " +
             " FROM" +
             "  team t" +
             " WHERE t.team_name = #{teamName} AND t.is_delete = #{isDelete} ")
     public Integer getTeamId(@Param("teamName") String  teamName,@Param("isDelete") Integer state);
 
+
+    /**
+     * 新增一个团队
+     * @param newTeam
+     */
     @Insert("INSERT INTO team  (team_name , team_msg) VALUES (#{newTeam.teamName} ,#{newTeam.teamMsg})")
     @Options(useGeneratedKeys = true,keyProperty = "newTeam.teamId",keyColumn = "team_id")
     public void addTeam(@Param("newTeam") NewTeam newTeam);
 
+
+    /**
+     * 改变团队成员的角色
+     * @param role  角色
+     * @param teamId    团队id
+     * @param userId    被改变成员id
+     * @return
+     */
     @Insert("INSERT INTO user_team (team_id,user_id,role_id,role_name) " +
             "   VALUES (#{teamId}, #{userId}, #{role.roleId} ,#{role.roleName})")
     public int addTeamRoles(@Param("role") Role role,@Param("teamId") Integer teamId,
                             @Param("userId") Integer userId);
 
 
+    /**
+     * 根据团队id 找到该团队的所有想法
+     * @param teamId    团队id
+     * @param state      1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT i.idea_name " +
             "   FROM idea i " +
             "   WHERE i.team_id = #{teamId} AND i.is_delete = #{isDelete}")
     public List<Idea> findAllTeamIdeas(@Param("teamId") Integer teamId,@Param("isDelete") Integer state);
 
 
+    /**
+     * 根据团队名查找团队信息
+     * @param teamName  团队名
+     * @param state   1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT " +
             " team_id, " +
             " team_name, " +
@@ -348,10 +486,26 @@ public interface TeamMapper {
     public TeamMsg findTeamMsg(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
 
+    /**
+     * 判断该用户是否是该团队的管理员
+     * @param userId    用户id
+     * @param teamId    团队id
+     * @param roleId    角色id
+     * @param state  1表示删除 0表示未删除
+     * @return
+     */
     @Select("SELECT role_id FROM user_team where user_id = #{userId} AND team_id = #{teamId} AND role_id = #{roleId} AND is_delete = #{isDelete}")
     public Integer checkManager(@Param("userId") Integer userId,@Param("teamId") Integer teamId,
                                 @Param("roleId") Integer roleId,@Param("isDelete") Integer state);
 
+    /**
+     * 对该用户授予该团队管理员权限
+     * @param userId    用户id
+     * @param teamId    团队id
+     * @param originRoleId  原来的角色id
+     * @param roleId    新的角色id
+     * @param roleName  `角色名
+     */
     @Update("UPDATE user_team SET role_id = #{roleId},role_name = #{roleName} WHERE user_id = #{userId} AND team_id = #{teamId} AND role_id = #{originRoleId}")
     public void awardManager(@Param("userId") Integer userId, @Param("teamId") Integer teamId ,@Param("originRoleId") Integer originRoleId,
                              @Param("roleId") Integer roleId , @Param("roleName") String roleName);

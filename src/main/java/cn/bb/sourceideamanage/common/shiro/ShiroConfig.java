@@ -25,8 +25,10 @@ import java.util.Map;
 public class ShiroConfig {
 
 
-    /*
-    创建ShiroFilterFactoryBean
+    /**
+     *  创建ShiroFilterFactoryBean
+     * @param securityManager
+     * @return
      */
     @Bean
     public ShiroFilterFactoryBean getShiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager securityManager
@@ -43,66 +45,60 @@ public class ShiroConfig {
                     perms: 该资源必须得到资源权限才可以访问
                     role: 该资源必须得到角色权限才可以访问
          */
-
         //设置未授权提示页面
-        shiroFilterFactoryBean.setUnauthorizedUrl("/LoginC/toErr");
-
-        //设置退出
-       /* Map<String, Filter> map = new HashMap<>();
-        map.put("logout",systemLogoutFilter);
-        shiroFilterFactoryBean.setFilters(map);*/
-
-      //  filterMap.put("/LoginC/*","anon");
-   //     filterMap.put("/BackIndexC/*","anon");
-        /* filterMap.put("/toAdd","authc");
-        filterMap.put("/toUpdate","authc");*/
-
-        //放行 要写在通配前面
-       // filterMap.put("/test","anon");
-
-        //授权过滤器 对这个路径Url进行授权拦截
-        //拦截后 shiro会自动跳转到未授权页面 需要设置
-        //下面两个是对不同Url 所需要的资源访问权限限制
-        /*filterMap.put("/toAdd","perms[user:add]");
-        filterMap.put("/toUpdate","perms[user:update]");*/
-
-        //用角色 role
-       // filterMap.put("/toAdd","roles[boss]");
-      //  filterMap.put("/toUpdate","roles[putong]");
-
-
-
-        //通配方法 让某个目录所有页面都实现过滤
-       // filterMap.put("/*","authc");
-
+       // shiroFilterFactoryBean.setUnauthorizedUrl("/userC/toLogin");
         //修改认证失败后跳转页面
-        shiroFilterFactoryBean.setLoginUrl("/userC/toLogin");
-
-
+       shiroFilterFactoryBean.setLoginUrl("/userC/toLogin");
         //设置拦截路径 和 过滤器  拦截这些请求URL(controller) 如果没有对应的权限就会定向到login页面
         //只能用Link
         Map<String,String> filterMap = new LinkedHashMap<>();
-        filterMap.put("/adminC/*","roles[Administrator]");
+        /*filterMap.put("/adminC/*","roles[Administrator]");
         filterMap.put("/loginC/*","anon");
         filterMap.put("/indexC/*","anon");
-        filterMap.put("/userC/toLogin","anon");
-        filterMap.put("/userC/toReg","anon");
+
         filterMap.put("/userC/toUsers","anon");
         filterMap.put("/teamC/toTeam","anon");
         filterMap.put("/teamC/toTeamMsg","anon");
-        filterMap.put("/ideaC/upIdeaSupports","authc");
+        filterMap.put("/ideaC/upIdeaSupports/**","roles[user:common]");
         filterMap.put("/ideaC/toIdea","anon");
         filterMap.put("/projectC/toProject","anon");
         filterMap.put("/teamC/*","authc");
-        filterMap.put("/userC/*","authc");
+        filterMap.put("/userC/*","authc");*/
+        //登录注册放行
+        filterMap.put("/userC/toLogin","anon");
+        filterMap.put("/userC/toReg","anon");
+        filterMap.put("/loginC/check","anon");
+        //首页放行
+        filterMap.put("/indexC/toIndex","anon");
+        //团队放行
+        filterMap.put("/teamC/toTeam","anon");
+        filterMap.put("/teamC/toTeamMsg/**","anon");
+        //想法放行
+        filterMap.put("/ideaC/toIdea","anon");
+        filterMap.put("/ideaC/toIdeaMsg/**","anon");
+        filterMap.put("/ideaC/toBrainStorming/**","anon");
+        filterMap.put("/ideaC/toIdeaComments/**","anon");
+
+        //项目放行
+        filterMap.put("/projectC/toProject","anon");
+        filterMap.put("/projectC/toProjectMsg/**","anon");
+        //todo 继续
+        //静态资源放行
+        filterMap.put("/pages/**","anon");
+        filterMap.put("/bower_components/**","anon");
+        filterMap.put("/dist/**","anon");
+        filterMap.put("/plugins/**","anon");
+        filterMap.put("/res/**","anon");
+        filterMap.put("/**","authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return shiroFilterFactoryBean;
     }
 
 
-
-    /*
-    创建DefaultWebSecurityManager
+    /**
+     * 创建DefaultWebSecurityManager
+     * @param userRealm
+     * @return
      */
     @Bean(name="securityManager")
     public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("userRealm") UserRealm userRealm){
@@ -112,16 +108,18 @@ public class ShiroConfig {
         return defaultWebSecurityManager;
     }
 
-    /*
-    创建Realm
+    /**
+     * 创建Realm
+     * @return
      */
     @Bean("userRealm")
     public UserRealm getUserRealm(){
         return new UserRealm();
     }
 
-    /*
-    配置shiroDialect 用于thymelefa和shiro标签配合使用
+    /**
+     * 配置shiroDialect 用于thymelefa和shiro标签配合使用
+     * @return
      */
     @Bean("shiroDialect")
     public ShiroDialect getShiroDialect(){

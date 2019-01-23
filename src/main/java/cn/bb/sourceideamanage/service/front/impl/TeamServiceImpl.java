@@ -30,27 +30,58 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     JSONObject jsonObject;
 
+    /**
+     * 根据团队id查找该团队所有项目
+     * @param teamId   团队id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.ALL_PROJECT},key = "'allProject=[teamId='+#teamId+']'")
     public List<Project> findAllProject(Integer teamId){
         return teamMapper.findAllProject(teamId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     *  根据想法id 查找所有
+     * @param ideaId    想法id
+     * @return
+     */
     @Override
     public List<Idea> findAllIdea(Integer ideaId) {
         return teamMapper.findAllIdea(ideaId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据团队id查找该团队所有成员
+     * @param teamId    团队id
+     * @return
+     */
     @Override
     public List<User> findAllMembers(Integer teamId) {
         return teamMapper.findAllMembers(teamId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据团名查找
+     * @param teamName  团队名
+     * @return
+     */
     @Override
     public List<UserTeam> findSearchTeam(String teamName) {
         return teamMapper.findSearchTeam(teamName,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据以下参数返回 团队模块前台分页
+     * @param page  当前页
+     * @param size  每页长度
+     * @param teamName  团队名
+     * @return
+     */
     @Override
     @Cacheable( cacheNames = {CacheConstant.TEAM_PAGE},key = "'findAllFrontTeam=[page='+#page+'][size='+#size+'][teamName='+#teamName+']' ")
     public PageInfo<FrontTeam> findAllFrontTeam(int page, int size, String teamName) {
@@ -59,27 +90,47 @@ public class TeamServiceImpl implements TeamService {
         return new PageInfo<>(teams);
     }
 
+
+    /**
+     * 根据团队名查找团队成员
+     * @param teamName 团队名
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.FIND_ALL_TEAM_MEMBER} ,key = "'findAllTeamMember=[teamName='+#teamName+']'")
     public BackTeam findAllTeamMember(String teamName) {
         return teamMapper.findAllTeamMember(teamName,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 加入团队,
+     * @param teamName 团队名
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.ALL_TEAM_MSG},key = "'allTeamMsg=[teamName='+#teamName+']'")
     public TeamMsg findTeamMsg(String teamName){
         return teamMapper.findTeamMsg(teamName,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据userId  团队Id 判断该user是否是团队管理员
+     * @param userId    用户id
+     * @param teamId    团队id
+     * @param roleId    角色id
+     * @return
+     */
     @Override
     public Integer checkManager(Integer userId, Integer teamId,Integer roleId) {
         return teamMapper.checkManager(userId,teamId,roleId,IsDelete.NOTDELETE.getState());
     }
 
     /**
-     * 申请加入团队
-     * @param userId
-     * @param teamId
+     * 加入团队,
+     * @param userId    用户id
+     * @param teamId    需要加入的团队
      * @return
      */
     @Override
@@ -107,17 +158,39 @@ public class TeamServiceImpl implements TeamService {
         return jsonObject.toString();
     }
 
+
+    /**
+     * 根据用户id 和团队id 检查是否在该团队
+     * @param userId    用户id
+     * @param teamId    团队id
+     * @return
+     */
     @Override
     public String checkTeamMember(Integer userId, Integer teamId) {
         return teamMapper.checkTeamMember(userId,teamId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据用户id查找该用户所有团队
+     * @param userId    用户id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.ALL_TEAM_BY_USERID},key = "'allTeamByUserId=[userId='+#userId+']'")
     public List<String> findAllTeam(Integer userId) {
         return teamMapper.findAllTeam(userId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     *  通过以下参数 返回我的团队分页信息
+     * @param page  当前页
+     * @param size  每页长度
+     * @param teamName  团队名
+     * @param userId    当前用户id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.MY_TEAMS},key = "'myTeams=[page='+#page+'][size='+#size+'][teamNmae='+#teamName+'][userId='+#userId+']'")
     public PageInfo<FrontTeam> findAllMyTeam(int page, int size, String teamName, Integer userId) {
@@ -126,18 +199,36 @@ public class TeamServiceImpl implements TeamService {
         return new PageInfo<>(teams);
     }
 
+
+    /**
+     * 根据团队名查找我的团队所有团员
+     * @param teamName  团队名
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.MY_TEAM_MEMBER} ,key = "'myTeamMember=[teamName='+#teamName+']'")
     public List<MyTeamMember> findAllMyTeamMember(String teamName) {
         return teamMapper.findAllMyTeamMember(teamName,IsDelete.NOTDELETE.getState());
     }
 
+    /**
+     * 通过团队名和userId 查找团队角色
+     * @param teamName  团队名
+     * @param userId    用户id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.TEAM_ROLE} ,key = "'teamRole=[teamName='+#teamName+'][userId='+#userId+']'")
     public List<String> findTeamRoleByTeamNameAndUserId(String teamName, Integer userId) {
         return teamMapper.findTeamRoleByTeamNameAndUserId(teamName,userId,IsDelete.NOTDELETE.getState());
     }
 
+
+    /**
+     * 根据团队名 查找团队Id
+     * @param teamName  团队名
+     * @return
+     */
     @Override
     @Cacheable( cacheNames = {CacheConstant.TEAM_ID},key = "'teamName=['+#teamName+']'" )
     public Integer getTeamId(String teamName) {
@@ -146,10 +237,10 @@ public class TeamServiceImpl implements TeamService {
 
 
     /**
-     * 新建团队 并删除我的团队redis缓存
-     * @param teamName
-     * @param teamMsg
-     * @param userId
+     * 新增一个团队
+     * @param teamName  团队名
+     * @param teamMsg   团队信息
+     * @param userId    当前用户id
      * @return
      */
     @Override
@@ -180,7 +271,7 @@ public class TeamServiceImpl implements TeamService {
                 log.info("successNums={}",successNums);
                 jsonObject.put(ModelMsg.MSG.getMsg(),"创建团队成功!!");
                 jsonObject.put(ModelMsg.SUCCESS.getMsg(),"1");
-                jsonObject.put(ModelMsg.SUCCESS_URL.getMsg(),"/userC/toMyTeamMsg?teamName=" + teamName);
+                jsonObject.put(ModelMsg.SUCCESS_URL.getMsg(),"/userC/toMyTeamMsg/" + teamName);
             }
         }catch (Exception e){
             log.error("新建团队错误!!exception={}",e.toString());
@@ -190,11 +281,12 @@ public class TeamServiceImpl implements TeamService {
         return jsonObject.toString();
     }
 
-    @Override
-    public String getTeamMsg(Integer teamId) {
-        return "";
-    }
 
+    /**
+     * 根据团队id 查找所有的团队队员
+     * @param teamId    团队id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.ALL_MEMBER_BY_TEAMID},key = "'allMemberByteamId=[teamId='+#teamId+']'")
     public List<TeamMember> findAllMemberByTeamId(Integer teamId) {
@@ -202,6 +294,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
 
+    /**
+     *  根据团队id 查找该团队所有想法
+     * @param teamId 团队id
+     * @return
+     */
     @Override
     @Cacheable(cacheNames = {CacheConstant.ALL_TEAM_IDEAS},key = "'allteamIdeas=[teamId='+#teamId+']'")
     public List<Idea> findAllTeamIdeas(Integer teamId){

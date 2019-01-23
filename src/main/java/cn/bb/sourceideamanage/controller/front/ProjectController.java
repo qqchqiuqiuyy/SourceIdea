@@ -26,6 +26,16 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    TeamService teamService;
+
+    /**
+     * 去项目页面 分页处理
+     * @param model
+     * @param projectName   项目名
+     * @param page  当前页
+     * @return
+     */
     @RequestMapping("/toProject")
     public String toProject(Model model, String projectName, Integer page){
         if(null == page || page < 1){
@@ -42,11 +52,16 @@ public class ProjectController {
         return "/pages/front/html/project/projectList";
     }
 
-    @Autowired
-    TeamService teamService;
 
-    @RequestMapping("/toProjectMsg")
-    public String toProjectMsg(Model model, Integer projectId, HttpServletRequest request){
+    /**
+     * 去项目信息页面
+     * @param model
+     * @param projectId 项目id
+     * @param request
+     * @return
+     */
+    @GetMapping("/toProjectMsg/{projectId}")
+    public String toProjectMsg(Model model,@PathVariable("projectId") Integer projectId, HttpServletRequest request){
         Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         Integer teamId = projectService.getTeamIdByProjectId(projectId);
         List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
@@ -61,16 +76,30 @@ public class ProjectController {
         return "/pages/front/html/project/projectMsg";
     }
 
+
+    /**
+     * 加入项目
+     * @param userId 用户名
+     * @param projectId 项目id
+     * @return
+     */
     @PostMapping("/joinProject/{userId}/{projectId}")
     @ResponseBody
     public String joinProject(@PathVariable("userId") Integer userId,
-                              @PathVariable("parojectId") Integer projectId){
+                              @PathVariable("projectId") Integer projectId){
         String msg = projectService.joinProject(userId, projectId);
         return msg;
     }
 
-    @RequestMapping("/toEditProject")
-    public String toEditProject(Integer projectId,Model model){
+
+    /**
+     * 区修改项目页面
+     * @param projectId 项目id
+     * @param model
+     * @return
+     */
+    @GetMapping("/toEditProject/{projectId}")
+    public String toEditProject(@PathVariable("projectId") Integer projectId,Model model){
         FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);
         model.addAttribute("project",projectMsg);
         model.addAttribute("projectId",projectId);
@@ -78,15 +107,30 @@ public class ProjectController {
     }
 
 
-    @RequestMapping("/editProject")
+    /**
+     * 修改项目
+     * @param projectName 项目名
+     * @param projectId 项目id
+     * @param projectMsg    项目信息
+     * @return
+     */
+    @PostMapping("/editProject")
     @ResponseBody
-    public String editProject(String projectName,Integer projectId,String projectMsg){
+    public String editProject( String projectName,
+                              Integer projectId,
+                               String projectMsg){
         return projectService.editProject(projectName,projectId,projectMsg);
     }
 
-    @PutMapping("/archiveProject/{projectId}")
+    /**
+     * 项目归档
+     * @param projectId 项目id
+     * @param teamName  团队名
+     * @return
+     */
+    @PutMapping("/archiveProject/{projectId}/{teamName}")
     @ResponseBody
-    public String archiveProject(@PathVariable("projectId") Integer projectId){
-            return projectService.archiveProject(projectId);
+    public String archiveProject(@PathVariable("projectId") Integer projectId,@PathVariable("teamName") String teamName){
+            return projectService.archiveProject(projectId,teamName);
     }
 }

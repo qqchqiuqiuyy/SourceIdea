@@ -53,4 +53,6 @@ public class CacheConstant {
     public static final String GET_ALL_PROJECTS = "getAllProjects";
     public static final String MY_PROJECTS = "myProjects";
     public static final String GET_TEAMID_BY_PROJECTID = "getTeamIdByProjectId";
+    public static final Integer SESSION_ALIVE = 2000;
+    public static final String NEW_USER_DEFAULT_MSG = "这个人很懒...还没有个人简介";
 }

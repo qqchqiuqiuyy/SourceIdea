@@ -51,6 +51,9 @@ public enum ModelMsg {
     TEAM_ID("teamId"),
     MANAGER("manager"),
     APPLIES("applies"),
+    USERS("users"),
+    FLAG("flag"),
+    USER_MSG("userMsg"),
     ;
 
      String msg;

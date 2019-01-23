@@ -14,6 +14,7 @@ import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONArray;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -112,6 +113,14 @@ public class UserController {
     }
 
 
+    /**
+     * 去我的团队分页页面
+     * @param model
+     * @param teamName  团队名
+     * @param page      当前页号
+     * @param request
+     * @return
+     */
     @RequestMapping("/toMyTeam")
     public String toMyTeam(Model model, String teamName, Integer page,HttpServletRequest request){
         if(null == page || page < 1){
@@ -130,16 +139,32 @@ public class UserController {
         return "/pages/front/html/team/myTeam";
     }
 
+    /**
+     * 去登录页面
+     * @return
+     */
     @GetMapping("/toLogin")
     public String toLogin(){
         return "/pages/front/html/user/login";
     }
+
+    /**
+     * 去注册页面
+     * @return
+     */
     @GetMapping("/toReg")
     public String toReg(){
         return "/pages/front/html/user/reg";
     }
 
 
+    /**
+     * 我参与的团队页面
+     * @param model
+     * @param teamName  团队名
+     * @param request
+     * @return
+     */
     @GetMapping("/toMyTeamMsg/{teamName}")
     public String toMyTeamMsg(Model model, @PathVariable("teamName") String teamName, HttpServletRequest request){
         //获取团员列表
@@ -189,44 +214,75 @@ public class UserController {
         String s = userService.agreeMember(userId,teamName);
         return s;
     }
-    @DeleteMapping("/delProject/{projectId}")
+
+
+    @DeleteMapping("/delProject/{projectId}/{teamName}")
     @ResponseBody
-    public String delProject(@PathVariable("projectId") Integer projectId){
-        String info = userService.delProject(projectId);
+    public String delProject(@PathVariable("projectId") Integer projectId,@PathVariable("teamName") String teamName){
+        String info = userService.delProject(projectId,teamName);
         return info;
     }
 
 
 
-    @RequestMapping("/toAddTeamIdea")
-    public String toAddTeamIdea(Model model,String teamName){
+    @GetMapping("/toAddTeamIdea/{teamName}")
+    public String toAddTeamIdea(Model model,@PathVariable("teamName") String teamName){
         List<Tag> allTag = backIdeaService.findAllTag();
-        model.addAttribute("tags",allTag);
-        model.addAttribute("teamName",teamName);
+        model.addAttribute(ModelMsg.TAGS.getMsg(),allTag);
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
         return "/pages/front/html/team/addTeamIdea";
     }
-    @RequestMapping("/addTeamIdea")
+
+
+    /**
+     * 添加团队想法
+     * @param ideaName 想法名
+     * @param tagId     想法标签
+     * @param ideaMsg   想法信息
+     * @param teamName  团队名
+     * @param request
+     * @return
+     */
+    @PostMapping("/addTeamIdea")
+    @ResponseBody
     public String addTeamIdea(String ideaName, Integer tagId, String ideaMsg,String teamName ,HttpServletRequest request){
-        ideaService.addTeamIdea(ideaName,tagId,ideaMsg,teamName,request);
-        return "redirect:/UserC/toMyTeamMsg?teamName="+teamName;
+        return ideaService.addTeamIdea(ideaName,tagId,ideaMsg,teamName,request);
     }
 
-
-    @DeleteMapping("/delIdea/{ideaId}")
+    /**
+     * 删除一条想法
+     * @param ideaId 想法id
+     * @param teamName  团队名
+     * @return
+     */
+    @DeleteMapping("/delIdea/{ideaId}/{teamName}")
     @ResponseBody
-    public String delIdea(@PathVariable("ideaId") Integer ideaId){
-        String s = ideaService.delIdea(ideaId);
+    public String delIdea(@PathVariable("ideaId") Integer ideaId ,@PathVariable("teamName") String teamName){
+        String s = ideaService.delIdea(ideaId,teamName);
         return s;
     }
 
-    @RequestMapping("/toAddProject")
-    public String toAddProject(String teamName,Model model){
-        model.addAttribute("teamName",teamName);
+    /**
+     * 去添加项目页面
+     * @param teamName 该团队名
+     * @param model
+     * @return
+     */
+    @GetMapping("/toAddProject/{teamName}")
+    public String toAddProject(@PathVariable("teamName") String teamName,Model model){
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
         return "/pages/front/html/team/addProject";
     }
 
 
-    @RequestMapping("/addTeamProject")
+    /**
+     * 添加团队项目
+     * @param teamName 团队名
+     * @param projectName   项目名
+     * @param projectMsg    项目信息
+     * @return
+     */
+    @PostMapping("/addTeamProject")
     @ResponseBody
     public String addTeamProject(String teamName,String projectName,String projectMsg){
         String s = userService.addTeamProject(teamName, projectName, projectMsg);
@@ -234,8 +290,14 @@ public class UserController {
     }
 
 
-
-
+    /**
+     * 查询用户分页页面
+     * @param model
+     * @param userName 用户名
+     * @param page  当前页
+     * @param teamName  团队名
+     * @return
+     */
     @RequestMapping("/toUsers")
     public String toUsesrs(Model model, String userName, Integer page,String teamName){
         if(null == page || page < 1){
@@ -247,16 +309,24 @@ public class UserController {
         PageInfo<FrontUser> info = userService.findAllFrontUser(page, PAGE_SIZE, userName);
 
         List<FrontUser> users = info.getList();
-        model.addAttribute("users",users);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",info.getPages());
-        model.addAttribute("teamName",teamName);
+        model.addAttribute(ModelMsg.USERS.getMsg(),users);
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
         return "pages/front/html/user/userList";
     }
 
 
-   @RequestMapping("/toUserMsg")
-    public String toUserMsg(Model model,HttpServletRequest request,Integer userId,String teamName){
+    /**
+     * 去用户个人信息页面
+     * @param model
+     * @param request
+     * @param userId    用户id
+     * @param teamName  团队名
+     * @return
+     */
+   @GetMapping("/toUserMsg/{userId}/{teamName}")
+    public String toUserMsg(Model model,HttpServletRequest request,@PathVariable("userId") Integer userId,@PathVariable("teamName") String teamName){
 
         //查找当前用户信息
        FrontUser userMsg = userService.getUserMsg(userId);
@@ -265,36 +335,47 @@ public class UserController {
         List<String> userTeams = teamService.findAllTeam(userId);
         JSONArray userteamsJson = JSONArray.fromObject(userTeams);
 
-        model.addAttribute("flag",flag);
-        model.addAttribute("userteamsJson",userteamsJson);
-        model.addAttribute("teamName",teamName);
-        model.addAttribute("userMsg",userMsg);
+        model.addAttribute(ModelMsg.FLAG.getMsg(),flag);
+        model.addAttribute(ModelMsg.USER_TEAMS_JSON.getMsg(),userteamsJson);
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
+        model.addAttribute(ModelMsg.USER_MSG.getMsg(),userMsg);
 
         return "pages/front/html/user/userMsg";
     }
 
-    @RequestMapping("/invite")
+    /**
+     * 邀请用户进入团队
+     * @param userId    用户id
+     * @param teamName  邀请的团队名
+     * @return
+     */
+    @PostMapping("/invite/{userId}/{teamName}")
     @ResponseBody
-    public String invite(Integer userId,String teamName){
+    public String invite(@PathVariable("userId") Integer userId,@PathVariable("teamName") String teamName){
         String invite = userService.invite(userId, teamName);
         return invite;
     }
 
     /**
      * 用户同意部分
-     * @param userId
-     * @param teamId
+     * @param userId    用户id
+     * @param teamId    同意进入的团队id
      * @return
      */
-    @RequestMapping("/agree")
+    @PostMapping("/agree/{userId}/{teamId}")
     @ResponseBody
-    public String agree(Integer userId,Integer teamId){
+    public String agree(@PathVariable("userId") Integer userId,@PathVariable("teamId") Integer teamId){
         String agree = userService.agree(userId, teamId);
         return agree;
     }
 
 
-
+    /**
+     * 授予管理员权限
+     * @param userId    用户id
+     * @param teamName  对应的团队名
+     * @return
+     */
     @PutMapping("/awardManager/{userId}/{teamName}")
     @ResponseBody
     public String awardManager(@PathVariable("userId") Integer userId,@PathVariable("teamName") String teamName){

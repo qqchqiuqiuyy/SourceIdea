@@ -18,5 +18,4 @@ public class Idea implements Serializable {
     private String ideaMsg;
     private Integer ideaSupports;
     private Timestamp ideaCreateTime;
-    private String ideaState;
 }

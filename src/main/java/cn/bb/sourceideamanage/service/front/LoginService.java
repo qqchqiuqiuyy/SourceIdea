@@ -7,35 +7,38 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+/**
+ * @author bobo
+ */
 public interface LoginService {
 
     /**
      * 增加一个user
-     * @param user
+     * @param user  封装用户信息的对象
      */
     public void addUser(User user);
 
     /**
      * 增加一个角色
-     * @param userId
-     * @param roleId
+     * @param userId 用户id
+     * @param roleId 角色id
      */
     public void addRole( Integer userId, Integer roleId);
 
     /**
      * 进行注册
-     * @param account
-     * @param password
-     * @param repassword
-     * @param username
+     * @param account 账号
+     * @param password 密码
+     * @param repassword 重复密码
+     * @param username  用户名
      * @return
      */
     public String register(String account, String password, String repassword, String username);
 
     /**
-     * 检查是否正确
-     * @param account
-     * @param password
+     * 检查账号是否正确
+     * @param account  账号
+     * @param password 密码
      * @param request
      * @param response
      * @return

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="utf-8">
   <title>SourceIdea</title>
@@ -39,8 +39,11 @@
           <hr>
           <br>
           <p th:text="'项目发起时间: '+${projectMsg.projectCreateTime}"></p>
-          <button class="layui-btn layui-btn-normal" id="joinProject" th:value="${projectMsg.projectId}" onclick="joinProject(this.value)">申请加入项目</button>
-          <i th:text="${session.userId}" id="userId" style="visibility: hidden"></i>
+          <shiro:hasRole name="user:common">
+            <button class="layui-btn layui-btn-normal" id="joinProject" th:value="${projectMsg.projectId}" onclick="joinProject(this.value)">申请加入项目</button>
+            <i th:text="${session.userId}" id="userId" style="visibility: hidden"></i>
+          </shiro:hasRole>
+
         </div>
       </div>
 
@@ -106,9 +109,6 @@ layui.config({
     console.log(userId)
     $.ajax({
       url:"/projectC/joinProject/"+userId+"/"+projectId,
-/*      data:{ "userId" : userId,
-        "projectId" : projectId
-      },*/
       type:"post",
       dataType:"json",
       cache:false,

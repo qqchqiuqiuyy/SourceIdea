@@ -70,19 +70,36 @@ public class TeamController {
         return "pages/front/html/team/teamMsg";
     }
 
+    /**
+     * 加入团队
+     * @param userId 加入用户的id
+     * @param teamId  团队id
+     * @return
+     */
     @PostMapping("/joinTeam/{userId}/{teamId}")
     @ResponseBody
     public String joinTeam(@PathVariable("userId") Integer userId,
-                           @PathVariable("teamIds") Integer teamId){
+                           @PathVariable("teamId") Integer teamId){
         String info = teamService.joinTeam(userId, teamId);
         return info;
     }
 
+    /**
+     * 去团队添加页面
+     * @return
+     */
     @GetMapping("/toAddTeam")
     public String toAddTeam(){
         return "pages/front/html/team/addTeam";
     }
 
+    /**
+     * 增加团队
+     * @param teamName 团队名
+     * @param teamMsg   团队信息
+     * @param request
+     * @return
+     */
     @PostMapping("/addTeam")
     @ResponseBody
     public String addTeam(String teamName,String teamMsg,HttpServletRequest request){
