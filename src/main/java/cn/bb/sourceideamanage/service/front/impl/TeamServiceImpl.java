@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.Roles;

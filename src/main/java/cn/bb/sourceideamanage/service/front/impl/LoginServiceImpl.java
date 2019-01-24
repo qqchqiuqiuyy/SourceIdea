@@ -1,8 +1,9 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.Roles;
+import cn.bb.sourceideamanage.common.exception.MyException;
 import cn.bb.sourceideamanage.dao.front.LoginMapper;
 import cn.bb.sourceideamanage.entity.User;
 import cn.bb.sourceideamanage.service.front.LoginService;
@@ -17,7 +18,6 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
@@ -159,8 +159,6 @@ public class LoginServiceImpl implements LoginService {
         }
         return jsonObject.toString();
     }
-
-
 
 
 }

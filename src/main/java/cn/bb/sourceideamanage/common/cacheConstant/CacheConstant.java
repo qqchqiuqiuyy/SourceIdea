@@ -1,4 +1,4 @@
-package cn.bb.sourceideamanage.common.CacheConstant;
+package cn.bb.sourceideamanage.common.cacheConstant;
 
 public class CacheConstant {
     public static final String ALL_PROJECT = "allProject";

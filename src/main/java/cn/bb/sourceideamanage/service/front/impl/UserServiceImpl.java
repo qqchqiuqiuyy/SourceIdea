@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.ProjectArchive;
@@ -10,7 +10,6 @@ import cn.bb.sourceideamanage.dao.front.TeamMapper;
 import cn.bb.sourceideamanage.dao.front.UserMapper;
 import cn.bb.sourceideamanage.dto.front.*;
 import cn.bb.sourceideamanage.entity.*;
-import cn.bb.sourceideamanage.service.front.IdeaService;
 import cn.bb.sourceideamanage.service.front.TeamService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import com.github.pagehelper.PageHelper;

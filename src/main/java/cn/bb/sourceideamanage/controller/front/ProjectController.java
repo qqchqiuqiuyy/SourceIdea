@@ -49,6 +49,7 @@ public class ProjectController {
         model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.PROJECT_NAME.getMsg(),projectName);
         return "/pages/front/html/project/projectList";
     }
 

@@ -63,13 +63,5 @@ public class UserServiceImplTest {
         System.out.println(applys);
     }
 
-    @Autowired
-    Jedis jedis;
-    @Test
-    public void redis(){
-       jedis.hset("test","size","1");
-       System.out.println(jedis.hgetAll("test"));
-       jedis.hincrBy("test","size",-1);
-        System.out.println(jedis.hgetAll("test"));
-    }
+
 }

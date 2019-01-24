@@ -42,6 +42,7 @@ public class TeamController {
         model.addAttribute(ModelMsg.TEAMS.getMsg(),teams);
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
         return "pages/front/html/team/teamList";
     }
 

@@ -1,5 +1,6 @@
 package cn.bb.sourceideamanage.service.front;
 
+import cn.bb.sourceideamanage.common.exception.MyException;
 import cn.bb.sourceideamanage.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,4 +45,6 @@ public interface LoginService {
      * @return
      */
     public String check(String account, String password, HttpServletRequest request, HttpServletResponse response);
+
+
 }

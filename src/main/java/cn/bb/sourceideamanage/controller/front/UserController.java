@@ -84,6 +84,7 @@ public class UserController {
         model.addAttribute(ModelMsg.IDEAS.getMsg(),ideas);
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.IDEA_NAME.getMsg(),ideaName);
         return "/pages/front/html/idea/myIdea";
     }
 
@@ -109,6 +110,7 @@ public class UserController {
         model.addAttribute(ModelMsg.PROJECTS.getMsg(),projects);
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.PROJECT_NAME.getMsg(),projectName);
         return "/pages/front/html/project/myProject";
     }
 
@@ -136,6 +138,7 @@ public class UserController {
         model.addAttribute(ModelMsg.TEAMS.getMsg(),teams);
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
+        model.addAttribute(ModelMsg.TEAM_NAME.getMsg(),teamName);
         return "/pages/front/html/team/myTeam";
     }
 

@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.*;
 import cn.bb.sourceideamanage.dao.front.IdeaMapper;
 import cn.bb.sourceideamanage.dao.front.TeamMapper;

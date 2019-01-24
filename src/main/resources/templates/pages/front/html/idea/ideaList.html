@@ -86,15 +86,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}  +'&ideaName=' + ${ideaName} + '&tagName=' + ${tagName}  }">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-3}  +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}  }" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-2}  +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}   }" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage-1}  +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}  }" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}   +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}   }" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+2}  +'&ideaName=' + ${ideaName} + '&tagName=' + ${tagName}   }" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+3}  +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}    }" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/ideaC/toIdea?page=' + ${indexPage+1}   +'&ideaName=' + ${ideaName}  + '&tagName=' + ${tagName}   }" href="#">&raquo;</a></li>
             </ul>
 
           </div>
@@ -107,7 +107,7 @@
       <dl class="fly-panel fly-list-one" >
         <dt class="fly-panel-title">点赞排名排行榜</dt>
         <dd th:each="idea : ${ideasSupports} " >
-          <a th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+          <a th:href="@{/ideaC/toIdeaMsg/{ideaId}(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
           <span style="display: inline-block;float:right;margin-right: 150px"><i class="iconfont icon-zan"  th:text="${idea.ideaSupports}"></i></span>
         </dd>
       </dl>
@@ -192,7 +192,7 @@ function supports(ideaId){
       layer.msg(data.msg);
     },
     error:function (data) {
-      layer.msg("发生一个错误 无法点赞")
+      layer.msg("请登录哦~")
     }
 
   });

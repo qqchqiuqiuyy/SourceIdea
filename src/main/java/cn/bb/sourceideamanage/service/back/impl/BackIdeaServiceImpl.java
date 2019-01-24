@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.service.back.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.dao.back.BackIdeaMapper;
 import cn.bb.sourceideamanage.dto.back.BackIdea;

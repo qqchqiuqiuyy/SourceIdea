@@ -54,6 +54,7 @@ public enum ModelMsg {
     USERS("users"),
     FLAG("flag"),
     USER_MSG("userMsg"),
+    PROJECT_NAME("projectName"),
     ;
 
      String msg;

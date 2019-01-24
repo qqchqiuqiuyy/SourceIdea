@@ -1,6 +1,6 @@
 package cn.bb.sourceideamanage.service.front.impl;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.IsDelete;
 import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.ProjectArchive;
@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static java.awt.SystemColor.info;
 
 /**
  * @author bobo

@@ -68,6 +68,7 @@ public class IdeaController {
         model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
         model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),info.getPages());
         model.addAttribute(ModelMsg.IDEAS_SUPPORTS.getMsg(),ideasSupports);
+        model.addAttribute(ModelMsg.IDEA_NAME.getMsg(),ideaName);
         return "/pages/front/html/idea/ideaList";
     }
 

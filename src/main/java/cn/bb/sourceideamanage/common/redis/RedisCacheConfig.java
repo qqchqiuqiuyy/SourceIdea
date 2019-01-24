@@ -1,11 +1,9 @@
 package cn.bb.sourceideamanage.common.redis;
 
-import cn.bb.sourceideamanage.common.CacheConstant.CacheConstant;
-import cn.bb.sourceideamanage.common.enums.IdeaSupportsKey;
+import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.TimeOut;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +15,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,12 +70,12 @@ public class RedisCacheConfig {
 
 
         //teamServoceImpl
-        /*expires.put(CacheConstant.TEAM_PAGE, TimeOut.MEDIUM.getTime());
-        expires.put(CacheConstant.FIND_ALL_TEAM_MEMBER, TimeOut.MEDIUM.getTime());
-        expires.put(CacheConstant.ALL_TEAM_MSG, TimeOut.MEDIUM.getTime());
-        expires.put(CacheConstant.ALL_TEAM_BY_USERID, TimeOut.MEDIUM.getTime());
-        expires.put(CacheConstant.MY_TEAMS, TimeOut.MEDIUM.getTime());
-        expires.put(CacheConstant.MY_TEAM_MEMBER, TimeOut.MEDIUM.getTime());*/
+        /*expires.put(cacheConstant.TEAM_PAGE, TimeOut.MEDIUM.getTime());
+        expires.put(cacheConstant.FIND_ALL_TEAM_MEMBER, TimeOut.MEDIUM.getTime());
+        expires.put(cacheConstant.ALL_TEAM_MSG, TimeOut.MEDIUM.getTime());
+        expires.put(cacheConstant.ALL_TEAM_BY_USERID, TimeOut.MEDIUM.getTime());
+        expires.put(cacheConstant.MY_TEAMS, TimeOut.MEDIUM.getTime());
+        expires.put(cacheConstant.MY_TEAM_MEMBER, TimeOut.MEDIUM.getTime());*/
 
        /* //想法page
         expires.put(TimeOut.IdeaPage.getCacheName(),TimeOut.IdeaPage.getTime());

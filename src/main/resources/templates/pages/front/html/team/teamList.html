@@ -70,15 +70,15 @@
           <!--分页-->
           <div style="margin-top: 40px">
             <ul class="pagination" >
-              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-1}}">&laquo;</a></li>
-              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-3}}" th:text="${indexPage -3}" >1</a></li>
-              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-2}}" th:text="${indexPage -2}" >1</a></li>
-              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-1}}" th:text="${indexPage -1}" >1</a></li>
+              <li th:class="${indexPage==1}?'disabled' : ''"><a th:href="@{'/teamC/toTeam?page='+ ${indexPage-1} + '&teamName=' +${teamName}   }">&laquo;</a></li>
+              <li th:if="${indexPage-3 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-3}  + '&teamName=' +${teamName}   }" th:text="${indexPage -3}" >1</a></li>
+              <li th:if="${indexPage-2 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-2}  + '&teamName=' +${teamName}    }" th:text="${indexPage -2}" >1</a></li>
+              <li th:if="${indexPage-1 >=1}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage-1}   + '&teamName=' +${teamName}     }" th:text="${indexPage -1}" >1</a></li>
               <li class="active"><a href="#" th:text="${indexPage}" >1</a></li>
-              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a></li>
-              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a></li>
-              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a></li>
-              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}}" href="#">&raquo;</a></li>
+              <li th:if="${indexPage+1 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}  + '&teamName=' +${teamName}   }" th:text="${indexPage +1}" >1</a></li>
+              <li th:if="${indexPage+2 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+2}  + '&teamName=' +${teamName}   }" th:text="${indexPage +2}" >1</a></li>
+              <li th:if="${indexPage+3 <=totalPage}" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+3}  + '&teamName=' +${teamName}     }" th:text="${indexPage +3}" >1</a></li>
+              <li th:class="${indexPage==totalPage}?'disabled' : ''" ><a th:href="@{'/teamC/toTeam?page=' + ${indexPage+1}   + '&teamName=' +${teamName}   }" href="#">&raquo;</a></li>
             </ul>
 
           </div>

@@ -4,8 +4,6 @@ import cn.bb.sourceideamanage.service.front.LoginService;
 import cn.bb.sourceideamanage.service.front.UserService;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,10 +64,12 @@ public class LoginController {
      * 退出
      * @return
      */
-    @GetMapping("/toLogout")
+  /*  @GetMapping("/toLogout")
     public String toLogout(){
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "forward:/indexC/toIndex";
-    }
+        return "redirect:/indexC/toIndex";
+    }*/
+
+
 }
