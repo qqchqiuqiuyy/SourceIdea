@@ -65,6 +65,7 @@ public class ProjectController {
     public String toProjectMsg(Model model,@PathVariable("projectId") Integer projectId, HttpServletRequest request){
         Integer userId = (Integer) request.getSession().getAttribute(ModelMsg.USER_ID.getMsg());
         Integer teamId = projectService.getTeamIdByProjectId(projectId);
+
         List<TeamMember> members = teamService.findAllMemberByTeamId(teamId);
 
         FrontProjectMsg projectMsg = projectService.getProjectMsgByProjectId(projectId);
@@ -94,7 +95,7 @@ public class ProjectController {
 
 
     /**
-     * 区修改项目页面
+     * 去修改项目页面
      * @param projectId 项目id
      * @param model
      * @return

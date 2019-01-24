@@ -3,7 +3,6 @@ package cn.bb.sourceideamanage.service.front.impl;
 import cn.bb.sourceideamanage.common.cacheConstant.CacheConstant;
 import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.common.enums.Roles;
-import cn.bb.sourceideamanage.common.exception.MyException;
 import cn.bb.sourceideamanage.dao.front.LoginMapper;
 import cn.bb.sourceideamanage.entity.User;
 import cn.bb.sourceideamanage.service.front.LoginService;

@@ -30,10 +30,10 @@ public class LoginController {
 
     /**
      *     进行注册
-     * @param account
-     * @param password
-     * @param repassword
-     * @param username
+     * @param account   账号
+     * @param password  密码
+     * @param repassword    再次输入的密码
+     * @param username  用户名
      * @return
      */
     @PostMapping("/register")

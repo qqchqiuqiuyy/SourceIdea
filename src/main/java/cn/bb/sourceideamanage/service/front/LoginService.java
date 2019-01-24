@@ -1,12 +1,9 @@
 package cn.bb.sourceideamanage.service.front;
 
-import cn.bb.sourceideamanage.common.exception.MyException;
 import cn.bb.sourceideamanage.entity.User;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * @author bobo

@@ -56,9 +56,9 @@ public class UserController {
     /**
      * 跳转到我的想法页面
      * @param model
-     * @param ideaName
-     * @param tagName
-     * @param page
+     * @param ideaName 想法名
+     * @param tagName   标签名
+     * @param page      当前页
      * @param request
      * @return
      */
@@ -91,8 +91,8 @@ public class UserController {
     /**
      * 去我的项目页面
      * @param model
-     * @param projectName
-     * @param page
+     * @param projectName 项目名
+     * @param page      当前页
      * @param request
      * @return
      */
@@ -196,6 +196,12 @@ public class UserController {
         return "pages/front/html/team/myTeamMsg";
     }
 
+    /**
+     * 删除团队成员
+     * @param userId    用户名
+     * @param teamName  团队名
+     * @return
+     */
     @DeleteMapping("/delMember/{userId}/{teamName}")
     @ResponseBody
     public String delMember(@PathVariable("userId") Integer userId,
@@ -205,9 +211,9 @@ public class UserController {
     }
 
     /**
-     * 队长审批
-     * @param userId
-     * @param teamName
+     * 队长审批申请用户
+     * @param userId    用户id
+     * @param teamName  团队名
      * @return
      */
     @PostMapping("/agreeMember/{userId}/{teamName}")
@@ -218,7 +224,12 @@ public class UserController {
         return s;
     }
 
-
+    /**
+     * 删除项目
+     * @param projectId 项目id
+     * @param teamName  团队名
+     * @return
+     */
     @DeleteMapping("/delProject/{projectId}/{teamName}")
     @ResponseBody
     public String delProject(@PathVariable("projectId") Integer projectId,@PathVariable("teamName") String teamName){
@@ -227,7 +238,12 @@ public class UserController {
     }
 
 
-
+    /**
+     * 去团队的添加想法页面
+     * @param model
+     * @param teamName  团队名
+     * @return
+     */
     @GetMapping("/toAddTeamIdea/{teamName}")
     public String toAddTeamIdea(Model model,@PathVariable("teamName") String teamName){
         List<Tag> allTag = backIdeaService.findAllTag();

@@ -64,7 +64,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     public List<String> findUserAllRoleByUserId(Integer userId) {
-        return userMapper.findUserAllRoleByUserId(userId);
+        return userMapper.findUserAllRoleByUserId(userId,IsDelete.NOTDELETE.getState());
     }
 
 
@@ -207,7 +207,7 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = {CacheConstant.INVITE_LIST},key = "'inviteList=[userId='+#userId+']'")
+    @CacheEvict(cacheNames = {CacheConstant.INVITE_LIST,CacheConstant.MY_TEAM_MEMBER},allEntries = true)
     public String agree(Integer userId, Integer teamId) {
         try {
             //加入团队 授予roleID 和 roleName + teamId
@@ -438,7 +438,7 @@ public class UserServiceImpl  implements UserService {
                 return jsonObject.toString();
             }
             //对用户所在团队 的团员职位进行授权为项目管理员
-            teamMapper.awardManager(userId,teamId,Roles.UserTeamMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectManager.getRoleName()+":"+teamId);
+            teamMapper.awardManager(userId,teamId,Roles.UserProjectMember.getRoleId(),Roles.UserProjectManager.getRoleId(),Roles.UserProjectManager.getRoleName()+":"+teamId);
             log.info("授予项目管理员成功!!");
             jsonObject.put(ModelMsg.MSG.getMsg(),"授予项目管理员成功!!");
             jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);

@@ -29,10 +29,13 @@ public interface ProjectMapper {
             "   p.team_id = t.team_id AND" +
             "   t.team_id = ut.team_id AND" +
             "   ut.role_id = #{teamManager} AND" +
-            "   ut.user_id = u.user_id" +
+            "   ut.user_id = u.user_id AND p.is_delete = #{state} " +
+            "   AND t.is_delete = #{state} AND ut.is_delete = #{state}" +
+            "   AND u.is_delete = #{state}" +
             "   GROUP BY projectName DESC")
     public List<FrontProject> findAllFrontProject(@Param("projectName") String projectName,
-                                                  @Param("teamManager") Integer teamManager);
+                                                  @Param("teamManager") Integer teamManager,
+                                                  @Param("state") Integer state);
 
     /**
      * 根据团队id 查找所有项目成员
@@ -98,8 +101,9 @@ public interface ProjectMapper {
             "   (select ut.team_id " +
             "       from user_team ut " +
             "       where " +
-            "           ut.user_id = #{userId})")
-    public List<String> getAllProjects(@Param("userId") Integer userId);
+            "           ut.user_id = #{userId} AND ut.is_delete = #{state})" +
+            "   AND p.is_delete = #{state}")
+    public List<String> getAllProjects(@Param("userId") Integer userId,@Param("state") Integer state);
 
 
     /**
@@ -110,20 +114,22 @@ public interface ProjectMapper {
      * @return
      */
     @Select("SELECT p.project_id AS projectId, t.team_name AS projectTeam , " +
-            "              p.project_create_time AS projectCreateTime ," +
-            "            u.user_name AS projectManager  ," +
-            "              p.project_name AS projectName " +
-            "           FROM project p,team t,user_team ut, user u, role r" +
-            "             WHERE p.project_name LIKE CONCAT('%',#{projectName},'%') AND " +
-            "               ut.user_id = #{userId} AND " +
-            "               ut.team_id = t.team_id AND " +
-            "               t.team_id = p.team_id AND " +
-            "                  ut.role_id = r.role_id AND" +
-            "                   u.user_id = ut.user_id AND p.is_delete = #{isDelete} AND ut.is_delete = #{isDelete}" +
-            "                   AND u.is_delete = #{isDelete}" +
-            "           GROUP BY projectName")
-    public List<FrontProject> findAllMyProject(@Param("projectName") String projectName,@Param("userId") Integer userId,
-                                               @Param("isDelete") Integer state);
+            "   p.project_create_time AS projectCreateTime ," +
+            "   u.user_name AS projectManager ," +
+            "   p.project_name AS projectName" +
+            " FROM project p,team t,user_team ut, user u" +
+            "   WHERE p.project_name LIKE CONCAT('%',#{projectName},'%') AND" +
+            "   p.team_id = t.team_id AND" +
+            "   t.team_id = ut.team_id AND" +
+            "   ut.role_id = #{teamManager} AND" +
+            "   ut.user_id = u.user_id AND p.is_delete = #{state} " +
+            "   AND t.is_delete = #{state} AND ut.is_delete = #{state}" +
+            "   AND u.is_delete = #{state} AND t.team_id IN (select team_id from user_team where user_id = #{userId} and is_delete = #{state} ) " +
+            "   GROUP BY projectName DESC")
+    public List<FrontProject> findAllMyProject(@Param("projectName") String projectName,
+                                               @Param("teamManager") Integer roleId,
+                                               @Param("userId") Integer userId,
+                                               @Param("state") Integer state);
 
     /**
      * 根据团队id 用户信息

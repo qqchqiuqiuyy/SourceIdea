@@ -49,7 +49,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Cacheable(cacheNames = {CacheConstant.PROJECT_PAGE},key = "'projectPage=[page='+#page+'][size='+#size+'][projectName='+#projectName+']'")
     public PageInfo<FrontProject> findAllFrontProject(int page, int size, String projectName) {
         PageHelper.startPage(page,size);
-        List<FrontProject> projects = projectMapper.findAllFrontProject(projectName, Roles.UserTeamManager.getRoleId());
+        List<FrontProject> projects = projectMapper.findAllFrontProject(projectName, Roles.UserTeamManager.getRoleId(),IsDelete.NOTDELETE.getState());
         return new PageInfo<>(projects);
     }
 
@@ -110,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Cacheable(cacheNames = {CacheConstant.GET_ALL_PROJECTS} ,key = "'getAllProjects=[userId='+#userId+']'")
     public List<String> getAllProjects(Integer userId) {
-        return projectMapper.getAllProjects(userId);
+        return projectMapper.getAllProjects(userId,IsDelete.NOTDELETE.getState());
     }
 
 
@@ -126,7 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Cacheable(cacheNames = {CacheConstant.MY_PROJECTS},key = "'myProjects=[page='+#page+'][size='+#size+'][projectName='+#projectName+'][userId='+#userId+']'")
     public PageInfo<FrontProject> findAllMyProject(int page, int size, String projectName, Integer userId) {
         PageHelper.startPage(page,size);
-        List<FrontProject> projects = projectMapper.findAllMyProject(projectName,userId,IsDelete.NOTDELETE.getState());
+        List<FrontProject> projects = projectMapper.findAllMyProject(projectName,Roles.UserTeamManager.getRoleId(),userId,IsDelete.NOTDELETE.getState());
         return new PageInfo<>(projects);
     }
 

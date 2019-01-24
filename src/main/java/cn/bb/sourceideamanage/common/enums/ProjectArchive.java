@@ -4,7 +4,8 @@ import lombok.Getter;
 
 
 /**
- * @author b
+ * 标记项目是否归档
+ * @author bobo
  */
 @Getter
 public enum ProjectArchive {

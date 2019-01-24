@@ -43,8 +43,10 @@ public class UserRealm extends AuthorizingRealm {
         //这个是下面认证返回结果的第一个参数
         User user = (User)subject.getPrincipal();
         Integer id = user.getUserId();
+        //查找当前用户所有角色
         List<String> roles = userService.findUserAllRoleByUserId(id);
         List<String> permissions = userService.findUserAllPermissionByUserId(id);
+        //添加角色
         info.addRoles(roles);
         info.addStringPermissions(permissions);
         return info;
@@ -75,7 +77,6 @@ public class UserRealm extends AuthorizingRealm {
         2.密码  user.getpassword
         3.relam  当前relam 可以是UserRealm
          */
-
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getUserPassword(), super.getName());
         return info;
     }

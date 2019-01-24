@@ -3,6 +3,10 @@ package cn.bb.sourceideamanage.common.exception;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * 异常信息类
+ * @author
+ */
 @Data
 @ToString
 public class ErrorInfo {

@@ -145,13 +145,17 @@ public class IdeaServiceImpl implements IdeaService {
             jsonObject.put(ModelMsg.MSG.getMsg(),"无法点赞出现错误!");
             return jsonObject.toString();
         }
-        String userSetKey = IdeaSupportsKey.UserSetKey.getKey();
-        if(jedis.sismember(IdeaSupportsKey.UserSetKey.getKey()+ ideaId,userId)){
-            jedis.srem(userSetKey+ideaId,userId);
+        //得到存有用户id 的Set集合的key,通过拼接 想法Id来区分不同的想法 ideaSupportUser:id
+        String userSetKey = IdeaSupportsKey.UserSetKey.getKey() + ideaId;
+        //判断当前用户是否已经在Set集合里面
+        if(jedis.sismember(userSetKey,userId)){
+            //将Set集合当前用户id删除
+            jedis.srem(userSetKey,userId);
             jsonObject.put(ModelMsg.MSG.getMsg(),"已取消赞");
             jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
         }else{
-            jedis.sadd(userSetKey+ideaId,userId);
+            //添加当前用户id到Set集合
+            jedis.sadd(userSetKey,userId);
             jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);
             jsonObject.put(ModelMsg.MSG.getMsg(),"已点赞");
         }
@@ -411,13 +415,16 @@ public class IdeaServiceImpl implements IdeaService {
     @Override
     public String addBrainStorming(Integer userId ,String brainName, Integer timeId, String brainMsg) {
         try{
+            //得到key ,key结构: brainStorming:branName
             String key = BrainKey.BRAIN_KEY.getKey() +brainName;
+            //判断是否已存在
             if(jedis.exists(key)){
                 log.error("增加头脑风暴失败!!!");
                 jsonObject.put(ModelMsg.MSG.getMsg(),"增加头脑风暴失败!!!名称已重复");
                 jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
                 throw new Exception("增加头脑风暴失败");
             }
+
             String userName = userMapper.getUserName(userId,IsDelete.NOTDELETE.getState());
             //转换成秒
             Integer brainTime = this.getBrainTime(timeId) * 60;
@@ -472,7 +479,7 @@ public class IdeaServiceImpl implements IdeaService {
         String mach;
         try{
             do {
-                //得到一系列的key
+                //得到一系列的key      brainStorming:*
                 mach = BrainKey.BRAIN_KEY.getKey()+"*";
                 keys = jedis.scan(cursor, scanParams.match(mach));
                 //得到所有的keyName
@@ -512,30 +519,30 @@ public class IdeaServiceImpl implements IdeaService {
             jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
             return jsonObject.toString();
         }
-            //得到该头脑风暴的key
+            //得到该头脑风暴的key      brainSupportsUsers:brainName
             String userKey = BrainKey.BRAIN_SUPPORT_USER.getKey() +brainName;
-            //得到点赞数
+            //得到点赞数                 brainStorming:brainName
             String supportsKey = BrainKey.BRAIN_KEY.getKey()+brainName;
             String userId = uuserId.toString();
+            //判断当前用户是否已经点过赞
             Boolean exist = jedis.sismember(userKey, userId);
             //判断集合Set之中是否有相同userId  如果有相同的userId 就删除 同时 点赞-1
             if(exist){
-                //删除某个用户点赞, 之后点赞数-1
+                //从set集合删除某个用户id, 之后点赞数-1
                 jedis.srem(userKey,userId);
                 jedis.hincrBy(supportsKey,"supports",-1);
                 jsonObject.put(ModelMsg.MSG.getMsg(),"取消赞成功!");
                 jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.FAILURE);
             }else{
-                //用户点赞
+                //用户点赞 将该用户id添加到set集合
                 jedis.sadd(userKey,userId);
                 jedis.hincrBy(supportsKey,"supports",1);
-                log.info("点赞成功!!");
                 jsonObject.put(ModelMsg.MSG.getMsg(),"点赞成功!!");
                 jsonObject.put(ModelMsg.SUCCESS.getMsg(),CacheConstant.SUCCESS);
             }
             //对保存用户id的key进行设置生存时间,先从点赞key获取ttl赋予
-        Long ttl = jedis.ttl(supportsKey);
-        jedis.expire(userKey,ttl.intValue());
+            Long ttl = jedis.ttl(supportsKey);
+            jedis.expire(userKey,ttl.intValue());
 
         return jsonObject.toString();
     }

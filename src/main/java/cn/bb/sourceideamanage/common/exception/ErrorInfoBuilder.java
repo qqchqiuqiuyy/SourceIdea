@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.time.LocalDateTime;
 
 /**
+ * 异常信息处理类
  * @author user
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)

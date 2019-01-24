@@ -2,6 +2,10 @@ package cn.bb.sourceideamanage.common.enums;
 
 import lombok.Getter;
 
+/**
+ * 存储头脑风暴的key
+ * @author bobo
+ */
 @Getter
 public enum BrainKey {
     /**

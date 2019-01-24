@@ -2,6 +2,10 @@ package cn.bb.sourceideamanage.common.enums;
 
 import lombok.Getter;
 
+/**
+ * 点赞存redis的key
+ * @author  bobo
+ */
 @Getter
 public enum IdeaSupportsKey {
     /**

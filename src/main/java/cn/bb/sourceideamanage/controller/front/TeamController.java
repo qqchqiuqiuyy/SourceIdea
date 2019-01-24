@@ -29,6 +29,13 @@ public class TeamController {
     @Autowired
     JSONObject jsonObject;
 
+    /**
+     * 团队分页
+     * @param model
+     * @param teamName  团队名
+     * @param page      当前页
+     * @return
+     */
     @RequestMapping("/toTeam")
     public String toTeam(Model model, String teamName, Integer page){
         if(null == page || page < 1){
@@ -46,6 +53,14 @@ public class TeamController {
         return "pages/front/html/team/teamList";
     }
 
+
+    /**
+     * 去团队信息页面
+     * @param model
+     * @param teamName 团队名
+     * @param request
+     * @return
+     */
     @GetMapping("/toTeamMsg/{teamName}")
     public String toTeamMsg(Model model, @PathVariable("teamName") String teamName, HttpServletRequest request){
         Integer teamId = teamService.getTeamId(teamName);

@@ -63,9 +63,11 @@ public interface BackIdeaMapper {
      * 删除评论
      * @param ideaId
      */
-    @Delete("delete from  idea where idea_id = #{ideaId}")
-    public void deleteIdea(Integer ideaId);
+    @Update("update   idea  set is_delete = #{state} where idea_id = #{ideaId}")
+    public void deleteIdea(@Param("ideaId") Integer ideaId,
+                           @Param("state") Integer state);
 
-    @Delete("DELETE from comment_idea WHERE idea_id = #{ideaId}")
-    public void deleteIdeaComment(@Param("ideaId") Integer ideaId);
+    @Update("update  comment_idea set is_delete = #{state} WHERE idea_id = #{ideaId}")
+    public void deleteIdeaComment(@Param("ideaId") Integer ideaId,
+                                  @Param("state") Integer state);
  }

@@ -1,6 +1,7 @@
 package cn.bb.sourceideamanage.controller.back;
 
 import cn.bb.sourceideamanage.common.config.PageSize;
+import cn.bb.sourceideamanage.common.enums.ModelMsg;
 import cn.bb.sourceideamanage.dto.back.BackUser;
 import cn.bb.sourceideamanage.service.back.BackUserService;
 import com.github.pagehelper.PageInfo;
@@ -24,7 +25,7 @@ public class BackUserController {
      * @param page
      * @return
      */
-    @GetMapping("/toUsers")
+    @RequestMapping("/toUsers")
     public String toUser(Model model, String userName,Integer page)
     {
 
@@ -35,9 +36,10 @@ public class BackUserController {
             userName = "";
         }
         PageInfo<BackUser> pageInfo = backUserService.findUserByPage(page, PageSize.PAGE_SIZE,userName);
-        model.addAttribute("indexPage",page);
-        model.addAttribute("totalPage",pageInfo.getPages());
-        model.addAttribute("users",pageInfo.getList());
+        model.addAttribute(ModelMsg.INDEX_PAGE.getMsg(),page);
+        model.addAttribute(ModelMsg.TOTAL_PAGE.getMsg(),pageInfo.getPages());
+        model.addAttribute(ModelMsg.USERS.getMsg(),pageInfo.getList());
+        model.addAttribute(ModelMsg.USER_NAME.getMsg(),userName);
         return "/pages/back/back_user";
     }
 

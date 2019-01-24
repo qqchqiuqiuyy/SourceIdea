@@ -59,9 +59,12 @@
                   <div class="panel-body">
                     <ul th:each="child : ${comment.childComments}">
                       <li>
-                        <span style="display: inline-block;margin-right: 20px" th:text="${child.userName} + ' @' + ${child.parentName} ">xx@xxx</span>
+                        <a href="" class="fly-link">
+                          <cite th:text="'用户名: '+${child.userName}+'@'"></cite>
+                        </a>
+                        <span style="display: inline-block;margin-right: 20px" th:text="  ${child.parentName} ">xx@xxx</span>
                         <span style="display: inline-block;margin-right: 20px" th:text="${child.content}">评论: xxx</span>
-                        <span style="display: inline-block;margin-right: 20px;float: right" th:text="'时间:'+${child.commentTime}"> 发表时间  2018</span>
+                        <span style="display: inline-block;margin-right: 20px;float: right" th:text="'时间:'+${child.commentTime}"> </span>
                           <div class="jieda-reply" style="display: inline-block;margin-left: 30px;float:right;margin-right: 20px">
                             <!-- 按钮触发模态框 -->
                             <shiro:hasRole name="user:common">
@@ -101,13 +104,6 @@
                                         </div>
                                       </div>
                                     </form>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                                    </button>
-                                    <button type="button" class="btn btn-primary">
-                                      评论
-                                    </button>
                                   </div>
                                 </div><!-- /.modal-content -->
                               </div><!-- /.modal -->

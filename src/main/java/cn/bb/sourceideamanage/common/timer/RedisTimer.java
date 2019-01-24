@@ -21,11 +21,16 @@ public class RedisTimer {
 
     @Autowired
     Jedis jedis;
+    /**
+     * ideaSupportUser:
+     */
     private static final String USER_SET_KEY = IdeaSupportsKey.UserSetKey.getKey();
-    private static final String SUPPORTS_KEY_KEY = IdeaSupportsKey.SupportsKey.getKey();
 
     @Autowired
     IdeaService ideaService;
+    /**
+     * 游标
+     */
     private static String CURSOR = "0";
     /**
      * 定时任务 10秒执行一次
@@ -33,19 +38,24 @@ public class RedisTimer {
     @Scheduled(cron = "0/10 * * * * ?")
     public void redisToDb(){
         ScanParams scanParams = new ScanParams();
+        //匹配所有符合前缀的key                          ideaSupportUser:*
         ScanResult<String> keys = jedis.scan(CURSOR, scanParams.match(USER_SET_KEY +"*"));
+        //获得游标
         CURSOR = keys.getStringCursor();
-        log.info("cursor游标={}",CURSOR);
+        //得到key集合
         List<String> results = keys.getResult();
         Integer ideaId = 0;
         Long supports = 0L;
-        String[] split = null;
+        String[] split;
         for (String key : results){
+            //ideaSupportUser:id
             split = key.split(":");
+            //得到id
             ideaId = Integer.parseInt(split[1]);
+            //计算该key的元素个数 即可得到点赞数
             supports = jedis.scard(key);
+            //持久化回数据库
             ideaService.durSupports(ideaId,supports);
         }
-
     }
 }

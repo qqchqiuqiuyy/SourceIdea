@@ -54,9 +54,10 @@ public interface UserMapper {
             "FROM " +
             " user_team ut  " +
             "WHERE " +
-            " ut.user_id = #{userId} "
+            " ut.user_id = #{userId} AND ut.is_delete = #{state}"
     )
-    public List<String> findUserAllRoleByUserId(@Param("userId") Integer userId);
+    public List<String> findUserAllRoleByUserId(@Param("userId") Integer userId,
+                                                @Param("state") Integer state);
 
 
     /**

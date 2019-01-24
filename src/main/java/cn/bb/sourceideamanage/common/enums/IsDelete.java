@@ -2,6 +2,10 @@ package cn.bb.sourceideamanage.common.enums;
 
 import lombok.Getter;
 
+/**
+ * 逻辑删除的标记位
+ * @author
+ */
 @Getter
 public enum IsDelete {
 

@@ -2,7 +2,10 @@ package cn.bb.sourceideamanage.common.enums;
 
 import lombok.Getter;
 
-
+/**
+ * cache缓存失效的时间
+ * @author
+ */
 @Getter
 public enum TimeOut {
     /**

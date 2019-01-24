@@ -185,7 +185,10 @@ function supports(ideaId){
       }
       if(data.success == "0"){
         console.log("取消赞!");
-        $("#ideaId"+ideaId).text(supports - 1);
+        if(supports != 0){
+          $("#ideaId"+ideaId).text(supports - 1);
+        }
+
         /*点击改变颜色*/
         $("#buttonId"+ideaId).removeClass("layui-btn-danger").addClass("layui-btn-normal");
       }

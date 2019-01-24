@@ -2,7 +2,6 @@ package cn.bb.sourceideamanage.controller.exception;
 
 import cn.bb.sourceideamanage.common.exception.ErrorInfo;
 import cn.bb.sourceideamanage.common.exception.ErrorInfoBuilder;
-import cn.bb.sourceideamanage.common.exception.MyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

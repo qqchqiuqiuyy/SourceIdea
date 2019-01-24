@@ -40,9 +40,9 @@ public class IdeaController {
     /**
      * 去idea想法列表 并且有分页
      * @param model
-     * @param ideaName
-     * @param tagName
-     * @param page
+     * @param ideaName 想法名
+     * @param tagName   标签名
+     * @param page  当前页号
      * @return
      */
     @RequestMapping("/toIdea")
@@ -73,9 +73,9 @@ public class IdeaController {
     }
 
     /**
-     * 想法详细
+     * 根据想法id得到想法详细
      * @param model
-     * @param ideaid
+     * @param ideaid    想法id
      * @return
      */
     @GetMapping("/toIdeaMsg/{ideaId}")
@@ -86,6 +86,13 @@ public class IdeaController {
         return "/pages/front/html/idea/ideaMsg";
     }
 
+    /**
+     * 根据想法id 想法名 去该想法评论页面
+     * @param ideaId    想法id
+     * @param ideaName  想法名
+     * @param model
+     * @return
+     */
     @GetMapping("/toIdeaComments/{ideaId}/{ideaName}")
     public String toIdeaComments(@PathVariable("ideaId") Integer ideaId,
                                  @PathVariable("ideaName") String ideaName,Model model){
@@ -97,6 +104,12 @@ public class IdeaController {
     }
 
 
+    /**
+     * 给该想法点赞
+     * @param ideaId    想法id
+     * @param userId    用户名
+     * @return
+     */
     @PutMapping("/upIdeaSupports/{ideaId}/{userId}")
     @ResponseBody
     public String upIdeaSupports(@PathVariable("ideaId") String ideaId,@PathVariable("userId") String userId){
@@ -108,9 +121,9 @@ public class IdeaController {
      * 评论想法
      * @param model
      * @param request
-     * @param content
-     * @param ideaName
-     * @param ideaId
+     * @param content   内容
+     * @param ideaName  想法名
+     * @param ideaId    想法id
      * @return
      */
     @PostMapping("/commentIdea")
@@ -125,6 +138,11 @@ public class IdeaController {
         return "/pages/front/html/idea/ideaComments";
     }
 
+    /**
+     * 去添加想法页面
+     * @param model
+     * @return
+     */
     @GetMapping("/toAddIdea")
     public String toAddIdea(Model model){
         List<Tag> tags = backIdeaService.findAllTag();
@@ -132,6 +150,14 @@ public class IdeaController {
         return "/pages/front/html/idea/addIdea";
     }
 
+    /**
+     * 添加想法
+     * @param ideaName  想法名
+     * @param tagId     标签id
+     * @param ideaMsg   想法信息
+     * @param request
+     * @return
+     */
     @PostMapping("/addIdea")
     @ResponseBody
     public String addIdea(String ideaName, Integer tagId, String ideaMsg, HttpServletRequest request){
@@ -139,7 +165,17 @@ public class IdeaController {
         return ideaService.addIdea(ideaName,tagId,ideaMsg,request);
     }
 
-
+    /**
+     * 评论想法
+     * @param request
+     * @param content   内容
+     * @param ideaId    想法id
+     * @param ideaName  想法名
+     * @param uid       父评论id
+     * @param parentId  评论他人的id
+     * @param parentName    评论他人的名字
+     * @return
+     */
     @PostMapping("/commentIdeaUser")
     @ResponseBody
     public String commentIdeaUser(HttpServletRequest request,String content,
@@ -150,6 +186,11 @@ public class IdeaController {
         return ideaService.commentIdeaUser(uid,ideaId,ideaName,userId,userName,parentId,parentName,content);
     }
 
+    /**
+     * 去添加头脑风暴页面
+     * @param model
+     * @return
+     */
     @GetMapping("/toAddBrainStorming")
     public String toAddBrainStorming(Model model){
         List<BrainTime> brainTimes = ideaService.getAllBrainTime();
@@ -158,6 +199,14 @@ public class IdeaController {
     }
 
 
+    /**
+     * 添加头脑风暴
+     * @param request
+     * @param brainName 头脑风暴名
+     * @param timeId    时间
+     * @param brainMsg  头脑风暴信息
+     * @return
+     */
     @PostMapping("/addBrainStorming")
     @ResponseBody
     public String addBrainStorming(HttpServletRequest request, String brainName,Integer timeId,String brainMsg ){
@@ -165,6 +214,11 @@ public class IdeaController {
         return  ideaService.addBrainStorming(userId,brainName,timeId,brainMsg);
     }
 
+    /**
+     * 去头脑风暴页面
+     * @param model
+     * @return
+     */
     @GetMapping("/toBrainStorming")
     public String toBrainStorming(Model model){
         List<Map<String, String>> brains = ideaService.allBrains();
@@ -173,6 +227,12 @@ public class IdeaController {
     }
 
 
+    /**
+     * 给头脑风暴点赞
+     * @param request
+     * @param brainName 头脑风暴名
+     * @return
+     */
     @PutMapping("/upBrainSupports")
     @ResponseBody
     public String upBrainSupports(HttpServletRequest request,String brainName ){

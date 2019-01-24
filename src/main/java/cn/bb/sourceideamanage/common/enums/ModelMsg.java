@@ -2,6 +2,10 @@ package cn.bb.sourceideamanage.common.enums;
 
 import lombok.Getter;
 
+/**
+ *  ModelAndView 模式的name
+ * @author bobo
+ */
 @Getter
 public enum ModelMsg {
     /**
@@ -55,6 +59,7 @@ public enum ModelMsg {
     FLAG("flag"),
     USER_MSG("userMsg"),
     PROJECT_NAME("projectName"),
+    BACK_TEAMS("backTeams"),
     ;
 
      String msg;

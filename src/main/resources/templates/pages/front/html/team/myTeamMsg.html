@@ -98,21 +98,27 @@
             </h3>
             <div class="fly-list-info">
               <span th:text="${project.projectCreateTime}"></span>
-              <!--团长 项目管理可看-->
-              <shiro:hasAnyRoles name="|user:teamManager:${teamId} , user:projectManager:${teamId}|" >
+              <!--团长 可看-->
+              <shiro:hasAnyRoles name="|user:teamManager:${teamId} |" >
                     <span style="display: inline-block;" class="delP" >
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:red;"  onclick="delProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'delProject'+${project.projectId}">删除</button>
                    </span>
-                 <span style="display: inline-block;" class="editP" th:if="${project.projectArchive == 0}">
-                     <a class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue"  th:href="@{/projectC/toEditProject/{projectId}(projectId=${project.projectId})}" th:value="${project.projectId}" type="button" th:id="'editProject'+${project.projectId}">修改项目</a>
-                   </span>
+              </shiro:hasAnyRoles>
+
+                <shiro:hasAnyRoles name="|user:teamManager:${teamId},user:projectManager:${teamId} ,user:projectMember:${teamId}|">
+                        <span style="display: inline-block;" class="editP" th:if="${project.projectArchive == 0}">
+                           <a class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue"  th:href="@{/projectC/toEditProject/{projectId}(projectId=${project.projectId})}" th:value="${project.projectId}" type="button" th:id="'editProject'+${project.projectId}">修改项目</a>
+                        </span>
+                </shiro:hasAnyRoles>
+              <shiro:hasAnyRoles name="|user:teamManager:${teamId},user:projectManager:${teamId}|">
                   <span th:if="${project.projectArchive == 0}">
                     <span style="display: inline-block;" class="archiveP" >
                      <button class="layui-btn layui-btn-normal btn-xs" style="display: inline-block;height:20px;background-color:deepskyblue;"  onclick="archiveProject(this.value)"  th:value="${project.projectId}" type="button" th:id="'archive'+${project.projectId}">归档</button>
                    </span>
+              </shiro:hasAnyRoles>
                   </span>
 
-              </shiro:hasAnyRoles>
+
             </div>
             <div class="fly-list-badge">
             </div>
@@ -127,7 +133,7 @@
         <ul class="fly-list" th:each="idea : ${ideas}">
           <li style="margin-bottom: 60px">
             <h3>
-              <a th:href="@{/ideaC/toIdeaMsg(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
+              <a th:href="@{/ideaC/toIdeaMsg/{ideaId}(ideaId=${idea.ideaId})}" th:text="${idea.ideaName}"></a>
             </h3>
             <div class="fly-list-info">
               <span th:text="${idea.ideaCreateTime}"></span>
