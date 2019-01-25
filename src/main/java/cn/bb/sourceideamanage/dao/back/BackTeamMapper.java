@@ -39,7 +39,7 @@ public interface BackTeamMapper {
             " r.role_id = ut.role_id  " +
             " AND u.user_id = ut.user_id  " +
             " AND ut.team_id = #{tId2} " +
-            "AND r.role_id IN ( SELECT max( role_id ) FROM user_team WHERE user_id = ut.user_id )")
+                "  GROUP BY userName ")
     public List<BackTeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 

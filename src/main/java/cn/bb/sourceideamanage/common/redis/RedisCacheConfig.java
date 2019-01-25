@@ -60,7 +60,7 @@ public class RedisCacheConfig {
         // 设置缓存过期时间  默认60秒
         redisCacheManager.setDefaultExpiration(TimeOut.TEST.getTime());
         //对不同场景设定缓存时间
-           Map<String, Long> expires = new ConcurrentHashMap<>(16);
+        Map<String, Long> expires = new ConcurrentHashMap<>(16);
         //对于缓存名 设置时间
         //对于tag 可以设置很长
         expires.put(CacheConstant.FIND_TAG,TimeOut.FOREVER.getTime());

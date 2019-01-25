@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,6 +141,7 @@ public class IdeaServiceImpl implements IdeaService {
      * @return
      */
     @Override
+    @CacheEvict(cacheNames = {CacheConstant.MY_IDEAS} , allEntries = true)
     public String upIdeaSupports(String ideaId, String userId) {
         if(null == ideaId || "".equals(ideaId) || null == userId || "".equals(userId) ){
             jsonObject.put(ModelMsg.MSG.getMsg(),"无法点赞出现错误!");
