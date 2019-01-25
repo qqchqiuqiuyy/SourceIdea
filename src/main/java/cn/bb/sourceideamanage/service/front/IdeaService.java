@@ -149,7 +149,7 @@ public interface IdeaService {
      * @param ideaId    想法id
      * @return
      */
-    public String delIdea(Integer ideaId,String teamName);
+    public String delIdea(Integer ideaId);
 
     /**
      * 将想法持久化回数据库

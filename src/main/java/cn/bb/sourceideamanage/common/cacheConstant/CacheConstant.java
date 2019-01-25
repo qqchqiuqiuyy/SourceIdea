@@ -1,5 +1,9 @@
 package cn.bb.sourceideamanage.common.cacheConstant;
 
+/**
+ * 一些设置cache的key
+ * @author
+ */
 public class CacheConstant {
     public static final String ALL_PROJECT = "allProject";
     public static final String TEAM_PAGE = "allProject";

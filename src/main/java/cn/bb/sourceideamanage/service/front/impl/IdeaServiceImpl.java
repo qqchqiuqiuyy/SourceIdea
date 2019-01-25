@@ -323,9 +323,11 @@ public class IdeaServiceImpl implements IdeaService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(cacheNames = {CacheConstant.TEAM_IDEAS},key = "'teamIdeas=[teamName='+#teamName+']'")
-    public String delIdea(Integer ideaId,String teamName) {
-        try {
+    @CacheEvict(cacheNames = {CacheConstant.TEAM_IDEAS,CacheConstant.MY_IDEAS},allEntries = true)
+    public String delIdea(Integer ideaId) {
+        try { //todo 删除点赞缓存
+            String userSetKey = IdeaSupportsKey.UserSetKey.getKey() + ideaId;
+            jedis.del(userSetKey);
             ideaMapper.delIdea(ideaId,IsDelete.DELETE.getState());
             log.info("删除想法成功!");
             ideaMapper.delIdeaComment(ideaId,IsDelete.DELETE.getState());

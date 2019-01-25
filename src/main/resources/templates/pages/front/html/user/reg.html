@@ -90,6 +90,7 @@ layui.config({
 <script>
   function reg() {
     console.log("submit!!")
+    console.log($('#dataFrom').serialize());
     $.ajax({
       url:"/loginC/register",
       data:$('#dataFrom').serialize(),

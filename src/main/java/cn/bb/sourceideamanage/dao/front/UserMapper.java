@@ -266,7 +266,7 @@ public interface UserMapper {
      */
     @Select("SELECT u.user_id AS userId, u.user_name AS userName ,u.user_msg AS userMsg , u.user_create_time AS userCreateTime  " +
             " FROM  user u" +
-            "   WHERE u.user_name LIKE CONCAT( '%',#{userName}, '%' ) AND u.is_delete = #{state}")
+            "   WHERE u.user_name LIKE CONCAT( '%',#{userName}, '%' ) AND u.is_delete = #{state} and u.user_account != 'admin'  ")
     public List<FrontUser> findAllFrontUser(@Param("userName") String userName, @Param("state") Integer state);
 
     /**

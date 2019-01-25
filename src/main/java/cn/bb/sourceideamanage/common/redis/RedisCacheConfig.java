@@ -58,7 +58,7 @@ public class RedisCacheConfig {
     public CacheManager cacheManager(@Autowired RedisTemplate redisTemplate) {
         RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
         // 设置缓存过期时间  默认60秒
-        redisCacheManager.setDefaultExpiration(TimeOut.SHORTEST.getTime());
+        redisCacheManager.setDefaultExpiration(TimeOut.TEST.getTime());
         //对不同场景设定缓存时间
            Map<String, Long> expires = new ConcurrentHashMap<>(16);
         //对于缓存名 设置时间

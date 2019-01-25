@@ -38,7 +38,7 @@ public class LoginController {
      */
     @PostMapping("/register")
     @ResponseBody
-    public String register(String account, String password, String repassword, String username, Model model){
+    public String register(String account, String password, String repassword, String username){
         String info  = loginService.register(account, password, repassword, username);
         log.info("info={}",info);
         return info;

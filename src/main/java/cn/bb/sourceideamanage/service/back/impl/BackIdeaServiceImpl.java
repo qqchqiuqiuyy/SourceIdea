@@ -49,7 +49,7 @@ public class BackIdeaServiceImpl implements BackIdeaService {
      * @return
      */
     @Override
-    @Cacheable( cacheNames = {CacheConstant.ALL_TAG},key = "'allTag'")
+    @Cacheable( cacheNames = {CacheConstant.ALL_TAG},key = "'tags'")
     public List<Tag> findAllTag() {
         return mapper.findAllTag();
     }

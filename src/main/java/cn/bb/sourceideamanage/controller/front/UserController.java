@@ -271,13 +271,12 @@ public class UserController {
     /**
      * 删除一条想法
      * @param ideaId 想法id
-     * @param teamName  团队名
      * @return
      */
-    @DeleteMapping("/delIdea/{ideaId}/{teamName}")
+    @DeleteMapping("/delIdea/{ideaId}")
     @ResponseBody
-    public String delIdea(@PathVariable("ideaId") Integer ideaId ,@PathVariable("teamName") String teamName){
-        String s = ideaService.delIdea(ideaId,teamName);
+    public String delIdea(@PathVariable("ideaId") Integer ideaId ){
+        String s = ideaService.delIdea(ideaId);
         return s;
     }
 

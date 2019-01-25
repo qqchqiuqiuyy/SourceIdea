@@ -55,6 +55,9 @@ public class ShiroConfig {
         filterMap.put("/userC/toLogin","anon");
         filterMap.put("/userC/toReg","anon");
         filterMap.put("/loginC/check","anon");
+        filterMap.put("/loginC/register","anon");
+
+
         //首页放行
         filterMap.put("/indexC/toIndex","anon");
         //团队放行

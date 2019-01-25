@@ -11,10 +11,11 @@ public enum TimeOut {
     /**
      *
      */
+    TEST(10L,"测试"),
     SHORTEST(30L,"最短"),
     MEDIUM(60L,"中等"),
     LONGEST(120L,"最长"),
-    FOREVER(-1L,"永久");
+    FOREVER(9999L,"超长");
     public  final Long time;
     public final String cacheName;
     TimeOut(Long time,String cacheName){

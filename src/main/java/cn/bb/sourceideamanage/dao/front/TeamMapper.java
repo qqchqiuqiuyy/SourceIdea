@@ -169,9 +169,10 @@ public interface TeamMapper {
             " r.role_id = ut.role_id  " +
             " AND u.user_id = ut.user_id  " +
             " AND ut.team_id = #{tId2} " +
-            " AND ut.role_id = ( SELECT role_id FROM user_team WHERE user_id  = ut.user_id and is_delete = 0 ORDER BY role_id DESC LIMIT 1)  " +
+      /*      " AND ut.role_id = ( SELECT role_id FROM user_team WHERE user_id  = ut.user_id and is_delete = 0 ORDER BY role_id DESC LIMIT 1)  " +*/
             " AND ut.is_delete = 0  " +
-            " AND u.is_delete = 0 " )
+            " AND u.is_delete = 0 " +
+            " GROUP BY userName" )
     public List<TeamMember> findAllMemberByTeamId(@Param("tId2") Integer teamId);
 
 
@@ -375,7 +376,7 @@ public interface TeamMapper {
             " AND ut.user_id = u.user_id " +
             " AND ut.role_id = r.role_id " +
             " AND u.is_delete = #{isDelete} AND ut.is_delete = #{isDelete} AND t.is_delete = #{isDelete} " +
-            " AND ut.role_id = (select max(role_id) from user_team  where user_id = ut.user_id and is_delete = #{isDelete})" )
+            " group by userName" )
     public List<MyTeamMember> findAllMyTeamMember(@Param("teamName") String teamName,@Param("isDelete") Integer state);
 
     /**
